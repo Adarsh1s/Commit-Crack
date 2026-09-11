@@ -174,205 +174,13 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          2.34,
-          -35.06
-        ]
-      },
-      "properties": {
-        "image_name": "0001_2015.jpg",
-        "target_id": "tgt-05",
-        "class_name": "ghost_net",
-        "confidence_ai": 0.96,
-        "confidence_final": 0.98,
-        "hazard_risk": "MEDIUM",
-        "shadow_evidence": "SUPPORTING",
-        "review_status": "VERIFIED_3D",
-        "length_m": 0.6,
-        "width_m": 0.9,
-        "area_m2": 0.54,
-        "relief_height_m": 4.57,
-        "bbox": [
-          515.0,
-          853.0,
-          557.0,
-          889.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "0001_2015.jpg_tgt-06",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          4.88,
-          -34.13
-        ]
-      },
-      "properties": {
-        "image_name": "0001_2015.jpg",
-        "target_id": "tgt-06",
-        "class_name": "crab_pot",
-        "confidence_ai": 0.96,
-        "confidence_final": 0.96,
-        "hazard_risk": "LOW",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.65,
-        "width_m": 0.5,
-        "area_m2": 0.33,
-        "relief_height_m": 0.98,
-        "bbox": [
-          545.0,
-          843.0,
-          579.0,
-          880.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "0001_2015.jpg_tgt-07",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          4.79,
-          -25.93
-        ]
-      },
-      "properties": {
-        "image_name": "0001_2015.jpg",
-        "target_id": "tgt-07",
-        "class_name": "submarine_pipeline",
-        "confidence_ai": 0.96,
-        "confidence_final": 0.86,
-        "hazard_risk": "HIGH",
-        "shadow_evidence": "ABSENT",
-        "review_status": "FLAGGED_FOR_REVIEW",
-        "length_m": 1.05,
-        "width_m": 0.5,
-        "area_m2": 0.53,
-        "relief_height_m": 1.24,
-        "bbox": [
-          544.0,
-          755.0,
-          578.0,
-          800.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "0001_2015.jpg_tgt-08",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -5.62,
-          -43.85
-        ]
-      },
-      "properties": {
-        "image_name": "0001_2015.jpg",
-        "target_id": "tgt-08",
-        "class_name": "submarine_pipeline",
-        "confidence_ai": 0.9283,
-        "confidence_final": 0.9283,
-        "hazard_risk": "HIGH",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 4.2,
-        "width_m": 0.95,
-        "area_m2": 3.99,
-        "relief_height_m": 1.64,
-        "bbox": [
-          433.0,
-          907.0,
-          476.0,
-          1015.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "0001_2015.jpg_tgt-09",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          2.39,
-          -16.85
-        ]
-      },
-      "properties": {
-        "image_name": "0001_2015.jpg",
-        "target_id": "tgt-09",
-        "class_name": "crab_pot",
-        "confidence_ai": 0.9189,
-        "confidence_final": 0.9189,
-        "hazard_risk": "LOW",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.75,
-        "width_m": 0.75,
-        "area_m2": 0.56,
-        "relief_height_m": 3.91,
-        "bbox": [
-          517.0,
-          665.0,
-          556.0,
-          704.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "0001_2015.jpg_tgt-10",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          4.35,
-          43.02
-        ]
-      },
-      "properties": {
-        "image_name": "0001_2015.jpg",
-        "target_id": "tgt-10",
-        "class_name": "submarine_pipeline",
-        "confidence_ai": 0.9158,
-        "confidence_final": 0.9158,
-        "hazard_risk": "HIGH",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 1.25,
-        "width_m": 0.55,
-        "area_m2": 0.69,
-        "relief_height_m": 1.93,
-        "bbox": [
-          539.0,
-          47.0,
-          574.0,
-          96.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "0001_2015.jpg_tgt-11",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
           -5.03,
           2.78
         ]
       },
       "properties": {
         "image_name": "0001_2015.jpg",
-        "target_id": "tgt-11",
+        "target_id": "tgt-05",
         "class_name": "submarine_pipeline",
         "confidence_ai": 0.9118,
         "confidence_final": 0.9118,
@@ -394,39 +202,39 @@
     },
     {
       "type": "Feature",
-      "id": "0001_2015.jpg_tgt-12",
+      "id": "0001_2015.jpg_tgt-06",
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -2.98,
-          -12.01
+          4.35,
+          43.02
         ]
       },
       "properties": {
         "image_name": "0001_2015.jpg",
-        "target_id": "tgt-12",
-        "class_name": "ghost_net",
-        "confidence_ai": 0.8999,
-        "confidence_final": 0.98,
-        "hazard_risk": "MEDIUM",
-        "shadow_evidence": "SUPPORTING",
-        "review_status": "VERIFIED_3D",
-        "length_m": 0.5,
-        "width_m": 0.95,
-        "area_m2": 0.47,
-        "relief_height_m": 3.72,
+        "target_id": "tgt-06",
+        "class_name": "submarine_pipeline",
+        "confidence_ai": 0.8965,
+        "confidence_final": 0.8965,
+        "hazard_risk": "HIGH",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 1.25,
+        "width_m": 0.55,
+        "area_m2": 0.69,
+        "relief_height_m": 1.93,
         "bbox": [
-          460.0,
-          618.0,
-          503.0,
-          652.0
+          539.0,
+          47.0,
+          574.0,
+          96.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
     },
     {
       "type": "Feature",
-      "id": "0001_2015.jpg_tgt-13",
+      "id": "0001_2015.jpg_tgt-07",
       "geometry": {
         "type": "Point",
         "coordinates": [
@@ -436,7 +244,7 @@
       },
       "properties": {
         "image_name": "0001_2015.jpg",
-        "target_id": "tgt-13",
+        "target_id": "tgt-07",
         "class_name": "crab_pot",
         "confidence_ai": 0.8831,
         "confidence_final": 0.8831,
@@ -458,39 +266,103 @@
     },
     {
       "type": "Feature",
-      "id": "0001_2015.jpg_tgt-14",
+      "id": "0001_2015.jpg_tgt-08",
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -34.18,
-          30.27
+          -2.98,
+          -12.01
         ]
       },
       "properties": {
         "image_name": "0001_2015.jpg",
-        "target_id": "tgt-14",
-        "class_name": "mine_cylinder",
-        "confidence_ai": 0.7612,
-        "confidence_final": 0.7612,
-        "hazard_risk": "CRITICAL",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 1.6,
-        "width_m": 2.0,
-        "area_m2": 3.2,
-        "relief_height_m": 2.04,
+        "target_id": "tgt-08",
+        "class_name": "ghost_net",
+        "confidence_ai": 0.8809,
+        "confidence_final": 0.98,
+        "hazard_risk": "MEDIUM",
+        "shadow_evidence": "SUPPORTING",
+        "review_status": "VERIFIED_3D",
+        "length_m": 0.5,
+        "width_m": 0.95,
+        "area_m2": 0.47,
+        "relief_height_m": 3.72,
         "bbox": [
-          130.0,
-          174.0,
-          194.0,
-          230.0
+          460.0,
+          618.0,
+          503.0,
+          652.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
     },
     {
       "type": "Feature",
-      "id": "0001_2015.jpg_tgt-15",
+      "id": "0001_2015.jpg_tgt-09",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -34.38,
+          30.27
+        ]
+      },
+      "properties": {
+        "image_name": "0001_2015.jpg",
+        "target_id": "tgt-09",
+        "class_name": "mine_cylinder",
+        "confidence_ai": 0.8228,
+        "confidence_final": 0.8228,
+        "hazard_risk": "CRITICAL",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 1.5,
+        "width_m": 2.1,
+        "area_m2": 3.15,
+        "relief_height_m": 2.11,
+        "bbox": [
+          127.0,
+          175.0,
+          193.0,
+          229.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "0001_2015.jpg_tgt-10",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.51,
+          48.14
+        ]
+      },
+      "properties": {
+        "image_name": "0001_2015.jpg",
+        "target_id": "tgt-10",
+        "class_name": "shipwreck",
+        "confidence_ai": 0.6372,
+        "confidence_final": 0.7572,
+        "hazard_risk": "HIGH",
+        "shadow_evidence": "SUPPORTING",
+        "review_status": "VERIFIED_3D",
+        "length_m": 1.1,
+        "width_m": 1.6,
+        "area_m2": 1.76,
+        "relief_height_m": 0.36,
+        "bbox": [
+          694.0,
+          0.0,
+          750.0,
+          42.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "0001_2015.jpg_tgt-11",
       "geometry": {
         "type": "Point",
         "coordinates": [
@@ -500,7 +372,7 @@
       },
       "properties": {
         "image_name": "0001_2015.jpg",
-        "target_id": "tgt-15",
+        "target_id": "tgt-11",
         "class_name": "shipwreck",
         "confidence_ai": 0.2563,
         "confidence_final": 0.3763,
@@ -522,32 +394,128 @@
     },
     {
       "type": "Feature",
+      "id": "0001_2015.jpg_tgt-12",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -36.72,
+          -7.42
+        ]
+      },
+      "properties": {
+        "image_name": "0001_2015.jpg",
+        "target_id": "tgt-12",
+        "class_name": "shipwreck",
+        "confidence_ai": 0.249,
+        "confidence_final": 0.369,
+        "hazard_risk": "HIGH",
+        "shadow_evidence": "SUPPORTING",
+        "review_status": "VERIFIED_3D",
+        "length_m": 0.9,
+        "width_m": 1.8,
+        "area_m2": 1.62,
+        "relief_height_m": 1.48,
+        "bbox": [
+          106.0,
+          567.0,
+          166.0,
+          609.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "0001_2015.jpg_tgt-13",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.96,
+          -40.97
+        ]
+      },
+      "properties": {
+        "image_name": "0001_2015.jpg",
+        "target_id": "tgt-13",
+        "class_name": "shipwreck",
+        "confidence_ai": 0.2561,
+        "confidence_final": 0.3761,
+        "hazard_risk": "HIGH",
+        "shadow_evidence": "SUPPORTING",
+        "review_status": "VERIFIED_3D",
+        "length_m": 9.15,
+        "width_m": 1.3,
+        "area_m2": 11.9,
+        "relief_height_m": 1.22,
+        "bbox": [
+          548.0,
+          826.0,
+          598.0,
+          1024.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "0001_2015.jpg_tgt-14",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -39.45,
+          -34.08
+        ]
+      },
+      "properties": {
+        "image_name": "0001_2015.jpg",
+        "target_id": "tgt-14",
+        "class_name": "mine_cylinder",
+        "confidence_ai": 0.151,
+        "confidence_final": 0.151,
+        "hazard_risk": "CRITICAL",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 0.9,
+        "width_m": 1.9,
+        "area_m2": 1.71,
+        "relief_height_m": 0.32,
+        "bbox": [
+          77.0,
+          840.0,
+          139.0,
+          882.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
       "id": "0003_2015.jpg_tgt-01",
       "geometry": {
         "type": "Point",
         "coordinates": [
-          4.49,
-          12.74
+          6.69,
+          -40.67
         ]
       },
       "properties": {
         "image_name": "0003_2015.jpg",
         "target_id": "tgt-01",
-        "class_name": "submarine_pipeline",
-        "confidence_ai": 0.96,
-        "confidence_final": 0.86,
+        "class_name": "shipwreck",
+        "confidence_ai": 0.8282,
+        "confidence_final": 0.9482,
         "hazard_risk": "HIGH",
-        "shadow_evidence": "ABSENT",
-        "review_status": "FLAGGED_FOR_REVIEW",
-        "length_m": 0.95,
-        "width_m": 0.5,
-        "area_m2": 0.47,
-        "relief_height_m": 1.43,
+        "shadow_evidence": "SUPPORTING",
+        "review_status": "VERIFIED_3D",
+        "length_m": 9.05,
+        "width_m": 2.15,
+        "area_m2": 19.46,
+        "relief_height_m": 1.37,
         "bbox": [
-          541.0,
-          360.0,
-          575.0,
-          403.0
+          547.0,
+          824.0,
+          614.0,
+          1024.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -558,28 +526,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -4.98,
-          31.15
+          29.64,
+          -8.74
         ]
       },
       "properties": {
         "image_name": "0003_2015.jpg",
         "target_id": "tgt-02",
-        "class_name": "submarine_pipeline",
-        "confidence_ai": 0.96,
-        "confidence_final": 0.96,
+        "class_name": "shipwreck",
+        "confidence_ai": 0.6651,
+        "confidence_final": 0.7851,
         "hazard_risk": "HIGH",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 3.3,
-        "width_m": 0.8,
-        "area_m2": 2.64,
-        "relief_height_m": 3.88,
+        "shadow_evidence": "SUPPORTING",
+        "review_status": "VERIFIED_3D",
+        "length_m": 1.05,
+        "width_m": 0.55,
+        "area_m2": 0.58,
+        "relief_height_m": 0.87,
         "bbox": [
-          441.0,
-          148.0,
-          481.0,
-          238.0
+          798.0,
+          579.0,
+          833.0,
+          624.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -590,28 +558,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -4.88,
-          37.21
+          9.72,
+          -32.23
         ]
       },
       "properties": {
         "image_name": "0003_2015.jpg",
         "target_id": "tgt-03",
-        "class_name": "submarine_pipeline",
-        "confidence_ai": 0.9419,
-        "confidence_final": 0.9419,
+        "class_name": "shipwreck",
+        "confidence_ai": 0.5641,
+        "confidence_final": 0.6841,
         "hazard_risk": "HIGH",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 4.2,
-        "width_m": 0.9,
-        "area_m2": 3.78,
-        "relief_height_m": 4.15,
+        "shadow_evidence": "SUPPORTING",
+        "review_status": "VERIFIED_3D",
+        "length_m": 0.9,
+        "width_m": 1.25,
+        "area_m2": 1.12,
+        "relief_height_m": 0.6,
         "bbox": [
-          441.0,
-          77.0,
-          483.0,
-          185.0
+          587.0,
+          821.0,
+          636.0,
+          863.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -622,28 +590,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -5.13,
-          19.78
+          45.56,
+          -2.25
         ]
       },
       "properties": {
         "image_name": "0003_2015.jpg",
         "target_id": "tgt-04",
-        "class_name": "submarine_pipeline",
-        "confidence_ai": 0.9268,
-        "confidence_final": 0.9268,
+        "class_name": "shipwreck",
+        "confidence_ai": 0.5317,
+        "confidence_final": 0.5317,
         "hazard_risk": "HIGH",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 3.35,
-        "width_m": 0.75,
-        "area_m2": 2.51,
-        "relief_height_m": 3.67,
+        "length_m": 2.5,
+        "width_m": 4.55,
+        "area_m2": 11.38,
+        "relief_height_m": 0.5,
         "bbox": [
-          440.0,
-          264.0,
-          479.0,
-          355.0
+          921.0,
+          498.0,
+          1024.0,
+          572.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -654,237 +622,13 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -4.88,
-          43.07
-        ]
-      },
-      "properties": {
-        "image_name": "0003_2015.jpg",
-        "target_id": "tgt-05",
-        "class_name": "submarine_pipeline",
-        "confidence_ai": 0.8699,
-        "confidence_final": 0.8699,
-        "hazard_risk": "HIGH",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 2.3,
-        "width_m": 0.7,
-        "area_m2": 1.61,
-        "relief_height_m": 2.37,
-        "bbox": [
-          443.0,
-          36.0,
-          481.0,
-          106.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "0003_2015.jpg_tgt-06",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -3.56,
-          -1.42
-        ]
-      },
-      "properties": {
-        "image_name": "0003_2015.jpg",
-        "target_id": "tgt-06",
-        "class_name": "crab_pot",
-        "confidence_ai": 0.8516,
-        "confidence_final": 0.9316,
-        "hazard_risk": "LOW",
-        "shadow_evidence": "SUPPORTING",
-        "review_status": "VERIFIED_3D",
-        "length_m": 0.75,
-        "width_m": 0.85,
-        "area_m2": 0.64,
-        "relief_height_m": 2.98,
-        "bbox": [
-          455.0,
-          507.0,
-          496.0,
-          546.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "0003_2015.jpg_tgt-07",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -39.5,
-          28.66
-        ]
-      },
-      "properties": {
-        "image_name": "0003_2015.jpg",
-        "target_id": "tgt-07",
-        "class_name": "crab_pot",
-        "confidence_ai": 0.8367,
-        "confidence_final": 0.8367,
-        "hazard_risk": "LOW",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.65,
-        "width_m": 0.85,
-        "area_m2": 0.55,
-        "relief_height_m": 0.14,
-        "bbox": [
-          87.0,
-          200.0,
-          128.0,
-          237.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "0003_2015.jpg_tgt-08",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          6.79,
-          33.89
-        ]
-      },
-      "properties": {
-        "image_name": "0003_2015.jpg",
-        "target_id": "tgt-08",
-        "class_name": "ghost_net",
-        "confidence_ai": 0.835,
-        "confidence_final": 0.935,
-        "hazard_risk": "MEDIUM",
-        "shadow_evidence": "SUPPORTING",
-        "review_status": "VERIFIED_3D",
-        "length_m": 1.2,
-        "width_m": 0.75,
-        "area_m2": 0.9,
-        "relief_height_m": 2.84,
-        "bbox": [
-          562.0,
-          141.0,
-          601.0,
-          189.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "0003_2015.jpg_tgt-09",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          6.74,
-          -40.87
-        ]
-      },
-      "properties": {
-        "image_name": "0003_2015.jpg",
-        "target_id": "tgt-09",
-        "class_name": "shipwreck",
-        "confidence_ai": 0.7382,
-        "confidence_final": 0.8582,
-        "hazard_risk": "HIGH",
-        "shadow_evidence": "SUPPORTING",
-        "review_status": "VERIFIED_3D",
-        "length_m": 9.15,
-        "width_m": 2.2,
-        "area_m2": 20.13,
-        "relief_height_m": 1.27,
-        "bbox": [
-          547.0,
-          825.0,
-          615.0,
-          1024.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "0003_2015.jpg_tgt-10",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          29.59,
-          -8.64
-        ]
-      },
-      "properties": {
-        "image_name": "0003_2015.jpg",
-        "target_id": "tgt-10",
-        "class_name": "shipwreck",
-        "confidence_ai": 0.5429,
-        "confidence_final": 0.6629,
-        "hazard_risk": "HIGH",
-        "shadow_evidence": "SUPPORTING",
-        "review_status": "VERIFIED_3D",
-        "length_m": 1.05,
-        "width_m": 0.5,
-        "area_m2": 0.53,
-        "relief_height_m": 0.87,
-        "bbox": [
-          798.0,
-          578.0,
-          832.0,
-          623.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "0003_2015.jpg_tgt-11",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          9.67,
-          -32.23
-        ]
-      },
-      "properties": {
-        "image_name": "0003_2015.jpg",
-        "target_id": "tgt-11",
-        "class_name": "shipwreck",
-        "confidence_ai": 0.5041,
-        "confidence_final": 0.6241,
-        "hazard_risk": "HIGH",
-        "shadow_evidence": "SUPPORTING",
-        "review_status": "VERIFIED_3D",
-        "length_m": 0.9,
-        "width_m": 1.2,
-        "area_m2": 1.08,
-        "relief_height_m": 0.6,
-        "bbox": [
-          587.0,
-          821.0,
-          635.0,
-          863.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "0003_2015.jpg_tgt-12",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
           24.71,
           46.19
         ]
       },
       "properties": {
         "image_name": "0003_2015.jpg",
-        "target_id": "tgt-12",
+        "target_id": "tgt-05",
         "class_name": "shipwreck",
         "confidence_ai": 0.4144,
         "confidence_final": 0.5344,
@@ -906,7 +650,7 @@
     },
     {
       "type": "Feature",
-      "id": "0003_2015.jpg_tgt-13",
+      "id": "0003_2015.jpg_tgt-06",
       "geometry": {
         "type": "Point",
         "coordinates": [
@@ -916,7 +660,7 @@
       },
       "properties": {
         "image_name": "0003_2015.jpg",
-        "target_id": "tgt-13",
+        "target_id": "tgt-06",
         "class_name": "mine_cylinder",
         "confidence_ai": 0.3992,
         "confidence_final": 0.3992,
@@ -938,63 +682,31 @@
     },
     {
       "type": "Feature",
-      "id": "0003_2015.jpg_tgt-14",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          45.46,
-          -2.1
-        ]
-      },
-      "properties": {
-        "image_name": "0003_2015.jpg",
-        "target_id": "tgt-14",
-        "class_name": "shipwreck",
-        "confidence_ai": 0.39,
-        "confidence_final": 0.39,
-        "hazard_risk": "HIGH",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 2.45,
-        "width_m": 4.55,
-        "area_m2": 11.15,
-        "relief_height_m": 0.02,
-        "bbox": [
-          920.0,
-          497.0,
-          1024.0,
-          570.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "0003_2015.jpg_tgt-15",
+      "id": "0003_2015.jpg_tgt-07",
       "geometry": {
         "type": "Point",
         "coordinates": [
           30.42,
-          -47.27
+          -47.36
         ]
       },
       "properties": {
         "image_name": "0003_2015.jpg",
-        "target_id": "tgt-15",
+        "target_id": "tgt-07",
         "class_name": "mine_cylinder",
-        "confidence_ai": 0.2706,
-        "confidence_final": 0.2706,
+        "confidence_ai": 0.3006,
+        "confidence_final": 0.3006,
         "hazard_risk": "CRITICAL",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 1.2,
-        "width_m": 2.35,
-        "area_m2": 2.82,
-        "relief_height_m": 0.34,
+        "length_m": 1.1,
+        "width_m": 2.15,
+        "area_m2": 2.37,
+        "relief_height_m": 0.37,
         "bbox": [
-          788.0,
-          972.0,
-          859.0,
+          790.0,
+          974.0,
+          857.0,
           1020.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
@@ -1002,7 +714,7 @@
     },
     {
       "type": "Feature",
-      "id": "0003_2015.jpg_tgt-16",
+      "id": "0003_2015.jpg_tgt-08",
       "geometry": {
         "type": "Point",
         "coordinates": [
@@ -1012,7 +724,7 @@
       },
       "properties": {
         "image_name": "0003_2015.jpg",
-        "target_id": "tgt-16",
+        "target_id": "tgt-08",
         "class_name": "shipwreck",
         "confidence_ai": 0.2564,
         "confidence_final": 0.3764,
@@ -1034,6 +746,230 @@
     },
     {
       "type": "Feature",
+      "id": "0003_2015.jpg_tgt-09",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.4,
+          -44.38
+        ]
+      },
+      "properties": {
+        "image_name": "0003_2015.jpg",
+        "target_id": "tgt-09",
+        "class_name": "mine_cylinder",
+        "confidence_ai": 0.2216,
+        "confidence_final": 0.2216,
+        "hazard_risk": "CRITICAL",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 0.65,
+        "width_m": 0.8,
+        "area_m2": 0.52,
+        "relief_height_m": 2.07,
+        "bbox": [
+          406.0,
+          948.0,
+          446.0,
+          985.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "0003_2015.jpg_tgt-10",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.44,
+          39.45
+        ]
+      },
+      "properties": {
+        "image_name": "0003_2015.jpg",
+        "target_id": "tgt-10",
+        "class_name": "shipwreck",
+        "confidence_ai": 0.2031,
+        "confidence_final": 0.3231,
+        "hazard_risk": "HIGH",
+        "shadow_evidence": "SUPPORTING",
+        "review_status": "VERIFIED_3D",
+        "length_m": 1.2,
+        "width_m": 0.4,
+        "area_m2": 0.42,
+        "relief_height_m": 1.33,
+        "bbox": [
+          542.0,
+          84.0,
+          573.0,
+          132.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "0003_2015.jpg_tgt-11",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.74,
+          12.74
+        ]
+      },
+      "properties": {
+        "image_name": "0003_2015.jpg",
+        "target_id": "tgt-11",
+        "class_name": "shipwreck",
+        "confidence_ai": 0.2534,
+        "confidence_final": 0.3734,
+        "hazard_risk": "HIGH",
+        "shadow_evidence": "SUPPORTING",
+        "review_status": "VERIFIED_3D",
+        "length_m": 0.85,
+        "width_m": 0.55,
+        "area_m2": 0.47,
+        "relief_height_m": 0.89,
+        "bbox": [
+          543.0,
+          361.0,
+          578.0,
+          402.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "0003_2015.jpg_tgt-12",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.37,
+          -8.3
+        ]
+      },
+      "properties": {
+        "image_name": "0003_2015.jpg",
+        "target_id": "tgt-12",
+        "class_name": "shipwreck",
+        "confidence_ai": 0.1487,
+        "confidence_final": 0.2687,
+        "hazard_risk": "HIGH",
+        "shadow_evidence": "SUPPORTING",
+        "review_status": "VERIFIED_3D",
+        "length_m": 0.8,
+        "width_m": 0.4,
+        "area_m2": 0.32,
+        "relief_height_m": 1.02,
+        "bbox": [
+          551.0,
+          577.0,
+          583.0,
+          617.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "0003_2015.jpg_tgt-13",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -13.82,
+          6.35
+        ]
+      },
+      "properties": {
+        "image_name": "0003_2015.jpg",
+        "target_id": "tgt-13",
+        "class_name": "mine_cylinder",
+        "confidence_ai": 0.1467,
+        "confidence_final": 0.1467,
+        "hazard_risk": "CRITICAL",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 0.7,
+        "width_m": 0.95,
+        "area_m2": 0.66,
+        "relief_height_m": 1.36,
+        "bbox": [
+          349.0,
+          428.0,
+          392.0,
+          466.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "0003_2015.jpg_tgt-14",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.54,
+          45.85
+        ]
+      },
+      "properties": {
+        "image_name": "0003_2015.jpg",
+        "target_id": "tgt-14",
+        "class_name": "shipwreck",
+        "confidence_ai": 0.1455,
+        "confidence_final": 0.2655,
+        "hazard_risk": "HIGH",
+        "shadow_evidence": "SUPPORTING",
+        "review_status": "VERIFIED_3D",
+        "length_m": 1.15,
+        "width_m": 5.2,
+        "area_m2": 5.98,
+        "relief_height_m": 3.1,
+        "bbox": [
+          730.0,
+          19.0,
+          858.0,
+          66.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "0003_2015.jpg_tgt-15",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -34.47,
+          44.78
+        ]
+      },
+      "properties": {
+        "image_name": "0003_2015.jpg",
+        "target_id": "tgt-15",
+        "class_name": "mine_cylinder",
+        "confidence_ai": 0.1409,
+        "confidence_final": 0.1409,
+        "hazard_risk": "CRITICAL",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 0.65,
+        "width_m": 1.6,
+        "area_m2": 1.04,
+        "relief_height_m": 0.51,
+        "bbox": [
+          131.0,
+          35.0,
+          187.0,
+          72.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
       "id": "0003_2021.jpg_tgt-01",
       "geometry": {
         "type": "Point",
@@ -1046,8 +982,8 @@
         "image_name": "0003_2021.jpg",
         "target_id": "tgt-01",
         "class_name": "mine_cylinder",
-        "confidence_ai": 0.5557,
-        "confidence_final": 0.5557,
+        "confidence_ai": 0.6157,
+        "confidence_final": 0.6157,
         "hazard_risk": "CRITICAL",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
@@ -1070,7 +1006,7 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -30.77,
+          -30.65,
           -36.66
         ]
       },
@@ -1078,20 +1014,84 @@
         "image_name": "0003_2021.jpg",
         "target_id": "tgt-02",
         "class_name": "crab_pot",
-        "confidence_ai": 0.3268,
-        "confidence_final": 0.3268,
+        "confidence_ai": 0.4168,
+        "confidence_final": 0.4168,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
         "length_m": 0.45,
-        "width_m": 0.4,
-        "area_m2": 0.18,
+        "width_m": 0.45,
+        "area_m2": 0.2,
         "relief_height_m": 0.74,
         "bbox": [
           64.0,
           344.0,
-          96.0,
+          97.0,
           377.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "0003_2021.jpg_tgt-03",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.0,
+          45.31
+        ]
+      },
+      "properties": {
+        "image_name": "0003_2021.jpg",
+        "target_id": "tgt-03",
+        "class_name": "mine_cylinder",
+        "confidence_ai": 0.37,
+        "confidence_final": 0.37,
+        "hazard_risk": "CRITICAL",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 0.45,
+        "width_m": 0.55,
+        "area_m2": 0.25,
+        "relief_height_m": 2.8,
+        "bbox": [
+          178.0,
+          3.0,
+          213.0,
+          36.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "0003_2021.jpg_tgt-04",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -36.3,
+          0.36
+        ]
+      },
+      "properties": {
+        "image_name": "0003_2021.jpg",
+        "target_id": "tgt-04",
+        "class_name": "shipwreck",
+        "confidence_ai": 0.2102,
+        "confidence_final": 0.3302,
+        "hazard_risk": "HIGH",
+        "shadow_evidence": "SUPPORTING",
+        "review_status": "VERIFIED_3D",
+        "length_m": 3.95,
+        "width_m": 2.5,
+        "area_m2": 9.88,
+        "relief_height_m": 0.89,
+        "bbox": [
+          20.0,
+          155.0,
+          94.0,
+          258.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -1102,92 +1102,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -2.64,
-          0.0
+          -3.61,
+          18.39
         ]
       },
       "properties": {
         "image_name": "0005_2010.jpg",
         "target_id": "tgt-01",
-        "class_name": "submarine_pipeline",
-        "confidence_ai": 0.96,
-        "confidence_final": 0.98,
-        "hazard_risk": "HIGH",
+        "class_name": "mine_cylinder",
+        "confidence_ai": 0.1501,
+        "confidence_final": 0.2901,
+        "hazard_risk": "CRITICAL",
         "shadow_evidence": "SUPPORTING",
         "review_status": "VERIFIED_3D",
-        "length_m": 20.8,
-        "width_m": 1.8,
-        "area_m2": 37.44,
-        "relief_height_m": 7.23,
+        "length_m": 0.4,
+        "width_m": 0.4,
+        "area_m2": 0.16,
+        "relief_height_m": 5.55,
         "bbox": [
-          167.0,
-          0.0,
-          227.0,
-          416.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "0005_2010.jpg_tgt-02",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          17.07,
-          21.51
-        ]
-      },
-      "properties": {
-        "image_name": "0005_2010.jpg",
-        "target_id": "tgt-02",
-        "class_name": "submarine_pipeline",
-        "confidence_ai": 0.8744,
-        "confidence_final": 0.8744,
-        "hazard_risk": "HIGH",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.45,
-        "width_m": 1.4,
-        "area_m2": 0.63,
-        "relief_height_m": 2.49,
-        "bbox": [
-          253.0,
-          102.0,
-          305.0,
-          135.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "0005_2010.jpg_tgt-03",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          5.05,
-          0.0
-        ]
-      },
-      "properties": {
-        "image_name": "0005_2010.jpg",
-        "target_id": "tgt-03",
-        "class_name": "submarine_pipeline",
-        "confidence_ai": 0.7428,
-        "confidence_final": 0.8628,
-        "hazard_risk": "HIGH",
-        "shadow_evidence": "SUPPORTING",
-        "review_status": "VERIFIED_3D",
-        "length_m": 20.8,
-        "width_m": 0.7,
-        "area_m2": 14.56,
-        "relief_height_m": 5.33,
-        "bbox": [
-          210.0,
-          0.0,
-          248.0,
-          416.0
+          178.0,
+          116.0,
+          208.0,
+          147.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -1198,7 +1134,7 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -8.41,
+          -8.89,
           31.85
         ]
       },
@@ -1206,19 +1142,19 @@
         "image_name": "0005_2021.jpg",
         "target_id": "tgt-01",
         "class_name": "submarine_pipeline",
-        "confidence_ai": 0.3667,
-        "confidence_final": 0.3667,
+        "confidence_ai": 0.7237,
+        "confidence_final": 0.7237,
         "hazard_risk": "HIGH",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
         "length_m": 7.55,
-        "width_m": 5.8,
-        "area_m2": 43.79,
-        "relief_height_m": 5.69,
+        "width_m": 5.9,
+        "area_m2": 44.55,
+        "relief_height_m": 5.53,
         "bbox": [
-          103.0,
+          100.0,
           0.0,
-          243.0,
+          242.0,
           163.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
@@ -1230,28 +1166,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -4.93,
-          -45.56
+          11.47,
+          48.68
         ]
       },
       "properties": {
         "image_name": "0009_2015.jpg",
         "target_id": "tgt-01",
-        "class_name": "submarine_pipeline",
-        "confidence_ai": 0.96,
-        "confidence_final": 0.96,
-        "hazard_risk": "HIGH",
+        "class_name": "mine_cylinder",
+        "confidence_ai": 0.7181,
+        "confidence_final": 0.7181,
+        "hazard_risk": "CRITICAL",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 1.25,
-        "width_m": 0.45,
-        "area_m2": 0.56,
-        "relief_height_m": 1.31,
+        "length_m": 0.85,
+        "width_m": 1.05,
+        "area_m2": 0.89,
+        "relief_height_m": 0.39,
         "bbox": [
-          445.0,
-          954.0,
-          478.0,
-          1003.0
+          607.0,
+          0.0,
+          652.0,
+          34.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -1262,28 +1198,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -4.74,
-          -24.61
+          -18.95,
+          -39.89
         ]
       },
       "properties": {
         "image_name": "0009_2015.jpg",
         "target_id": "tgt-02",
-        "class_name": "submarine_pipeline",
-        "confidence_ai": 0.9483,
-        "confidence_final": 0.9483,
-        "hazard_risk": "HIGH",
+        "class_name": "mine_cylinder",
+        "confidence_ai": 0.5982,
+        "confidence_final": 0.5982,
+        "hazard_risk": "CRITICAL",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 2.6,
-        "width_m": 0.45,
-        "area_m2": 1.17,
-        "relief_height_m": 1.0,
+        "length_m": 0.85,
+        "width_m": 1.7,
+        "area_m2": 1.44,
+        "relief_height_m": 0.24,
         "bbox": [
-          447.0,
-          726.0,
-          480.0,
-          802.0
+          289.0,
+          900.0,
+          347.0,
+          941.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -1294,28 +1230,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          4.93,
-          -48.83
+          -49.22,
+          8.64
         ]
       },
       "properties": {
         "image_name": "0009_2015.jpg",
         "target_id": "tgt-03",
-        "class_name": "submarine_pipeline",
-        "confidence_ai": 0.9436,
-        "confidence_final": 0.9436,
+        "class_name": "shipwreck",
+        "confidence_ai": 0.4915,
+        "confidence_final": 0.4915,
         "hazard_risk": "HIGH",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 1.2,
-        "width_m": 0.45,
-        "area_m2": 0.54,
-        "relief_height_m": 0.86,
+        "length_m": 1.15,
+        "width_m": 0.8,
+        "area_m2": 0.92,
+        "relief_height_m": 0.5,
         "bbox": [
-          546.0,
-          988.0,
-          579.0,
-          1024.0
+          0.0,
+          400.0,
+          28.0,
+          447.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -1326,269 +1262,13 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          38.87,
-          -19.73
-        ]
-      },
-      "properties": {
-        "image_name": "0009_2015.jpg",
-        "target_id": "tgt-04",
-        "class_name": "crab_pot",
-        "confidence_ai": 0.9409,
-        "confidence_final": 0.9409,
-        "hazard_risk": "LOW",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.7,
-        "width_m": 0.6,
-        "area_m2": 0.42,
-        "relief_height_m": 0.71,
-        "bbox": [
-          892.0,
-          695.0,
-          928.0,
-          733.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "0009_2015.jpg_tgt-05",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          15.43,
-          7.32
-        ]
-      },
-      "properties": {
-        "image_name": "0009_2015.jpg",
-        "target_id": "tgt-05",
-        "class_name": "crab_pot",
-        "confidence_ai": 0.9231,
-        "confidence_final": 0.9231,
-        "hazard_risk": "LOW",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.7,
-        "width_m": 0.9,
-        "area_m2": 0.63,
-        "relief_height_m": 2.04,
-        "bbox": [
-          649.0,
-          418.0,
-          691.0,
-          456.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "0009_2015.jpg_tgt-06",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -4.83,
-          -37.21
-        ]
-      },
-      "properties": {
-        "image_name": "0009_2015.jpg",
-        "target_id": "tgt-06",
-        "class_name": "submarine_pipeline",
-        "confidence_ai": 0.9145,
-        "confidence_final": 0.9145,
-        "hazard_risk": "HIGH",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 1.3,
-        "width_m": 0.45,
-        "area_m2": 0.59,
-        "relief_height_m": 1.22,
-        "bbox": [
-          446.0,
-          868.0,
-          479.0,
-          918.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "0009_2015.jpg_tgt-07",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -5.37,
-          4.79
-        ]
-      },
-      "properties": {
-        "image_name": "0009_2015.jpg",
-        "target_id": "tgt-07",
-        "class_name": "submarine_pipeline",
-        "confidence_ai": 0.9017,
-        "confidence_final": 0.9017,
-        "hazard_risk": "HIGH",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 1.1,
-        "width_m": 0.6,
-        "area_m2": 0.66,
-        "relief_height_m": 1.12,
-        "bbox": [
-          439.0,
-          440.0,
-          475.0,
-          486.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "0009_2015.jpg_tgt-08",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          4.83,
-          -39.89
-        ]
-      },
-      "properties": {
-        "image_name": "0009_2015.jpg",
-        "target_id": "tgt-08",
-        "class_name": "submarine_pipeline",
-        "confidence_ai": 0.8971,
-        "confidence_final": 0.8971,
-        "hazard_risk": "HIGH",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 2.25,
-        "width_m": 0.45,
-        "area_m2": 1.01,
-        "relief_height_m": 1.0,
-        "bbox": [
-          545.0,
-          886.0,
-          578.0,
-          955.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "0009_2015.jpg_tgt-09",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          11.57,
-          48.83
-        ]
-      },
-      "properties": {
-        "image_name": "0009_2015.jpg",
-        "target_id": "tgt-09",
-        "class_name": "mine_cylinder",
-        "confidence_ai": 0.6281,
-        "confidence_final": 0.6281,
-        "hazard_risk": "CRITICAL",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.8,
-        "width_m": 1.15,
-        "area_m2": 0.92,
-        "relief_height_m": 0.39,
-        "bbox": [
-          607.0,
-          0.0,
-          654.0,
-          32.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "0009_2015.jpg_tgt-10",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -18.95,
-          -39.89
-        ]
-      },
-      "properties": {
-        "image_name": "0009_2015.jpg",
-        "target_id": "tgt-10",
-        "class_name": "mine_cylinder",
-        "confidence_ai": 0.4328,
-        "confidence_final": 0.4328,
-        "hazard_risk": "CRITICAL",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.95,
-        "width_m": 1.7,
-        "area_m2": 1.61,
-        "relief_height_m": 0.24,
-        "bbox": [
-          289.0,
-          899.0,
-          347.0,
-          942.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "0009_2015.jpg_tgt-11",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -49.22,
-          8.59
-        ]
-      },
-      "properties": {
-        "image_name": "0009_2015.jpg",
-        "target_id": "tgt-11",
-        "class_name": "shipwreck",
-        "confidence_ai": 0.4315,
-        "confidence_final": 0.4315,
-        "hazard_risk": "HIGH",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 1.2,
-        "width_m": 0.8,
-        "area_m2": 0.96,
-        "relief_height_m": 0.5,
-        "bbox": [
-          0.0,
-          400.0,
-          28.0,
-          448.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "0009_2015.jpg_tgt-12",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
           10.6,
           14.65
         ]
       },
       "properties": {
         "image_name": "0009_2015.jpg",
-        "target_id": "tgt-12",
+        "target_id": "tgt-04",
         "class_name": "mine_cylinder",
         "confidence_ai": 0.265,
         "confidence_final": 0.265,
@@ -1610,32 +1290,320 @@
     },
     {
       "type": "Feature",
+      "id": "0009_2015.jpg_tgt-05",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -9.08,
+          39.7
+        ]
+      },
+      "properties": {
+        "image_name": "0009_2015.jpg",
+        "target_id": "tgt-05",
+        "class_name": "mine_cylinder",
+        "confidence_ai": 0.262,
+        "confidence_final": 0.262,
+        "hazard_risk": "CRITICAL",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 0.65,
+        "width_m": 0.8,
+        "area_m2": 0.52,
+        "relief_height_m": 1.85,
+        "bbox": [
+          399.0,
+          87.0,
+          439.0,
+          124.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "0009_2015.jpg_tgt-06",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -13.92,
+          -37.26
+        ]
+      },
+      "properties": {
+        "image_name": "0009_2015.jpg",
+        "target_id": "tgt-06",
+        "class_name": "mine_cylinder",
+        "confidence_ai": 0.2707,
+        "confidence_final": 0.2707,
+        "hazard_risk": "CRITICAL",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 0.95,
+        "width_m": 1.25,
+        "area_m2": 1.19,
+        "relief_height_m": 0.32,
+        "bbox": [
+          345.0,
+          872.0,
+          394.0,
+          915.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "0009_2015.jpg_tgt-07",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          16.06,
+          -19.53
+        ]
+      },
+      "properties": {
+        "image_name": "0009_2015.jpg",
+        "target_id": "tgt-07",
+        "class_name": "mine_cylinder",
+        "confidence_ai": 0.217,
+        "confidence_final": 0.217,
+        "hazard_risk": "CRITICAL",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 0.8,
+        "width_m": 1.35,
+        "area_m2": 1.08,
+        "relief_height_m": 0.33,
+        "bbox": [
+          651.0,
+          692.0,
+          702.0,
+          732.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "0009_2015.jpg_tgt-08",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -44.09,
+          8.89
+        ]
+      },
+      "properties": {
+        "image_name": "0009_2015.jpg",
+        "target_id": "tgt-08",
+        "class_name": "shipwreck",
+        "confidence_ai": 0.2313,
+        "confidence_final": 0.3513,
+        "hazard_risk": "HIGH",
+        "shadow_evidence": "SUPPORTING",
+        "review_status": "VERIFIED_3D",
+        "length_m": 1.6,
+        "width_m": 3.45,
+        "area_m2": 5.52,
+        "relief_height_m": 0.39,
+        "bbox": [
+          14.0,
+          393.0,
+          107.0,
+          449.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "0009_2015.jpg_tgt-09",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          13.82,
+          21.73
+        ]
+      },
+      "properties": {
+        "image_name": "0009_2015.jpg",
+        "target_id": "tgt-09",
+        "class_name": "mine_cylinder",
+        "confidence_ai": 0.196,
+        "confidence_final": 0.196,
+        "hazard_risk": "CRITICAL",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 0.65,
+        "width_m": 1.35,
+        "area_m2": 0.88,
+        "relief_height_m": 0.68,
+        "bbox": [
+          628.0,
+          271.0,
+          679.0,
+          308.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "0009_2015.jpg_tgt-10",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -35.5,
+          -7.08
+        ]
+      },
+      "properties": {
+        "image_name": "0009_2015.jpg",
+        "target_id": "tgt-10",
+        "class_name": "mine_cylinder",
+        "confidence_ai": 0.183,
+        "confidence_final": 0.183,
+        "hazard_risk": "CRITICAL",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 1.85,
+        "width_m": 2.55,
+        "area_m2": 4.72,
+        "relief_height_m": 2.02,
+        "bbox": [
+          111.0,
+          554.0,
+          186.0,
+          615.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "0009_2015.jpg_tgt-11",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.82,
+          30.13
+        ]
+      },
+      "properties": {
+        "image_name": "0009_2015.jpg",
+        "target_id": "tgt-11",
+        "class_name": "mine_cylinder",
+        "confidence_ai": 0.1749,
+        "confidence_final": 0.1749,
+        "hazard_risk": "CRITICAL",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 0.75,
+        "width_m": 0.6,
+        "area_m2": 0.45,
+        "relief_height_m": 0.99,
+        "bbox": [
+          615.0,
+          184.0,
+          651.0,
+          223.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "0009_2015.jpg_tgt-12",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          15.87,
+          -19.43
+        ]
+      },
+      "properties": {
+        "image_name": "0009_2015.jpg",
+        "target_id": "tgt-12",
+        "class_name": "shipwreck",
+        "confidence_ai": 0.1553,
+        "confidence_final": 0.2753,
+        "hazard_risk": "HIGH",
+        "shadow_evidence": "SUPPORTING",
+        "review_status": "VERIFIED_3D",
+        "length_m": 0.6,
+        "width_m": 0.95,
+        "area_m2": 0.57,
+        "relief_height_m": 0.59,
+        "bbox": [
+          653.0,
+          693.0,
+          696.0,
+          729.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
       "id": "0011_2021.jpg_tgt-01",
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -0.96,
-          -0.12
+          -0.72,
+          -8.05
         ]
       },
       "properties": {
         "image_name": "0011_2021.jpg",
         "target_id": "tgt-01",
         "class_name": "shipwreck",
-        "confidence_ai": 0.2594,
-        "confidence_final": 0.3794,
+        "confidence_ai": 0.3462,
+        "confidence_final": 0.4662,
         "hazard_risk": "HIGH",
         "shadow_evidence": "SUPPORTING",
         "review_status": "VERIFIED_3D",
-        "length_m": 20.65,
-        "width_m": 7.1,
-        "area_m2": 146.61,
-        "relief_height_m": 7.7,
+        "length_m": 17.45,
+        "width_m": 7.6,
+        "area_m2": 132.62,
+        "relief_height_m": 7.78,
         "bbox": [
-          121.0,
-          0.0,
-          287.0,
+          117.0,
+          40.0,
+          293.0,
           416.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "0011_2021.jpg_tgt-02",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -31.97,
+          43.99
+        ]
+      },
+      "properties": {
+        "image_name": "0011_2021.jpg",
+        "target_id": "tgt-02",
+        "class_name": "crab_pot",
+        "confidence_ai": 0.1993,
+        "confidence_final": 0.1993,
+        "hazard_risk": "LOW",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 0.5,
+        "width_m": 0.5,
+        "area_m2": 0.25,
+        "relief_height_m": 1.63,
+        "bbox": [
+          58.0,
+          8.0,
+          92.0,
+          42.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -1718,7 +1686,7 @@
         "image_name": "0012_2010.jpg",
         "target_id": "tgt-03",
         "class_name": "submarine_pipeline",
-        "confidence_ai": 0.96,
+        "confidence_ai": 0.99,
         "confidence_final": 0.98,
         "hazard_risk": "HIGH",
         "shadow_evidence": "SUPPORTING",
@@ -1750,7 +1718,7 @@
         "image_name": "0012_2010.jpg",
         "target_id": "tgt-04",
         "class_name": "submarine_pipeline",
-        "confidence_ai": 0.96,
+        "confidence_ai": 0.99,
         "confidence_final": 0.98,
         "hazard_risk": "HIGH",
         "shadow_evidence": "SUPPORTING",
@@ -1782,7 +1750,7 @@
         "image_name": "0012_2010.jpg",
         "target_id": "tgt-05",
         "class_name": "submarine_pipeline",
-        "confidence_ai": 0.96,
+        "confidence_ai": 0.99,
         "confidence_final": 0.98,
         "hazard_risk": "HIGH",
         "shadow_evidence": "SUPPORTING",
@@ -1814,7 +1782,7 @@
         "image_name": "0012_2010.jpg",
         "target_id": "tgt-06",
         "class_name": "submarine_pipeline",
-        "confidence_ai": 0.96,
+        "confidence_ai": 0.99,
         "confidence_final": 0.98,
         "hazard_risk": "HIGH",
         "shadow_evidence": "SUPPORTING",
@@ -1846,7 +1814,7 @@
         "image_name": "0012_2010.jpg",
         "target_id": "tgt-07",
         "class_name": "submarine_pipeline",
-        "confidence_ai": 0.96,
+        "confidence_ai": 0.99,
         "confidence_final": 0.98,
         "hazard_risk": "HIGH",
         "shadow_evidence": "SUPPORTING",
@@ -1878,7 +1846,7 @@
         "image_name": "0012_2010.jpg",
         "target_id": "tgt-08",
         "class_name": "submarine_pipeline",
-        "confidence_ai": 0.96,
+        "confidence_ai": 0.99,
         "confidence_final": 0.98,
         "hazard_risk": "HIGH",
         "shadow_evidence": "SUPPORTING",
@@ -1966,28 +1934,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -1.12,
-          11.33
+          2.49,
+          0.0
         ]
       },
       "properties": {
         "image_name": "0012_2010.jpg",
         "target_id": "tgt-11",
-        "class_name": "submarine_pipeline",
-        "confidence_ai": 0.96,
-        "confidence_final": 0.98,
-        "hazard_risk": "HIGH",
-        "shadow_evidence": "SUPPORTING",
-        "review_status": "VERIFIED_3D",
-        "length_m": 1.2,
-        "width_m": 0.45,
-        "area_m2": 0.54,
-        "relief_height_m": 5.66,
+        "class_name": "mine_cylinder",
+        "confidence_ai": 0.187,
+        "confidence_final": 0.187,
+        "hazard_risk": "CRITICAL",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 0.5,
+        "width_m": 0.55,
+        "area_m2": 0.28,
+        "relief_height_m": 3.12,
         "bbox": [
-          484.0,
-          372.0,
-          517.0,
-          420.0
+          520.0,
+          495.0,
+          555.0,
+          529.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -1998,28 +1966,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -4.69,
-          9.38
+          -35.79,
+          10.45
         ]
       },
       "properties": {
         "image_name": "0012_2010.jpg",
         "target_id": "tgt-12",
-        "class_name": "submarine_pipeline",
-        "confidence_ai": 0.96,
-        "confidence_final": 0.86,
+        "class_name": "shipwreck",
+        "confidence_ai": 0.1494,
+        "confidence_final": 0.2694,
         "hazard_risk": "HIGH",
-        "shadow_evidence": "ABSENT",
-        "review_status": "FLAGGED_FOR_REVIEW",
-        "length_m": 3.2,
-        "width_m": 0.6,
-        "area_m2": 1.92,
-        "relief_height_m": 2.88,
+        "shadow_evidence": "SUPPORTING",
+        "review_status": "VERIFIED_3D",
+        "length_m": 1.0,
+        "width_m": 0.55,
+        "area_m2": 0.55,
+        "relief_height_m": 0.21,
         "bbox": [
-          446.0,
-          372.0,
-          482.0,
-          460.0
+          128.0,
+          383.0,
+          163.0,
+          427.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -2030,92 +1998,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          5.18,
-          -38.67
+          -36.38,
+          12.94
         ]
       },
       "properties": {
         "image_name": "0012_2010.jpg",
         "target_id": "tgt-13",
-        "class_name": "submarine_pipeline",
-        "confidence_ai": 0.9028,
-        "confidence_final": 0.9028,
+        "class_name": "shipwreck",
+        "confidence_ai": 0.1477,
+        "confidence_final": 0.2677,
         "hazard_risk": "HIGH",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 11.6,
-        "width_m": 0.9,
-        "area_m2": 10.44,
-        "relief_height_m": 4.04,
+        "shadow_evidence": "SUPPORTING",
+        "review_status": "VERIFIED_3D",
+        "length_m": 1.55,
+        "width_m": 0.75,
+        "area_m2": 1.16,
+        "relief_height_m": 0.58,
         "bbox": [
-          544.0,
-          774.0,
-          586.0,
-          1024.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "0012_2010.jpg_tgt-14",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          4.88,
-          -6.05
-        ]
-      },
-      "properties": {
-        "image_name": "0012_2010.jpg",
-        "target_id": "tgt-14",
-        "class_name": "submarine_pipeline",
-        "confidence_ai": 0.8707,
-        "confidence_final": 0.7707,
-        "hazard_risk": "HIGH",
-        "shadow_evidence": "ABSENT",
-        "review_status": "FLAGGED_FOR_REVIEW",
-        "length_m": 19.0,
-        "width_m": 0.8,
-        "area_m2": 15.2,
-        "relief_height_m": 3.92,
-        "bbox": [
-          542.0,
-          354.0,
-          582.0,
-          794.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "0012_2010.jpg_tgt-15",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          19.68,
-          -35.69
-        ]
-      },
-      "properties": {
-        "image_name": "0012_2010.jpg",
-        "target_id": "tgt-15",
-        "class_name": "crab_pot",
-        "confidence_ai": 0.8479,
-        "confidence_final": 0.8479,
-        "hazard_risk": "LOW",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.85,
-        "width_m": 0.85,
-        "area_m2": 0.72,
-        "relief_height_m": 0.27,
-        "bbox": [
-          693.0,
-          857.0,
-          734.0,
-          898.0
+          120.0,
+          352.0,
+          159.0,
+          407.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -2126,26 +2030,26 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -32.81,
-          31.73
+          -32.69,
+          31.85
         ]
       },
       "properties": {
         "image_name": "0015_2021.jpg",
         "target_id": "tgt-01",
         "class_name": "mine_cylinder",
-        "confidence_ai": 0.5367,
-        "confidence_final": 0.5367,
+        "confidence_ai": 0.5667,
+        "confidence_final": 0.5667,
         "hazard_risk": "CRITICAL",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 0.8,
-        "width_m": 1.75,
-        "area_m2": 1.4,
-        "relief_height_m": 0.64,
+        "length_m": 0.85,
+        "width_m": 1.7,
+        "area_m2": 1.44,
+        "relief_height_m": 0.7,
         "bbox": [
-          42.0,
-          56.0,
+          43.0,
+          55.0,
           101.0,
           96.0
         ],
@@ -2414,28 +2318,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          48.44,
-          -43.75
+          33.59,
+          4.53
         ]
       },
       "properties": {
         "image_name": "baycove_03_14_png_jpg.rf.f71de09bd762d6bda89fe0612cc6d776.jpg",
         "target_id": "tgt-01",
-        "class_name": "ghost_net",
-        "confidence_ai": 0.96,
-        "confidence_final": 0.96,
-        "hazard_risk": "MEDIUM",
+        "class_name": "crab_pot",
+        "confidence_ai": 0.2038,
+        "confidence_final": 0.2038,
+        "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 2.2,
-        "width_m": 1.0,
-        "area_m2": 2.2,
-        "relief_height_m": 0.5,
+        "length_m": 1.3,
+        "width_m": 1.1,
+        "area_m2": 1.43,
+        "relief_height_m": 1.23,
         "bbox": [
-          608.0,
-          566.0,
-          640.0,
-          634.0
+          512.0,
+          266.0,
+          558.0,
+          316.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -2446,220 +2350,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          46.95,
-          -11.64
+          6.25,
+          -29.69
         ]
       },
       "properties": {
         "image_name": "baycove_03_14_png_jpg.rf.f71de09bd762d6bda89fe0612cc6d776.jpg",
         "target_id": "tgt-02",
         "class_name": "crab_pot",
-        "confidence_ai": 0.96,
-        "confidence_final": 0.96,
-        "hazard_risk": "LOW",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.75,
-        "width_m": 0.75,
-        "area_m2": 0.56,
-        "relief_height_m": 0.18,
-        "bbox": [
-          601.0,
-          375.0,
-          640.0,
-          414.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "baycove_03_14_png_jpg.rf.f71de09bd762d6bda89fe0612cc6d776.jpg_tgt-03",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          37.66,
-          -2.03
-        ]
-      },
-      "properties": {
-        "image_name": "baycove_03_14_png_jpg.rf.f71de09bd762d6bda89fe0612cc6d776.jpg",
-        "target_id": "tgt-03",
-        "class_name": "crab_pot",
-        "confidence_ai": 0.9584,
-        "confidence_final": 0.9584,
+        "confidence_ai": 0.1689,
+        "confidence_final": 0.1689,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
         "length_m": 0.7,
-        "width_m": 0.5,
-        "area_m2": 0.35,
-        "relief_height_m": 0.58,
-        "bbox": [
-          544.0,
-          314.0,
-          578.0,
-          352.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "baycove_03_14_png_jpg.rf.f71de09bd762d6bda89fe0612cc6d776.jpg_tgt-04",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          45.7,
-          -7.34
-        ]
-      },
-      "properties": {
-        "image_name": "baycove_03_14_png_jpg.rf.f71de09bd762d6bda89fe0612cc6d776.jpg",
-        "target_id": "tgt-04",
-        "class_name": "ghost_net",
-        "confidence_ai": 0.9354,
-        "confidence_final": 0.9354,
-        "hazard_risk": "MEDIUM",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.8,
-        "width_m": 0.55,
-        "area_m2": 0.44,
-        "relief_height_m": 0.32,
-        "bbox": [
-          595.0,
-          347.0,
-          630.0,
-          387.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "baycove_03_14_png_jpg.rf.f71de09bd762d6bda89fe0612cc6d776.jpg_tgt-05",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          43.52,
-          -14.61
-        ]
-      },
-      "properties": {
-        "image_name": "baycove_03_14_png_jpg.rf.f71de09bd762d6bda89fe0612cc6d776.jpg",
-        "target_id": "tgt-05",
-        "class_name": "crab_pot",
-        "confidence_ai": 0.9229,
-        "confidence_final": 0.9229,
-        "hazard_risk": "LOW",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.55,
-        "width_m": 0.65,
-        "area_m2": 0.36,
-        "relief_height_m": 0.36,
-        "bbox": [
-          580.0,
-          396.0,
-          617.0,
-          431.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "baycove_03_14_png_jpg.rf.f71de09bd762d6bda89fe0612cc6d776.jpg_tgt-06",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          47.58,
-          -19.45
-        ]
-      },
-      "properties": {
-        "image_name": "baycove_03_14_png_jpg.rf.f71de09bd762d6bda89fe0612cc6d776.jpg",
-        "target_id": "tgt-06",
-        "class_name": "ghost_net",
-        "confidence_ai": 0.8901,
-        "confidence_final": 0.8901,
-        "hazard_risk": "MEDIUM",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 1.15,
-        "width_m": 0.75,
-        "area_m2": 0.86,
-        "relief_height_m": 0.3,
-        "bbox": [
-          605.0,
-          421.0,
-          640.0,
-          468.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "baycove_03_14_png_jpg.rf.f71de09bd762d6bda89fe0612cc6d776.jpg_tgt-07",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          47.11,
-          -13.28
-        ]
-      },
-      "properties": {
-        "image_name": "baycove_03_14_png_jpg.rf.f71de09bd762d6bda89fe0612cc6d776.jpg",
-        "target_id": "tgt-07",
-        "class_name": "ghost_net",
-        "confidence_ai": 0.8891,
-        "confidence_final": 0.8891,
-        "hazard_risk": "MEDIUM",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.5,
-        "width_m": 0.75,
-        "area_m2": 0.38,
-        "relief_height_m": 0.23,
-        "bbox": [
-          602.0,
-          388.0,
-          640.0,
-          422.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "baycove_03_14_png_jpg.rf.f71de09bd762d6bda89fe0612cc6d776.jpg_tgt-08",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          47.5,
-          -7.34
-        ]
-      },
-      "properties": {
-        "image_name": "baycove_03_14_png_jpg.rf.f71de09bd762d6bda89fe0612cc6d776.jpg",
-        "target_id": "tgt-08",
-        "class_name": "crab_pot",
-        "confidence_ai": 0.8737,
-        "confidence_final": 0.8737,
-        "hazard_risk": "LOW",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.8,
         "width_m": 0.6,
-        "area_m2": 0.48,
-        "relief_height_m": 0.05,
+        "area_m2": 0.42,
+        "relief_height_m": 1.85,
         "bbox": [
-          606.0,
-          347.0,
-          640.0,
-          387.0
+          342.0,
+          491.0,
+          378.0,
+          529.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -2670,28 +2382,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -16.33,
-          32.11
+          -16.25,
+          32.03
         ]
       },
       "properties": {
         "image_name": "baycove_03_15_png_jpg.rf.2e7216d4273f3e6c11928ab24b606590.jpg",
         "target_id": "tgt-01",
         "class_name": "crab_pot",
-        "confidence_ai": 0.5904,
-        "confidence_final": 0.5904,
+        "confidence_ai": 0.6804,
+        "confidence_final": 0.6804,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 0.75,
-        "width_m": 0.95,
-        "area_m2": 0.71,
-        "relief_height_m": 0.43,
+        "length_m": 0.8,
+        "width_m": 1.0,
+        "area_m2": 0.8,
+        "relief_height_m": 0.5,
         "bbox": [
           194.0,
           95.0,
-          237.0,
-          134.0
+          238.0,
+          135.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -2702,28 +2414,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          5.55,
-          9.06
+          5.78,
+          9.14
         ]
       },
       "properties": {
         "image_name": "baycove_03_15_png_jpg.rf.2e7216d4273f3e6c11928ab24b606590.jpg",
         "target_id": "tgt-02",
         "class_name": "crab_pot",
-        "confidence_ai": 0.4551,
-        "confidence_final": 0.4551,
+        "confidence_ai": 0.4851,
+        "confidence_final": 0.4851,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 0.9,
-        "width_m": 1.05,
-        "area_m2": 0.95,
-        "relief_height_m": 1.78,
+        "length_m": 0.85,
+        "width_m": 1.0,
+        "area_m2": 0.85,
+        "relief_height_m": 1.57,
         "bbox": [
-          333.0,
+          335.0,
           241.0,
-          378.0,
-          283.0
+          379.0,
+          282.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -2734,27 +2446,27 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          3.67,
-          34.38
+          3.83,
+          34.45
         ]
       },
       "properties": {
         "image_name": "baycove_03_15_png_jpg.rf.2e7216d4273f3e6c11928ab24b606590.jpg",
         "target_id": "tgt-03",
         "class_name": "crab_pot",
-        "confidence_ai": 0.4066,
-        "confidence_final": 0.4066,
+        "confidence_ai": 0.4666,
+        "confidence_final": 0.4666,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 0.8,
+        "length_m": 0.85,
         "width_m": 0.95,
-        "area_m2": 0.76,
-        "relief_height_m": 1.87,
+        "area_m2": 0.81,
+        "relief_height_m": 1.81,
         "bbox": [
-          322.0,
-          80.0,
-          365.0,
+          323.0,
+          79.0,
+          366.0,
           120.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
@@ -2766,13 +2478,45 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          -35.0,
+          45.86
+        ]
+      },
+      "properties": {
+        "image_name": "baycove_03_15_png_jpg.rf.2e7216d4273f3e6c11928ab24b606590.jpg",
+        "target_id": "tgt-04",
+        "class_name": "crab_pot",
+        "confidence_ai": 0.302,
+        "confidence_final": 0.382,
+        "hazard_risk": "LOW",
+        "shadow_evidence": "SUPPORTING",
+        "review_status": "VERIFIED_3D",
+        "length_m": 1.05,
+        "width_m": 1.2,
+        "area_m2": 1.26,
+        "relief_height_m": 1.95,
+        "bbox": [
+          72.0,
+          4.0,
+          120.0,
+          49.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "baycove_03_15_png_jpg.rf.2e7216d4273f3e6c11928ab24b606590.jpg_tgt-05",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           -33.83,
           46.41
         ]
       },
       "properties": {
         "image_name": "baycove_03_15_png_jpg.rf.2e7216d4273f3e6c11928ab24b606590.jpg",
-        "target_id": "tgt-04",
+        "target_id": "tgt-05",
         "class_name": "crab_pot",
         "confidence_ai": 0.2753,
         "confidence_final": 0.3553,
@@ -2794,64 +2538,32 @@
     },
     {
       "type": "Feature",
-      "id": "baycove_03_15_png_jpg.rf.2e7216d4273f3e6c11928ab24b606590.jpg_tgt-05",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -35.08,
-          45.78
-        ]
-      },
-      "properties": {
-        "image_name": "baycove_03_15_png_jpg.rf.2e7216d4273f3e6c11928ab24b606590.jpg",
-        "target_id": "tgt-05",
-        "class_name": "crab_pot",
-        "confidence_ai": 0.272,
-        "confidence_final": 0.352,
-        "hazard_risk": "LOW",
-        "shadow_evidence": "SUPPORTING",
-        "review_status": "VERIFIED_3D",
-        "length_m": 1.0,
-        "width_m": 1.05,
-        "area_m2": 1.05,
-        "relief_height_m": 1.75,
-        "bbox": [
-          73.0,
-          5.0,
-          118.0,
-          49.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
       "id": "baycove_03_15_png_jpg.rf.5b00ae977dc818589fc0ca0e5ca74765.jpg_tgt-01",
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -2.89,
-          3.52
+          -2.73,
+          3.44
         ]
       },
       "properties": {
         "image_name": "baycove_03_15_png_jpg.rf.5b00ae977dc818589fc0ca0e5ca74765.jpg",
         "target_id": "tgt-01",
         "class_name": "crab_pot",
-        "confidence_ai": 0.5861,
-        "confidence_final": 0.5861,
+        "confidence_ai": 0.6461,
+        "confidence_final": 0.6461,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 0.95,
+        "length_m": 1.0,
         "width_m": 1.25,
-        "area_m2": 1.19,
-        "relief_height_m": 2.15,
+        "area_m2": 1.25,
+        "relief_height_m": 2.24,
         "bbox": [
-          277.0,
+          278.0,
           276.0,
-          326.0,
-          319.0
+          327.0,
+          320.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -2862,28 +2574,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          16.17,
-          -25.31
+          16.25,
+          -25.23
         ]
       },
       "properties": {
         "image_name": "baycove_03_15_png_jpg.rf.5b00ae977dc818589fc0ca0e5ca74765.jpg",
         "target_id": "tgt-02",
         "class_name": "crab_pot",
-        "confidence_ai": 0.4801,
-        "confidence_final": 0.4801,
+        "confidence_ai": 0.5906,
+        "confidence_final": 0.5906,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 0.9,
-        "width_m": 0.85,
-        "area_m2": 0.77,
+        "length_m": 0.85,
+        "width_m": 0.8,
+        "area_m2": 0.68,
         "relief_height_m": 0.44,
         "bbox": [
-          403.0,
+          404.0,
           461.0,
           444.0,
-          503.0
+          502.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -2894,28 +2606,60 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -6.09,
-          -24.45
+          -5.94,
+          -24.53
         ]
       },
       "properties": {
         "image_name": "baycove_03_15_png_jpg.rf.5b00ae977dc818589fc0ca0e5ca74765.jpg",
         "target_id": "tgt-03",
         "class_name": "crab_pot",
-        "confidence_ai": 0.3711,
-        "confidence_final": 0.3711,
+        "confidence_ai": 0.4311,
+        "confidence_final": 0.4311,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 1.15,
+        "length_m": 1.2,
         "width_m": 1.3,
-        "area_m2": 1.49,
-        "relief_height_m": 1.36,
+        "area_m2": 1.56,
+        "relief_height_m": 1.39,
         "bbox": [
-          256.0,
+          257.0,
           453.0,
-          306.0,
-          500.0
+          307.0,
+          501.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "baycove_03_15_png_jpg.rf.5b00ae977dc818589fc0ca0e5ca74765.jpg_tgt-04",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.34,
+          -27.5
+        ]
+      },
+      "properties": {
+        "image_name": "baycove_03_15_png_jpg.rf.5b00ae977dc818589fc0ca0e5ca74765.jpg",
+        "target_id": "tgt-04",
+        "class_name": "crab_pot",
+        "confidence_ai": 0.1532,
+        "confidence_final": 0.1532,
+        "hazard_risk": "LOW",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 1.5,
+        "width_m": 1.1,
+        "area_m2": 1.65,
+        "relief_height_m": 0.6,
+        "bbox": [
+          408.0,
+          469.0,
+          454.0,
+          523.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -2934,8 +2678,8 @@
         "image_name": "baycove_03_15_png_jpg.rf.86db284df93a246f0a9897e59914802c.jpg",
         "target_id": "tgt-01",
         "class_name": "crab_pot",
-        "confidence_ai": 0.6533,
-        "confidence_final": 0.6533,
+        "confidence_ai": 0.6833,
+        "confidence_final": 0.6833,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
@@ -2958,28 +2702,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          0.62,
-          -27.03
+          22.66,
+          -22.19
         ]
       },
       "properties": {
         "image_name": "baycove_03_15_png_jpg.rf.86db284df93a246f0a9897e59914802c.jpg",
         "target_id": "tgt-02",
         "class_name": "crab_pot",
-        "confidence_ai": 0.3475,
-        "confidence_final": 0.3475,
+        "confidence_ai": 0.4838,
+        "confidence_final": 0.4838,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 0.8,
-        "width_m": 0.9,
-        "area_m2": 0.72,
-        "relief_height_m": 5.09,
+        "length_m": 0.7,
+        "width_m": 0.8,
+        "area_m2": 0.56,
+        "relief_height_m": 0.37,
         "bbox": [
-          303.0,
-          473.0,
-          345.0,
-          513.0
+          445.0,
+          443.0,
+          485.0,
+          481.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -2990,28 +2734,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          45.55,
-          -40.31
+          0.62,
+          -26.95
         ]
       },
       "properties": {
         "image_name": "baycove_03_15_png_jpg.rf.86db284df93a246f0a9897e59914802c.jpg",
         "target_id": "tgt-03",
         "class_name": "crab_pot",
-        "confidence_ai": 0.2847,
-        "confidence_final": 0.2847,
+        "confidence_ai": 0.4805,
+        "confidence_final": 0.4805,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 3.7,
-        "width_m": 2.65,
-        "area_m2": 9.8,
-        "relief_height_m": 0.05,
+        "length_m": 0.85,
+        "width_m": 0.9,
+        "area_m2": 0.77,
+        "relief_height_m": 5.09,
         "bbox": [
-          573.0,
-          529.0,
-          640.0,
-          627.0
+          303.0,
+          472.0,
+          345.0,
+          513.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -3022,28 +2766,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          22.58,
-          -22.19
+          45.94,
+          -37.34
         ]
       },
       "properties": {
         "image_name": "baycove_03_15_png_jpg.rf.86db284df93a246f0a9897e59914802c.jpg",
         "target_id": "tgt-04",
         "class_name": "crab_pot",
-        "confidence_ai": 0.231,
-        "confidence_final": 0.231,
+        "confidence_ai": 0.3413,
+        "confidence_final": 0.3413,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 0.8,
-        "width_m": 0.85,
-        "area_m2": 0.68,
-        "relief_height_m": 0.37,
+        "length_m": 1.2,
+        "width_m": 1.2,
+        "area_m2": 1.44,
+        "relief_height_m": 0.36,
         "bbox": [
-          444.0,
-          442.0,
-          485.0,
-          482.0
+          590.0,
+          535.0,
+          638.0,
+          583.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -3054,28 +2798,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          23.52,
-          -24.22
+          45.63,
+          -39.77
         ]
       },
       "properties": {
         "image_name": "baycove_03_15_png_jpg.rf.86db284df93a246f0a9897e59914802c.jpg",
         "target_id": "tgt-05",
         "class_name": "crab_pot",
-        "confidence_ai": 0.2014,
-        "confidence_final": 0.2014,
+        "confidence_ai": 0.3147,
+        "confidence_final": 0.3147,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 2.6,
-        "width_m": 2.35,
-        "area_m2": 6.11,
-        "relief_height_m": 0.73,
+        "length_m": 3.25,
+        "width_m": 2.4,
+        "area_m2": 7.8,
+        "relief_height_m": 0.11,
         "bbox": [
-          435.0,
-          437.0,
-          506.0,
-          513.0
+          576.0,
+          530.0,
+          640.0,
+          619.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -3086,28 +2830,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          45.63,
-          -37.19
+          23.2,
+          -23.98
         ]
       },
       "properties": {
         "image_name": "baycove_03_15_png_jpg.rf.86db284df93a246f0a9897e59914802c.jpg",
         "target_id": "tgt-06",
         "class_name": "crab_pot",
-        "confidence_ai": 0.1901,
-        "confidence_final": 0.1901,
+        "confidence_ai": 0.2314,
+        "confidence_final": 0.2314,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 1.1,
-        "width_m": 1.2,
-        "area_m2": 1.32,
-        "relief_height_m": 0.42,
+        "length_m": 2.35,
+        "width_m": 1.95,
+        "area_m2": 4.58,
+        "relief_height_m": 0.99,
         "bbox": [
-          588.0,
-          535.0,
-          636.0,
-          581.0
+          437.0,
+          438.0,
+          500.0,
+          509.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -3118,7 +2862,7 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -35.0,
+          -34.84,
           38.44
         ]
       },
@@ -3126,19 +2870,19 @@
         "image_name": "baycove_03_17_png_jpg.rf.5da5401f54a8a96cb1141761ad3959e2.jpg",
         "target_id": "tgt-01",
         "class_name": "crab_pot",
-        "confidence_ai": 0.6124,
-        "confidence_final": 0.6924,
+        "confidence_ai": 0.6724,
+        "confidence_final": 0.7524,
         "hazard_risk": "LOW",
         "shadow_evidence": "SUPPORTING",
         "review_status": "VERIFIED_3D",
         "length_m": 0.9,
         "width_m": 1.1,
         "area_m2": 0.99,
-        "relief_height_m": 0.28,
+        "relief_height_m": 0.21,
         "bbox": [
-          73.0,
+          74.0,
           53.0,
-          119.0,
+          120.0,
           95.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
@@ -3150,7 +2894,7 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -3.12,
+          -2.97,
           -25.55
         ]
       },
@@ -3158,20 +2902,20 @@
         "image_name": "baycove_03_17_png_jpg.rf.5da5401f54a8a96cb1141761ad3959e2.jpg",
         "target_id": "tgt-02",
         "class_name": "crab_pot",
-        "confidence_ai": 0.4818,
-        "confidence_final": 0.5618,
+        "confidence_ai": 0.6028,
+        "confidence_final": 0.6828,
         "hazard_risk": "LOW",
         "shadow_evidence": "SUPPORTING",
         "review_status": "VERIFIED_3D",
-        "length_m": 0.95,
-        "width_m": 1.0,
-        "area_m2": 0.95,
-        "relief_height_m": 5.97,
+        "length_m": 1.05,
+        "width_m": 1.1,
+        "area_m2": 1.16,
+        "relief_height_m": 6.1,
         "bbox": [
           278.0,
-          462.0,
-          322.0,
-          505.0
+          461.0,
+          324.0,
+          506.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -3182,13 +2926,77 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          -33.75,
+          47.19
+        ]
+      },
+      "properties": {
+        "image_name": "baycove_03_17_png_jpg.rf.5da5401f54a8a96cb1141761ad3959e2.jpg",
+        "target_id": "tgt-03",
+        "class_name": "crab_pot",
+        "confidence_ai": 0.4959,
+        "confidence_final": 0.5759,
+        "hazard_risk": "LOW",
+        "shadow_evidence": "SUPPORTING",
+        "review_status": "VERIFIED_3D",
+        "length_m": 1.1,
+        "width_m": 1.4,
+        "area_m2": 1.54,
+        "relief_height_m": 0.58,
+        "bbox": [
+          78.0,
+          0.0,
+          130.0,
+          41.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "baycove_03_17_png_jpg.rf.5da5401f54a8a96cb1141761ad3959e2.jpg_tgt-04",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.23,
+          -1.95
+        ]
+      },
+      "properties": {
+        "image_name": "baycove_03_17_png_jpg.rf.5da5401f54a8a96cb1141761ad3959e2.jpg",
+        "target_id": "tgt-04",
+        "class_name": "crab_pot",
+        "confidence_ai": 0.4594,
+        "confidence_final": 0.4594,
+        "hazard_risk": "LOW",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 0.75,
+        "width_m": 0.65,
+        "area_m2": 0.49,
+        "relief_height_m": 5.33,
+        "bbox": [
+          300.0,
+          313.0,
+          337.0,
+          352.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "baycove_03_17_png_jpg.rf.5da5401f54a8a96cb1141761ad3959e2.jpg_tgt-05",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           -5.23,
           -32.19
         ]
       },
       "properties": {
         "image_name": "baycove_03_17_png_jpg.rf.5da5401f54a8a96cb1141761ad3959e2.jpg",
-        "target_id": "tgt-03",
+        "target_id": "tgt-05",
         "class_name": "crab_pot",
         "confidence_ai": 0.4245,
         "confidence_final": 0.4245,
@@ -3210,75 +3018,11 @@
     },
     {
       "type": "Feature",
-      "id": "baycove_03_17_png_jpg.rf.5da5401f54a8a96cb1141761ad3959e2.jpg_tgt-04",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -0.39,
-          -1.88
-        ]
-      },
-      "properties": {
-        "image_name": "baycove_03_17_png_jpg.rf.5da5401f54a8a96cb1141761ad3959e2.jpg",
-        "target_id": "tgt-04",
-        "class_name": "crab_pot",
-        "confidence_ai": 0.3994,
-        "confidence_final": 0.3994,
-        "hazard_risk": "LOW",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.7,
-        "width_m": 0.65,
-        "area_m2": 0.45,
-        "relief_height_m": 5.0,
-        "bbox": [
-          299.0,
-          313.0,
-          336.0,
-          351.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "baycove_03_17_png_jpg.rf.5da5401f54a8a96cb1141761ad3959e2.jpg_tgt-05",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -33.83,
-          47.11
-        ]
-      },
-      "properties": {
-        "image_name": "baycove_03_17_png_jpg.rf.5da5401f54a8a96cb1141761ad3959e2.jpg",
-        "target_id": "tgt-05",
-        "class_name": "crab_pot",
-        "confidence_ai": 0.3807,
-        "confidence_final": 0.4607,
-        "hazard_risk": "LOW",
-        "shadow_evidence": "SUPPORTING",
-        "review_status": "VERIFIED_3D",
-        "length_m": 0.85,
-        "width_m": 1.15,
-        "area_m2": 0.98,
-        "relief_height_m": 0.45,
-        "bbox": [
-          80.0,
-          0.0,
-          127.0,
-          39.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
       "id": "baycove_03_17_png_jpg.rf.5da5401f54a8a96cb1141761ad3959e2.jpg_tgt-06",
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -32.34,
+          -32.27,
           34.77
         ]
       },
@@ -3286,20 +3030,52 @@
         "image_name": "baycove_03_17_png_jpg.rf.5da5401f54a8a96cb1141761ad3959e2.jpg",
         "target_id": "tgt-06",
         "class_name": "crab_pot",
-        "confidence_ai": 0.2081,
-        "confidence_final": 0.2081,
+        "confidence_ai": 0.3742,
+        "confidence_final": 0.3742,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
         "length_m": 0.85,
-        "width_m": 0.9,
-        "area_m2": 0.77,
-        "relief_height_m": 0.26,
+        "width_m": 0.85,
+        "area_m2": 0.72,
+        "relief_height_m": 0.3,
         "bbox": [
-          92.0,
+          93.0,
           77.0,
           134.0,
           118.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "baycove_03_17_png_jpg.rf.5da5401f54a8a96cb1141761ad3959e2.jpg_tgt-07",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.81,
+          -1.09
+        ]
+      },
+      "properties": {
+        "image_name": "baycove_03_17_png_jpg.rf.5da5401f54a8a96cb1141761ad3959e2.jpg",
+        "target_id": "tgt-07",
+        "class_name": "crab_pot",
+        "confidence_ai": 0.3113,
+        "confidence_final": 0.3113,
+        "hazard_risk": "LOW",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 0.8,
+        "width_m": 0.8,
+        "area_m2": 0.64,
+        "relief_height_m": 1.14,
+        "bbox": [
+          318.0,
+          307.0,
+          358.0,
+          347.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -3310,28 +3086,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          38.59,
-          -26.64
+          26.33,
+          -34.77
         ]
       },
       "properties": {
         "image_name": "baycove_03_17_png_jpg.rf.600c1b3ed8ede55291f5cbcebf8f86f6.jpg",
         "target_id": "tgt-01",
         "class_name": "crab_pot",
-        "confidence_ai": 0.6808,
-        "confidence_final": 0.6808,
+        "confidence_ai": 0.7225,
+        "confidence_final": 0.7225,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 0.65,
-        "width_m": 0.7,
-        "area_m2": 0.45,
-        "relief_height_m": 0.22,
+        "length_m": 0.85,
+        "width_m": 0.95,
+        "area_m2": 0.81,
+        "relief_height_m": 1.11,
         "bbox": [
-          548.0,
-          472.0,
-          586.0,
-          509.0
+          467.0,
+          522.0,
+          510.0,
+          563.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -3342,28 +3118,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          42.42,
-          -30.78
+          42.81,
+          -42.27
         ]
       },
       "properties": {
         "image_name": "baycove_03_17_png_jpg.rf.600c1b3ed8ede55291f5cbcebf8f86f6.jpg",
         "target_id": "tgt-02",
         "class_name": "crab_pot",
-        "confidence_ai": 0.6363,
-        "confidence_final": 0.6363,
+        "confidence_ai": 0.7163,
+        "confidence_final": 0.7163,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 0.9,
-        "width_m": 0.95,
-        "area_m2": 0.85,
-        "relief_height_m": 0.26,
+        "length_m": 1.05,
+        "width_m": 1.3,
+        "area_m2": 1.37,
+        "relief_height_m": 0.69,
         "bbox": [
-          570.0,
-          496.0,
-          613.0,
-          538.0
+          569.0,
+          568.0,
+          619.0,
+          613.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -3374,28 +3150,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          42.73,
-          -42.27
+          38.75,
+          -26.64
         ]
       },
       "properties": {
         "image_name": "baycove_03_17_png_jpg.rf.600c1b3ed8ede55291f5cbcebf8f86f6.jpg",
         "target_id": "tgt-03",
         "class_name": "crab_pot",
-        "confidence_ai": 0.5559,
-        "confidence_final": 0.5559,
+        "confidence_ai": 0.7108,
+        "confidence_final": 0.7108,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 1.05,
-        "width_m": 1.35,
-        "area_m2": 1.42,
-        "relief_height_m": 0.7,
+        "length_m": 0.65,
+        "width_m": 0.7,
+        "area_m2": 0.45,
+        "relief_height_m": 0.19,
         "bbox": [
-          568.0,
-          568.0,
-          619.0,
-          613.0
+          549.0,
+          472.0,
+          587.0,
+          509.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -3406,28 +3182,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          1.25,
-          11.02
+          42.42,
+          -30.7
         ]
       },
       "properties": {
         "image_name": "baycove_03_17_png_jpg.rf.600c1b3ed8ede55291f5cbcebf8f86f6.jpg",
         "target_id": "tgt-04",
         "class_name": "crab_pot",
-        "confidence_ai": 0.4379,
-        "confidence_final": 0.4379,
+        "confidence_ai": 0.6663,
+        "confidence_final": 0.6663,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 0.55,
-        "width_m": 0.7,
-        "area_m2": 0.39,
-        "relief_height_m": 2.67,
+        "length_m": 0.85,
+        "width_m": 0.95,
+        "area_m2": 0.81,
+        "relief_height_m": 0.26,
         "bbox": [
-          309.0,
-          232.0,
-          347.0,
-          267.0
+          570.0,
+          496.0,
+          613.0,
+          537.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -3438,28 +3214,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          26.02,
-          -34.77
+          1.41,
+          11.02
         ]
       },
       "properties": {
         "image_name": "baycove_03_17_png_jpg.rf.600c1b3ed8ede55291f5cbcebf8f86f6.jpg",
         "target_id": "tgt-05",
         "class_name": "crab_pot",
-        "confidence_ai": 0.2183,
-        "confidence_final": 0.2183,
+        "confidence_ai": 0.4679,
+        "confidence_final": 0.4679,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 0.85,
-        "width_m": 0.95,
-        "area_m2": 0.81,
-        "relief_height_m": 0.97,
+        "length_m": 0.55,
+        "width_m": 0.7,
+        "area_m2": 0.39,
+        "relief_height_m": 2.46,
         "bbox": [
-          465.0,
-          522.0,
-          508.0,
-          563.0
+          310.0,
+          232.0,
+          348.0,
+          267.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -3470,7 +3246,7 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -34.84,
+          -34.77,
           46.64
         ]
       },
@@ -3478,20 +3254,20 @@
         "image_name": "baycove_03_17_png_jpg.rf.6b3cf738452a20c7d1f97812337c410f.jpg",
         "target_id": "tgt-01",
         "class_name": "crab_pot",
-        "confidence_ai": 0.524,
-        "confidence_final": 0.524,
+        "confidence_ai": 0.6293,
+        "confidence_final": 0.6293,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 0.95,
-        "width_m": 1.3,
-        "area_m2": 1.23,
-        "relief_height_m": 0.6,
+        "length_m": 1.05,
+        "width_m": 1.25,
+        "area_m2": 1.31,
+        "relief_height_m": 0.63,
         "bbox": [
-          72.0,
+          73.0,
           0.0,
           122.0,
-          43.0
+          44.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -3502,28 +3278,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -21.48,
-          40.47
+          -33.52,
+          34.22
         ]
       },
       "properties": {
         "image_name": "baycove_03_17_png_jpg.rf.6b3cf738452a20c7d1f97812337c410f.jpg",
         "target_id": "tgt-02",
         "class_name": "crab_pot",
-        "confidence_ai": 0.476,
-        "confidence_final": 0.476,
+        "confidence_ai": 0.5687,
+        "confidence_final": 0.5687,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 0.8,
-        "width_m": 0.95,
-        "area_m2": 0.76,
-        "relief_height_m": 0.59,
+        "length_m": 0.9,
+        "width_m": 1.05,
+        "area_m2": 0.95,
+        "relief_height_m": 0.22,
         "bbox": [
-          161.0,
-          41.0,
-          204.0,
-          81.0
+          83.0,
+          80.0,
+          128.0,
+          122.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -3534,28 +3310,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -36.25,
-          37.81
+          -21.41,
+          40.62
         ]
       },
       "properties": {
         "image_name": "baycove_03_17_png_jpg.rf.6b3cf738452a20c7d1f97812337c410f.jpg",
         "target_id": "tgt-03",
         "class_name": "crab_pot",
-        "confidence_ai": 0.4586,
-        "confidence_final": 0.5386,
+        "confidence_ai": 0.5293,
+        "confidence_final": 0.5293,
         "hazard_risk": "LOW",
-        "shadow_evidence": "SUPPORTING",
-        "review_status": "VERIFIED_3D",
-        "length_m": 0.9,
-        "width_m": 1.1,
-        "area_m2": 0.99,
-        "relief_height_m": 1.15,
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 0.8,
+        "width_m": 0.9,
+        "area_m2": 0.72,
+        "relief_height_m": 0.79,
         "bbox": [
-          65.0,
-          57.0,
-          111.0,
-          99.0
+          162.0,
+          40.0,
+          204.0,
+          80.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -3566,28 +3342,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          0.39,
-          -0.23
+          -36.09,
+          37.81
         ]
       },
       "properties": {
         "image_name": "baycove_03_17_png_jpg.rf.6b3cf738452a20c7d1f97812337c410f.jpg",
         "target_id": "tgt-04",
         "class_name": "crab_pot",
-        "confidence_ai": 0.4383,
-        "confidence_final": 0.4383,
+        "confidence_ai": 0.5226,
+        "confidence_final": 0.6026,
         "hazard_risk": "LOW",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.95,
-        "width_m": 0.85,
-        "area_m2": 0.81,
-        "relief_height_m": 5.71,
+        "shadow_evidence": "SUPPORTING",
+        "review_status": "VERIFIED_3D",
+        "length_m": 0.9,
+        "width_m": 1.1,
+        "area_m2": 0.99,
+        "relief_height_m": 1.18,
         "bbox": [
-          302.0,
-          300.0,
-          343.0,
-          343.0
+          66.0,
+          57.0,
+          112.0,
+          99.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -3598,28 +3374,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -6.41,
-          -24.92
+          0.62,
+          -0.16
         ]
       },
       "properties": {
         "image_name": "baycove_03_17_png_jpg.rf.6b3cf738452a20c7d1f97812337c410f.jpg",
         "target_id": "tgt-05",
         "class_name": "crab_pot",
-        "confidence_ai": 0.3389,
-        "confidence_final": 0.4189,
+        "confidence_ai": 0.4766,
+        "confidence_final": 0.4766,
         "hazard_risk": "LOW",
-        "shadow_evidence": "SUPPORTING",
-        "review_status": "VERIFIED_3D",
-        "length_m": 1.05,
-        "width_m": 1.0,
-        "area_m2": 1.05,
-        "relief_height_m": 4.72,
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 0.9,
+        "width_m": 0.8,
+        "area_m2": 0.72,
+        "relief_height_m": 4.44,
         "bbox": [
-          257.0,
-          457.0,
-          301.0,
-          502.0
+          304.0,
+          300.0,
+          344.0,
+          342.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -3630,13 +3406,77 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          -6.25,
+          -24.92
+        ]
+      },
+      "properties": {
+        "image_name": "baycove_03_17_png_jpg.rf.6b3cf738452a20c7d1f97812337c410f.jpg",
+        "target_id": "tgt-06",
+        "class_name": "crab_pot",
+        "confidence_ai": 0.3704,
+        "confidence_final": 0.4504,
+        "hazard_risk": "LOW",
+        "shadow_evidence": "SUPPORTING",
+        "review_status": "VERIFIED_3D",
+        "length_m": 0.95,
+        "width_m": 1.0,
+        "area_m2": 0.95,
+        "relief_height_m": 4.73,
+        "bbox": [
+          258.0,
+          458.0,
+          302.0,
+          501.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "baycove_03_17_png_jpg.rf.6b3cf738452a20c7d1f97812337c410f.jpg_tgt-07",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -2.89,
+          -1.25
+        ]
+      },
+      "properties": {
+        "image_name": "baycove_03_17_png_jpg.rf.6b3cf738452a20c7d1f97812337c410f.jpg",
+        "target_id": "tgt-07",
+        "class_name": "crab_pot",
+        "confidence_ai": 0.3546,
+        "confidence_final": 0.3546,
+        "hazard_risk": "LOW",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 0.8,
+        "width_m": 0.75,
+        "area_m2": 0.6,
+        "relief_height_m": 1.09,
+        "bbox": [
+          282.0,
+          308.0,
+          321.0,
+          348.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "baycove_03_17_png_jpg.rf.6b3cf738452a20c7d1f97812337c410f.jpg_tgt-08",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           -8.75,
           -31.87
         ]
       },
       "properties": {
         "image_name": "baycove_03_17_png_jpg.rf.6b3cf738452a20c7d1f97812337c410f.jpg",
-        "target_id": "tgt-06",
+        "target_id": "tgt-08",
         "class_name": "crab_pot",
         "confidence_ai": 0.2495,
         "confidence_final": 0.2495,
@@ -3652,70 +3492,6 @@
           502.0,
           290.0,
           546.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "baycove_03_17_png_jpg.rf.6b3cf738452a20c7d1f97812337c410f.jpg_tgt-07",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -3.12,
-          -1.33
-        ]
-      },
-      "properties": {
-        "image_name": "baycove_03_17_png_jpg.rf.6b3cf738452a20c7d1f97812337c410f.jpg",
-        "target_id": "tgt-07",
-        "class_name": "crab_pot",
-        "confidence_ai": 0.2282,
-        "confidence_final": 0.2282,
-        "hazard_risk": "LOW",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.75,
-        "width_m": 0.6,
-        "area_m2": 0.45,
-        "relief_height_m": 0.73,
-        "bbox": [
-          282.0,
-          309.0,
-          318.0,
-          348.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "baycove_03_17_png_jpg.rf.6b3cf738452a20c7d1f97812337c410f.jpg_tgt-08",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -33.75,
-          34.38
-        ]
-      },
-      "properties": {
-        "image_name": "baycove_03_17_png_jpg.rf.6b3cf738452a20c7d1f97812337c410f.jpg",
-        "target_id": "tgt-08",
-        "class_name": "crab_pot",
-        "confidence_ai": 0.2235,
-        "confidence_final": 0.2235,
-        "hazard_risk": "LOW",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.8,
-        "width_m": 0.9,
-        "area_m2": 0.72,
-        "relief_height_m": 0.22,
-        "bbox": [
-          83.0,
-          80.0,
-          125.0,
-          120.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -3758,28 +3534,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -21.25,
-          11.25
+          -21.17,
+          11.33
         ]
       },
       "properties": {
         "image_name": "baycove_03_18_png_jpg.rf.5e168360c20dc6b1aab64e11dd7d9a8e.jpg",
         "target_id": "tgt-01",
         "class_name": "crab_pot",
-        "confidence_ai": 0.6396,
-        "confidence_final": 0.6396,
+        "confidence_ai": 0.6778,
+        "confidence_final": 0.6778,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 0.9,
-        "width_m": 1.0,
-        "area_m2": 0.9,
+        "length_m": 0.85,
+        "width_m": 0.95,
+        "area_m2": 0.81,
         "relief_height_m": 0.7,
         "bbox": [
-          162.0,
+          163.0,
           227.0,
           206.0,
-          269.0
+          268.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -3790,7 +3566,7 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -30.16,
+          -30.23,
           28.91
         ]
       },
@@ -3798,17 +3574,17 @@
         "image_name": "baycove_03_18_png_jpg.rf.5e168360c20dc6b1aab64e11dd7d9a8e.jpg",
         "target_id": "tgt-02",
         "class_name": "crab_pot",
-        "confidence_ai": 0.2806,
-        "confidence_final": 0.2806,
+        "confidence_ai": 0.4888,
+        "confidence_final": 0.4888,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
         "length_m": 1.0,
-        "width_m": 1.1,
-        "area_m2": 1.1,
-        "relief_height_m": 0.95,
+        "width_m": 1.15,
+        "area_m2": 1.15,
+        "relief_height_m": 0.91,
         "bbox": [
-          104.0,
+          103.0,
           113.0,
           150.0,
           157.0
@@ -3822,7 +3598,7 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -6.87,
+          -6.64,
           -2.5
         ]
       },
@@ -3830,20 +3606,52 @@
         "image_name": "baycove_09_10_png_jpg.rf.c99b3e32f0d5c74b4363272c5f003e2c.jpg",
         "target_id": "tgt-01",
         "class_name": "crab_pot",
-        "confidence_ai": 0.5778,
-        "confidence_final": 0.5778,
+        "confidence_ai": 0.6378,
+        "confidence_final": 0.6378,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 0.8,
-        "width_m": 0.8,
-        "area_m2": 0.64,
-        "relief_height_m": 1.36,
+        "length_m": 0.9,
+        "width_m": 0.85,
+        "area_m2": 0.77,
+        "relief_height_m": 1.38,
         "bbox": [
-          256.0,
-          316.0,
-          296.0,
-          356.0
+          257.0,
+          315.0,
+          298.0,
+          357.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "baycove_09_10_png_jpg.rf.c99b3e32f0d5c74b4363272c5f003e2c.jpg_tgt-02",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -2.58,
+          11.88
+        ]
+      },
+      "properties": {
+        "image_name": "baycove_09_10_png_jpg.rf.c99b3e32f0d5c74b4363272c5f003e2c.jpg",
+        "target_id": "tgt-02",
+        "class_name": "crab_pot",
+        "confidence_ai": 0.1453,
+        "confidence_final": 0.1453,
+        "hazard_risk": "LOW",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 1.6,
+        "width_m": 1.55,
+        "area_m2": 2.48,
+        "relief_height_m": 4.0,
+        "bbox": [
+          276.0,
+          216.0,
+          331.0,
+          272.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -3854,28 +3662,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          27.58,
-          -36.41
+          -10.0,
+          -40.31
         ]
       },
       "properties": {
         "image_name": "baycove_09_11_png_jpg.rf.8b621cc1b5da15fc15020ca3ff5bdd45.jpg",
         "target_id": "tgt-01",
         "class_name": "crab_pot",
-        "confidence_ai": 0.96,
-        "confidence_final": 0.96,
+        "confidence_ai": 0.2229,
+        "confidence_final": 0.2229,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 0.7,
-        "width_m": 0.55,
-        "area_m2": 0.39,
-        "relief_height_m": 1.03,
+        "length_m": 2.2,
+        "width_m": 1.7,
+        "area_m2": 3.74,
+        "relief_height_m": 1.35,
         "bbox": [
-          479.0,
-          534.0,
-          514.0,
-          572.0
+          227.0,
+          544.0,
+          285.0,
+          612.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -3886,220 +3694,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -20.47,
-          -32.58
+          -9.84,
+          -38.91
         ]
       },
       "properties": {
         "image_name": "baycove_09_11_png_jpg.rf.8b621cc1b5da15fc15020ca3ff5bdd45.jpg",
         "target_id": "tgt-02",
-        "class_name": "submarine_pipeline",
-        "confidence_ai": 0.96,
-        "confidence_final": 0.96,
-        "hazard_risk": "HIGH",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.85,
-        "width_m": 0.4,
-        "area_m2": 0.34,
-        "relief_height_m": 0.35,
-        "bbox": [
-          173.0,
-          508.0,
-          205.0,
-          549.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "baycove_09_11_png_jpg.rf.8b621cc1b5da15fc15020ca3ff5bdd45.jpg_tgt-03",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          37.19,
-          -22.03
-        ]
-      },
-      "properties": {
-        "image_name": "baycove_09_11_png_jpg.rf.8b621cc1b5da15fc15020ca3ff5bdd45.jpg",
-        "target_id": "tgt-03",
         "class_name": "crab_pot",
-        "confidence_ai": 0.96,
-        "confidence_final": 0.96,
+        "confidence_ai": 0.1691,
+        "confidence_final": 0.1691,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 0.9,
-        "width_m": 0.7,
-        "area_m2": 0.63,
-        "relief_height_m": 0.73,
+        "length_m": 3.9,
+        "width_m": 3.5,
+        "area_m2": 13.65,
+        "relief_height_m": 1.62,
         "bbox": [
-          539.0,
-          440.0,
-          577.0,
-          482.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "baycove_09_11_png_jpg.rf.8b621cc1b5da15fc15020ca3ff5bdd45.jpg_tgt-04",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -47.42,
-          -17.97
-        ]
-      },
-      "properties": {
-        "image_name": "baycove_09_11_png_jpg.rf.8b621cc1b5da15fc15020ca3ff5bdd45.jpg",
-        "target_id": "tgt-04",
-        "class_name": "crab_pot",
-        "confidence_ai": 0.96,
-        "confidence_final": 0.96,
-        "hazard_risk": "LOW",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.8,
-        "width_m": 0.65,
-        "area_m2": 0.52,
-        "relief_height_m": 0.18,
-        "bbox": [
-          0.0,
-          415.0,
-          35.0,
-          455.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "baycove_09_11_png_jpg.rf.8b621cc1b5da15fc15020ca3ff5bdd45.jpg_tgt-05",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          36.02,
-          -11.95
-        ]
-      },
-      "properties": {
-        "image_name": "baycove_09_11_png_jpg.rf.8b621cc1b5da15fc15020ca3ff5bdd45.jpg",
-        "target_id": "tgt-05",
-        "class_name": "ghost_net",
-        "confidence_ai": 0.9454,
-        "confidence_final": 0.9454,
-        "hazard_risk": "MEDIUM",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.95,
-        "width_m": 0.55,
-        "area_m2": 0.52,
-        "relief_height_m": 0.2,
-        "bbox": [
-          533.0,
-          375.0,
-          568.0,
-          418.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "baycove_09_11_png_jpg.rf.8b621cc1b5da15fc15020ca3ff5bdd45.jpg_tgt-06",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -39.84,
-          -5.31
-        ]
-      },
-      "properties": {
-        "image_name": "baycove_09_11_png_jpg.rf.8b621cc1b5da15fc15020ca3ff5bdd45.jpg",
-        "target_id": "tgt-06",
-        "class_name": "crab_pot",
-        "confidence_ai": 0.9173,
-        "confidence_final": 0.9173,
-        "hazard_risk": "LOW",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.8,
-        "width_m": 0.6,
-        "area_m2": 0.48,
-        "relief_height_m": 0.24,
-        "bbox": [
-          47.0,
-          334.0,
-          83.0,
-          374.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "baycove_09_11_png_jpg.rf.8b621cc1b5da15fc15020ca3ff5bdd45.jpg_tgt-07",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -15.47,
-          -28.52
-        ]
-      },
-      "properties": {
-        "image_name": "baycove_09_11_png_jpg.rf.8b621cc1b5da15fc15020ca3ff5bdd45.jpg",
-        "target_id": "tgt-07",
-        "class_name": "ghost_net",
-        "confidence_ai": 0.9144,
-        "confidence_final": 0.9144,
-        "hazard_risk": "MEDIUM",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.75,
-        "width_m": 0.5,
-        "area_m2": 0.38,
-        "relief_height_m": 0.46,
-        "bbox": [
-          204.0,
-          483.0,
-          238.0,
-          522.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "baycove_09_11_png_jpg.rf.8b621cc1b5da15fc15020ca3ff5bdd45.jpg_tgt-08",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -33.28,
-          -15.78
-        ]
-      },
-      "properties": {
-        "image_name": "baycove_09_11_png_jpg.rf.8b621cc1b5da15fc15020ca3ff5bdd45.jpg",
-        "target_id": "tgt-08",
-        "class_name": "ghost_net",
-        "confidence_ai": 0.9133,
-        "confidence_final": 0.9133,
-        "hazard_risk": "MEDIUM",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 1.4,
-        "width_m": 0.8,
-        "area_m2": 1.12,
-        "relief_height_m": 0.29,
-        "bbox": [
-          87.0,
-          395.0,
-          127.0,
-          447.0
+          210.0,
+          518.0,
+          304.0,
+          620.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -4110,28 +3726,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -34.92,
-          -7.34
+          -34.84,
+          -7.19
         ]
       },
       "properties": {
         "image_name": "baycove_09_11_png_jpg.rf.91d0452745cb86710f352b40f400d047.jpg",
         "target_id": "tgt-01",
         "class_name": "crab_pot",
-        "confidence_ai": 0.2406,
-        "confidence_final": 0.3206,
+        "confidence_ai": 0.2706,
+        "confidence_final": 0.3506,
         "hazard_risk": "LOW",
         "shadow_evidence": "SUPPORTING",
         "review_status": "VERIFIED_3D",
-        "length_m": 1.1,
-        "width_m": 1.35,
-        "area_m2": 1.49,
-        "relief_height_m": 0.94,
+        "length_m": 1.3,
+        "width_m": 1.6,
+        "area_m2": 2.08,
+        "relief_height_m": 2.13,
         "bbox": [
-          71.0,
-          344.0,
-          122.0,
-          390.0
+          69.0,
+          341.0,
+          125.0,
+          391.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -7470,28 +7086,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          17.89,
-          6.56
+          17.81,
+          6.41
         ]
       },
       "properties": {
         "image_name": "Contact_103_sslo_png_jpg.rf.53fe66a3739b5f18e390901f89cf481e.jpg",
         "target_id": "tgt-01",
         "class_name": "crab_pot",
-        "confidence_ai": 0.2694,
-        "confidence_final": 0.2694,
+        "confidence_ai": 0.2994,
+        "confidence_final": 0.2994,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 2.2,
-        "width_m": 2.85,
-        "area_m2": 6.27,
-        "relief_height_m": 4.67,
+        "length_m": 1.8,
+        "width_m": 2.6,
+        "area_m2": 4.68,
+        "relief_height_m": 0.59,
         "bbox": [
-          394.0,
-          244.0,
-          475.0,
-          312.0
+          396.0,
+          249.0,
+          472.0,
+          309.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -7534,252 +7150,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          48.98,
-          -43.59
+          1.56,
+          4.69
         ]
       },
       "properties": {
         "image_name": "Contact_104_sslo_png_jpg.rf.22e4adfcabfab6cc53f6c4ec51d4099d.jpg",
         "target_id": "tgt-01",
-        "class_name": "ghost_net",
-        "confidence_ai": 0.96,
-        "confidence_final": 0.96,
-        "hazard_risk": "MEDIUM",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.5,
-        "width_m": 0.65,
-        "area_m2": 0.33,
-        "relief_height_m": 0.5,
-        "bbox": [
-          615.0,
-          582.0,
-          640.0,
-          616.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "Contact_104_sslo_png_jpg.rf.22e4adfcabfab6cc53f6c4ec51d4099d.jpg_tgt-02",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          23.44,
-          18.91
-        ]
-      },
-      "properties": {
-        "image_name": "Contact_104_sslo_png_jpg.rf.22e4adfcabfab6cc53f6c4ec51d4099d.jpg",
-        "target_id": "tgt-02",
-        "class_name": "ghost_net",
-        "confidence_ai": 0.96,
-        "confidence_final": 0.96,
-        "hazard_risk": "MEDIUM",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.5,
-        "width_m": 0.7,
-        "area_m2": 0.35,
-        "relief_height_m": 0.73,
-        "bbox": [
-          451.0,
-          182.0,
-          489.0,
-          216.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "Contact_104_sslo_png_jpg.rf.22e4adfcabfab6cc53f6c4ec51d4099d.jpg_tgt-03",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -42.66,
-          44.45
-        ]
-      },
-      "properties": {
-        "image_name": "Contact_104_sslo_png_jpg.rf.22e4adfcabfab6cc53f6c4ec51d4099d.jpg",
-        "target_id": "tgt-03",
-        "class_name": "ghost_net",
-        "confidence_ai": 0.96,
-        "confidence_final": 0.96,
-        "hazard_risk": "MEDIUM",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 3.55,
-        "width_m": 4.7,
-        "area_m2": 16.68,
-        "relief_height_m": 0.5,
-        "bbox": [
-          0.0,
-          0.0,
-          106.0,
-          83.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "Contact_104_sslo_png_jpg.rf.22e4adfcabfab6cc53f6c4ec51d4099d.jpg_tgt-04",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          48.83,
-          -41.56
-        ]
-      },
-      "properties": {
-        "image_name": "Contact_104_sslo_png_jpg.rf.22e4adfcabfab6cc53f6c4ec51d4099d.jpg",
-        "target_id": "tgt-04",
-        "class_name": "ghost_net",
-        "confidence_ai": 0.9574,
-        "confidence_final": 0.9574,
-        "hazard_risk": "MEDIUM",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.6,
-        "width_m": 0.75,
-        "area_m2": 0.45,
-        "relief_height_m": 0.5,
-        "bbox": [
-          613.0,
-          568.0,
-          640.0,
-          604.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "Contact_104_sslo_png_jpg.rf.22e4adfcabfab6cc53f6c4ec51d4099d.jpg_tgt-05",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          35.7,
-          -34.14
-        ]
-      },
-      "properties": {
-        "image_name": "Contact_104_sslo_png_jpg.rf.22e4adfcabfab6cc53f6c4ec51d4099d.jpg",
-        "target_id": "tgt-05",
         "class_name": "crab_pot",
-        "confidence_ai": 0.9481,
-        "confidence_final": 0.9481,
+        "confidence_ai": 0.1547,
+        "confidence_final": 0.1547,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 0.55,
-        "width_m": 0.65,
-        "area_m2": 0.36,
-        "relief_height_m": 0.3,
+        "length_m": 2.1,
+        "width_m": 3.0,
+        "area_m2": 6.3,
+        "relief_height_m": 7.53,
         "bbox": [
-          530.0,
-          521.0,
-          567.0,
-          556.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "Contact_104_sslo_png_jpg.rf.22e4adfcabfab6cc53f6c4ec51d4099d.jpg_tgt-06",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          28.67,
-          -32.11
-        ]
-      },
-      "properties": {
-        "image_name": "Contact_104_sslo_png_jpg.rf.22e4adfcabfab6cc53f6c4ec51d4099d.jpg",
-        "target_id": "tgt-06",
-        "class_name": "crab_pot",
-        "confidence_ai": 0.944,
-        "confidence_final": 0.944,
-        "hazard_risk": "LOW",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.65,
-        "width_m": 0.65,
-        "area_m2": 0.42,
-        "relief_height_m": 0.38,
-        "bbox": [
-          485.0,
-          507.0,
-          522.0,
-          544.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "Contact_104_sslo_png_jpg.rf.22e4adfcabfab6cc53f6c4ec51d4099d.jpg_tgt-07",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -41.56,
-          5.0
-        ]
-      },
-      "properties": {
-        "image_name": "Contact_104_sslo_png_jpg.rf.22e4adfcabfab6cc53f6c4ec51d4099d.jpg",
-        "target_id": "tgt-07",
-        "class_name": "ghost_net",
-        "confidence_ai": 0.9145,
-        "confidence_final": 0.9145,
-        "hazard_risk": "MEDIUM",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.5,
-        "width_m": 0.8,
-        "area_m2": 0.4,
-        "relief_height_m": 1.16,
-        "bbox": [
-          34.0,
-          271.0,
-          74.0,
-          305.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "Contact_104_sslo_png_jpg.rf.22e4adfcabfab6cc53f6c4ec51d4099d.jpg_tgt-08",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -42.97,
-          -18.13
-        ]
-      },
-      "properties": {
-        "image_name": "Contact_104_sslo_png_jpg.rf.22e4adfcabfab6cc53f6c4ec51d4099d.jpg",
-        "target_id": "tgt-08",
-        "class_name": "crab_pot",
-        "confidence_ai": 0.9097,
-        "confidence_final": 0.9097,
-        "hazard_risk": "LOW",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.7,
-        "width_m": 0.6,
-        "area_m2": 0.42,
-        "relief_height_m": 0.99,
-        "bbox": [
-          27.0,
-          417.0,
-          63.0,
-          455.0
+          288.0,
+          257.0,
+          372.0,
+          323.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -7818,7 +7210,103 @@
     },
     {
       "type": "Feature",
+      "id": "Contact_105_sslo_png_jpg.rf.4ef20d167e305a8cd5713496355c6f40.jpg_tgt-02",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -7.27,
+          -12.5
+        ]
+      },
+      "properties": {
+        "image_name": "Contact_105_sslo_png_jpg.rf.4ef20d167e305a8cd5713496355c6f40.jpg",
+        "target_id": "tgt-02",
+        "class_name": "crab_pot",
+        "confidence_ai": 0.2135,
+        "confidence_final": 0.2135,
+        "hazard_risk": "LOW",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 0.8,
+        "width_m": 1.05,
+        "area_m2": 0.84,
+        "relief_height_m": 0.3,
+        "bbox": [
+          251.0,
+          380.0,
+          296.0,
+          420.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "Contact_105_sslo_png_jpg.rf.4ef20d167e305a8cd5713496355c6f40.jpg_tgt-03",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -24.92,
+          -13.98
+        ]
+      },
+      "properties": {
+        "image_name": "Contact_105_sslo_png_jpg.rf.4ef20d167e305a8cd5713496355c6f40.jpg",
+        "target_id": "tgt-03",
+        "class_name": "mine_cylinder",
+        "confidence_ai": 0.1768,
+        "confidence_final": 0.1768,
+        "hazard_risk": "CRITICAL",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 0.65,
+        "width_m": 1.65,
+        "area_m2": 1.07,
+        "relief_height_m": 0.29,
+        "bbox": [
+          132.0,
+          391.0,
+          189.0,
+          428.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
       "id": "Contact_106_sslo_png_jpg.rf.c31dd588a8787b9aae6720c3b27be6d0.jpg_tgt-01",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -11.95,
+          18.52
+        ]
+      },
+      "properties": {
+        "image_name": "Contact_106_sslo_png_jpg.rf.c31dd588a8787b9aae6720c3b27be6d0.jpg",
+        "target_id": "tgt-01",
+        "class_name": "crab_pot",
+        "confidence_ai": 0.2382,
+        "confidence_final": 0.2382,
+        "hazard_risk": "LOW",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 0.95,
+        "width_m": 2.25,
+        "area_m2": 2.14,
+        "relief_height_m": 0.84,
+        "bbox": [
+          209.0,
+          180.0,
+          278.0,
+          223.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "Contact_106_sslo_png_jpg.rf.c31dd588a8787b9aae6720c3b27be6d0.jpg_tgt-02",
       "geometry": {
         "type": "Point",
         "coordinates": [
@@ -7828,7 +7316,7 @@
       },
       "properties": {
         "image_name": "Contact_106_sslo_png_jpg.rf.c31dd588a8787b9aae6720c3b27be6d0.jpg",
-        "target_id": "tgt-01",
+        "target_id": "tgt-02",
         "class_name": "crab_pot",
         "confidence_ai": 0.2146,
         "confidence_final": 0.2146,
@@ -7850,43 +7338,11 @@
     },
     {
       "type": "Feature",
-      "id": "Contact_106_sslo_png_jpg.rf.c31dd588a8787b9aae6720c3b27be6d0.jpg_tgt-02",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -12.27,
-          18.59
-        ]
-      },
-      "properties": {
-        "image_name": "Contact_106_sslo_png_jpg.rf.c31dd588a8787b9aae6720c3b27be6d0.jpg",
-        "target_id": "tgt-02",
-        "class_name": "crab_pot",
-        "confidence_ai": 0.2082,
-        "confidence_final": 0.2082,
-        "hazard_risk": "LOW",
-        "shadow_evidence": "NEUTRAL",
-        "review_status": "UNVERIFIED",
-        "length_m": 0.9,
-        "width_m": 1.95,
-        "area_m2": 1.75,
-        "relief_height_m": 0.56,
-        "bbox": [
-          210.0,
-          180.0,
-          273.0,
-          222.0
-        ],
-        "coordinate_frame": "LOCAL_TRACK_METRIC"
-      }
-    },
-    {
-      "type": "Feature",
       "id": "Contact_107_sslo_png_jpg.rf.339273b6c8d402e500d5dd1ba9452fba.jpg_tgt-01",
       "geometry": {
         "type": "Point",
         "coordinates": [
-          1.41,
+          1.48,
           4.84
         ]
       },
@@ -7894,20 +7350,20 @@
         "image_name": "Contact_107_sslo_png_jpg.rf.339273b6c8d402e500d5dd1ba9452fba.jpg",
         "target_id": "tgt-01",
         "class_name": "crab_pot",
-        "confidence_ai": 0.2787,
-        "confidence_final": 0.2787,
+        "confidence_ai": 0.3387,
+        "confidence_final": 0.3387,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 1.5,
-        "width_m": 2.5,
-        "area_m2": 3.75,
-        "relief_height_m": 6.64,
+        "length_m": 1.6,
+        "width_m": 2.55,
+        "area_m2": 4.08,
+        "relief_height_m": 6.62,
         "bbox": [
           292.0,
-          262.0,
-          366.0,
-          316.0
+          261.0,
+          367.0,
+          317.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -7918,7 +7374,7 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -12.03,
+          -11.95,
           -6.33
         ]
       },
@@ -7926,19 +7382,19 @@
         "image_name": "mission_01_tile_0002.png",
         "target_id": "tgt-01",
         "class_name": "shipwreck",
-        "confidence_ai": 0.4071,
-        "confidence_final": 0.5271,
+        "confidence_ai": 0.4371,
+        "confidence_final": 0.5571,
         "hazard_risk": "HIGH",
         "shadow_evidence": "SUPPORTING",
         "review_status": "VERIFIED_3D",
         "length_m": 3.85,
-        "width_m": 2.6,
-        "area_m2": 10.01,
-        "relief_height_m": 5.36,
+        "width_m": 2.65,
+        "area_m2": 10.2,
+        "relief_height_m": 5.39,
         "bbox": [
           205.0,
           310.0,
-          281.0,
+          282.0,
           411.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
@@ -7950,28 +7406,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          7.27,
-          15.94
+          7.34,
+          16.02
         ]
       },
       "properties": {
         "image_name": "mission_01_tile_0003.png",
         "target_id": "tgt-01",
         "class_name": "mine_cylinder",
-        "confidence_ai": 0.5259,
-        "confidence_final": 0.6659,
+        "confidence_ai": 0.6159,
+        "confidence_final": 0.7559,
         "hazard_risk": "CRITICAL",
         "shadow_evidence": "SUPPORTING",
         "review_status": "VERIFIED_3D",
-        "length_m": 2.2,
-        "width_m": 2.85,
-        "area_m2": 6.27,
-        "relief_height_m": 6.21,
+        "length_m": 2.15,
+        "width_m": 2.9,
+        "area_m2": 6.23,
+        "relief_height_m": 6.18,
         "bbox": [
           326.0,
           184.0,
-          407.0,
-          252.0
+          408.0,
+          251.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -7982,28 +7438,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -15.86,
-          -2.97
+          -15.7,
+          -2.81
         ]
       },
       "properties": {
         "image_name": "mission_01_tile_0004.png",
         "target_id": "tgt-01",
-        "class_name": "shipwreck",
-        "confidence_ai": 0.1932,
-        "confidence_final": 0.3132,
-        "hazard_risk": "HIGH",
-        "shadow_evidence": "SUPPORTING",
-        "review_status": "VERIFIED_3D",
+        "class_name": "ghost_net",
+        "confidence_ai": 0.7879,
+        "confidence_final": 0.7879,
+        "hazard_risk": "MEDIUM",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
         "length_m": 2.7,
         "width_m": 3.15,
         "area_m2": 8.51,
-        "relief_height_m": 4.89,
+        "relief_height_m": 4.9,
         "bbox": [
-          175.0,
-          300.0,
-          262.0,
-          378.0
+          176.0,
+          299.0,
+          263.0,
+          377.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -8022,8 +7478,8 @@
         "image_name": "mission_02_tile_0006.png",
         "target_id": "tgt-01",
         "class_name": "mine_cylinder",
-        "confidence_ai": 0.7101,
-        "confidence_final": 0.5601,
+        "confidence_ai": 0.7401,
+        "confidence_final": 0.5901,
         "hazard_risk": "CRITICAL",
         "shadow_evidence": "ABSENT",
         "review_status": "FLAGGED_FOR_REVIEW",
@@ -8110,7 +7566,7 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -15.0,
+          -14.92,
           -6.17
         ]
       },
@@ -8118,17 +7574,17 @@
         "image_name": "mission_04_tile_0019.png",
         "target_id": "tgt-01",
         "class_name": "mine_cylinder",
-        "confidence_ai": 0.7646,
-        "confidence_final": 0.7646,
+        "confidence_ai": 0.7946,
+        "confidence_final": 0.7946,
         "hazard_risk": "CRITICAL",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
         "length_m": 2.35,
-        "width_m": 4.1,
-        "area_m2": 9.63,
+        "width_m": 4.05,
+        "area_m2": 9.52,
         "relief_height_m": 5.0,
         "bbox": [
-          171.0,
+          172.0,
           324.0,
           277.0,
           395.0
@@ -8142,7 +7598,7 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          12.11,
+          12.19,
           -16.8
         ]
       },
@@ -8150,19 +7606,19 @@
         "image_name": "mission_04_tile_0020.png",
         "target_id": "tgt-01",
         "class_name": "mine_cylinder",
-        "confidence_ai": 0.4568,
-        "confidence_final": 0.5968,
+        "confidence_ai": 0.5168,
+        "confidence_final": 0.6568,
         "hazard_risk": "CRITICAL",
         "shadow_evidence": "SUPPORTING",
         "review_status": "VERIFIED_3D",
         "length_m": 2.55,
-        "width_m": 3.05,
-        "area_m2": 7.78,
-        "relief_height_m": 5.4,
+        "width_m": 3.1,
+        "area_m2": 7.9,
+        "relief_height_m": 5.38,
         "bbox": [
           355.0,
           390.0,
-          440.0,
+          441.0,
           465.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
@@ -8174,25 +7630,25 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          22.66,
-          0.8
+          22.34,
+          1.0
         ]
       },
       "properties": {
         "image_name": "pipe_1693569563.809_x3000.jpg",
         "target_id": "tgt-01",
         "class_name": "submarine_pipeline",
-        "confidence_ai": 0.822,
-        "confidence_final": 0.822,
+        "confidence_ai": 0.8672,
+        "confidence_final": 0.8672,
         "hazard_risk": "HIGH",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 24.6,
-        "width_m": 16.3,
-        "area_m2": 400.98,
-        "relief_height_m": 0.61,
+        "length_m": 24.5,
+        "width_m": 15.5,
+        "area_m2": 379.75,
+        "relief_height_m": 0.81,
         "bbox": [
-          276.0,
+          284.0,
           0.0,
           640.0,
           500.0
@@ -8206,7 +7662,7 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -0.47,
+          -2.5,
           0.5
         ]
       },
@@ -8214,19 +7670,19 @@
         "image_name": "pipe_1693569608.819_x1500.jpg",
         "target_id": "tgt-01",
         "class_name": "submarine_pipeline",
-        "confidence_ai": 0.7812,
-        "confidence_final": 0.7812,
+        "confidence_ai": 0.8412,
+        "confidence_final": 0.8412,
         "hazard_risk": "HIGH",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 24.75,
-        "width_m": 14.5,
-        "area_m2": 358.88,
-        "relief_height_m": 7.85,
+        "length_m": 24.65,
+        "width_m": 12.6,
+        "area_m2": 310.59,
+        "relief_height_m": 7.27,
         "bbox": [
-          149.0,
+          158.0,
           0.0,
-          485.0,
+          450.0,
           500.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
@@ -8238,27 +7694,27 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          23.28,
-          -0.1
+          23.91,
+          0.1
         ]
       },
       "properties": {
         "image_name": "pipe_1693569615.829_x3000.jpg",
         "target_id": "tgt-01",
         "class_name": "submarine_pipeline",
-        "confidence_ai": 0.8108,
-        "confidence_final": 0.8108,
+        "confidence_ai": 0.8825,
+        "confidence_final": 0.8825,
         "hazard_risk": "HIGH",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
         "length_m": 24.95,
-        "width_m": 14.3,
-        "area_m2": 356.79,
-        "relief_height_m": 1.19,
+        "width_m": 14.1,
+        "area_m2": 351.79,
+        "relief_height_m": 1.16,
         "bbox": [
-          304.0,
+          310.0,
           0.0,
-          634.0,
+          636.0,
           500.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
@@ -8270,27 +7726,27 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -0.23,
-          0.3
+          -4.06,
+          0.4
         ]
       },
       "properties": {
         "image_name": "pipe_1693569624.829_x1500.jpg",
         "target_id": "tgt-01",
         "class_name": "submarine_pipeline",
-        "confidence_ai": 0.8357,
-        "confidence_final": 0.8357,
+        "confidence_ai": 0.8957,
+        "confidence_final": 0.8957,
         "hazard_risk": "HIGH",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 24.45,
-        "width_m": 13.95,
-        "area_m2": 341.08,
-        "relief_height_m": 7.9,
+        "length_m": 24.7,
+        "width_m": 11.6,
+        "area_m2": 286.52,
+        "relief_height_m": 6.88,
         "bbox": [
-          157.0,
+          160.0,
           0.0,
-          480.0,
+          428.0,
           500.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
@@ -8302,7 +7758,7 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -21.64,
+          -18.2,
           0.0
         ]
       },
@@ -8310,19 +7766,19 @@
         "image_name": "pipe_1693569637.830_x3500.jpg",
         "target_id": "tgt-01",
         "class_name": "submarine_pipeline",
-        "confidence_ai": 0.53,
-        "confidence_final": 0.53,
+        "confidence_ai": 0.56,
+        "confidence_final": 0.56,
         "hazard_risk": "HIGH",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
         "length_m": 25.0,
-        "width_m": 17.95,
-        "area_m2": 448.75,
-        "relief_height_m": 0.11,
+        "width_m": 15.75,
+        "area_m2": 393.75,
+        "relief_height_m": 2.26,
         "bbox": [
+          21.0,
           0.0,
-          0.0,
-          389.0,
+          386.0,
           500.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
@@ -8334,27 +7790,27 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -1.33,
-          0.2
+          -4.45,
+          -0.5
         ]
       },
       "properties": {
         "image_name": "pipe_1693569639.830_x1500.jpg",
         "target_id": "tgt-01",
         "class_name": "submarine_pipeline",
-        "confidence_ai": 0.6732,
-        "confidence_final": 0.6732,
+        "confidence_ai": 0.8725,
+        "confidence_final": 0.8725,
         "hazard_risk": "HIGH",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 24.5,
-        "width_m": 13.85,
-        "area_m2": 339.32,
-        "relief_height_m": 7.57,
+        "length_m": 24.45,
+        "width_m": 12.05,
+        "area_m2": 294.62,
+        "relief_height_m": 6.77,
         "bbox": [
-          151.0,
+          152.0,
           0.0,
-          472.0,
+          431.0,
           500.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
@@ -8366,7 +7822,7 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -2.27,
+          -2.11,
           19.3
         ]
       },
@@ -8374,20 +7830,84 @@
         "image_name": "pipe_1693569651.830_x1500.jpg",
         "target_id": "tgt-01",
         "class_name": "mine_cylinder",
-        "confidence_ai": 0.4972,
-        "confidence_final": 0.3472,
+        "confidence_ai": 0.5272,
+        "confidence_final": 0.3772,
         "hazard_risk": "CRITICAL",
         "shadow_evidence": "ABSENT",
         "review_status": "FLAGGED_FOR_REVIEW",
         "length_m": 0.95,
         "width_m": 1.95,
         "area_m2": 1.85,
-        "relief_height_m": 4.25,
+        "relief_height_m": 4.5,
+        "bbox": [
+          275.0,
+          132.0,
+          338.0,
+          175.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pipe_1693569651.830_x1500.jpg_tgt-02",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -2.89,
+          -10.6
+        ]
+      },
+      "properties": {
+        "image_name": "pipe_1693569651.830_x1500.jpg",
+        "target_id": "tgt-02",
+        "class_name": "mine_cylinder",
+        "confidence_ai": 0.4654,
+        "confidence_final": 0.4654,
+        "hazard_risk": "CRITICAL",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 1.3,
+        "width_m": 1.55,
+        "area_m2": 2.02,
+        "relief_height_m": 2.93,
         "bbox": [
           274.0,
-          132.0,
-          337.0,
-          175.0
+          278.0,
+          329.0,
+          328.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pipe_1693569651.830_x1500.jpg_tgt-03",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.44,
+          -0.3
+        ]
+      },
+      "properties": {
+        "image_name": "pipe_1693569651.830_x1500.jpg",
+        "target_id": "tgt-03",
+        "class_name": "submarine_pipeline",
+        "confidence_ai": 0.4313,
+        "confidence_final": 0.4313,
+        "hazard_risk": "HIGH",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 24.55,
+        "width_m": 12.9,
+        "area_m2": 316.69,
+        "relief_height_m": 7.03,
+        "bbox": [
+          149.0,
+          0.0,
+          447.0,
+          500.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -8398,27 +7918,27 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -38.59,
-          0.0
+          -38.44,
+          0.1
         ]
       },
       "properties": {
         "image_name": "pipe_1693569664.840_x3500.jpg",
         "target_id": "tgt-01",
         "class_name": "submarine_pipeline",
-        "confidence_ai": 0.5486,
-        "confidence_final": 0.5486,
+        "confidence_ai": 0.8256,
+        "confidence_final": 0.8256,
         "hazard_risk": "HIGH",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 25.0,
-        "width_m": 7.3,
-        "area_m2": 182.5,
+        "length_m": 24.95,
+        "width_m": 7.4,
+        "area_m2": 184.63,
         "relief_height_m": 0.5,
         "bbox": [
           0.0,
           0.0,
-          158.0,
+          160.0,
           500.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
@@ -8430,27 +7950,27 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          34.69,
-          20.39
+          34.84,
+          20.31
         ]
       },
       "properties": {
         "image_name": "Rec14_wcp_ss_port_00004_png_jpg.rf.485f358b11f790efdbfa583afcffe0dc.jpg",
         "target_id": "tgt-01",
         "class_name": "crab_pot",
-        "confidence_ai": 0.2106,
-        "confidence_final": 0.2106,
+        "confidence_ai": 0.2524,
+        "confidence_final": 0.2524,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 1.15,
+        "length_m": 1.1,
         "width_m": 0.9,
-        "area_m2": 1.03,
-        "relief_height_m": 0.87,
+        "area_m2": 0.99,
+        "relief_height_m": 0.84,
         "bbox": [
-          521.0,
-          166.0,
-          563.0,
+          522.0,
+          167.0,
+          564.0,
           213.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
@@ -8470,8 +7990,8 @@
         "image_name": "Rec14_wcp_ss_port_00004_png_jpg.rf.4a7dd09d0db308be5a8364b9c566931b.jpg",
         "target_id": "tgt-01",
         "class_name": "crab_pot",
-        "confidence_ai": 0.2586,
-        "confidence_final": 0.2586,
+        "confidence_ai": 0.2886,
+        "confidence_final": 0.2886,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
@@ -8534,19 +8054,83 @@
         "image_name": "Rec14_wcp_ss_port_00009_png_jpg.rf.a8e161fa80aeb064f5a658aabe981a80.jpg",
         "target_id": "tgt-02",
         "class_name": "crab_pot",
-        "confidence_ai": 0.2778,
-        "confidence_final": 0.2778,
+        "confidence_ai": 0.3078,
+        "confidence_final": 0.3078,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 0.9,
-        "width_m": 0.85,
-        "area_m2": 0.77,
-        "relief_height_m": 0.56,
+        "length_m": 1.0,
+        "width_m": 0.95,
+        "area_m2": 0.95,
+        "relief_height_m": 0.59,
         "bbox": [
-          537.0,
-          49.0,
-          578.0,
+          536.0,
+          48.0,
+          579.0,
+          92.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "Rec14_wcp_ss_port_00009_png_jpg.rf.a8e161fa80aeb064f5a658aabe981a80.jpg_tgt-03",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.73,
+          10.86
+        ]
+      },
+      "properties": {
+        "image_name": "Rec14_wcp_ss_port_00009_png_jpg.rf.a8e161fa80aeb064f5a658aabe981a80.jpg",
+        "target_id": "tgt-03",
+        "class_name": "crab_pot",
+        "confidence_ai": 0.267,
+        "confidence_final": 0.267,
+        "hazard_risk": "LOW",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 1.85,
+        "width_m": 1.75,
+        "area_m2": 3.24,
+        "relief_height_m": 6.86,
+        "bbox": [
+          308.0,
+          220.0,
+          367.0,
+          281.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "Rec14_wcp_ss_port_00009_png_jpg.rf.a8e161fa80aeb064f5a658aabe981a80.jpg_tgt-04",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          48.75,
+          39.14
+        ]
+      },
+      "properties": {
+        "image_name": "Rec14_wcp_ss_port_00009_png_jpg.rf.a8e161fa80aeb064f5a658aabe981a80.jpg",
+        "target_id": "tgt-04",
+        "class_name": "crab_pot",
+        "confidence_ai": 0.2107,
+        "confidence_final": 0.2107,
+        "hazard_risk": "LOW",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 0.95,
+        "width_m": 0.8,
+        "area_m2": 0.76,
+        "relief_height_m": 0.5,
+        "bbox": [
+          612.0,
+          48.0,
+          640.0,
           91.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
@@ -8558,26 +8142,26 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          43.75,
-          -43.28
+          43.52,
+          -42.73
         ]
       },
       "properties": {
         "image_name": "Rec14_wcp_ss_port_00009_png_jpg.rf.b87aa4f960e3b475ec5fded4dc0d17d4.jpg",
         "target_id": "tgt-01",
         "class_name": "shipwreck",
-        "confidence_ai": 0.4283,
-        "confidence_final": 0.4283,
+        "confidence_ai": 0.4583,
+        "confidence_final": 0.4583,
         "hazard_risk": "HIGH",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 4.2,
-        "width_m": 3.9,
-        "area_m2": 16.38,
+        "length_m": 4.55,
+        "width_m": 4.05,
+        "area_m2": 18.43,
         "relief_height_m": 0.03,
         "bbox": [
-          549.0,
-          543.0,
+          546.0,
+          536.0,
           640.0,
           640.0
         ],
@@ -8598,20 +8182,84 @@
         "image_name": "Rec14_wcp_ss_port_00009_png_jpg.rf.b87aa4f960e3b475ec5fded4dc0d17d4.jpg",
         "target_id": "tgt-02",
         "class_name": "crab_pot",
-        "confidence_ai": 0.3167,
-        "confidence_final": 0.3167,
+        "confidence_ai": 0.3467,
+        "confidence_final": 0.3467,
+        "hazard_risk": "LOW",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 0.95,
+        "width_m": 0.9,
+        "area_m2": 0.85,
+        "relief_height_m": 0.56,
+        "bbox": [
+          537.0,
+          48.0,
+          579.0,
+          91.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "Rec14_wcp_ss_port_00009_png_jpg.rf.b87aa4f960e3b475ec5fded4dc0d17d4.jpg_tgt-03",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          48.67,
+          39.14
+        ]
+      },
+      "properties": {
+        "image_name": "Rec14_wcp_ss_port_00009_png_jpg.rf.b87aa4f960e3b475ec5fded4dc0d17d4.jpg",
+        "target_id": "tgt-03",
+        "class_name": "crab_pot",
+        "confidence_ai": 0.191,
+        "confidence_final": 0.191,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
         "length_m": 0.85,
-        "width_m": 0.8,
-        "area_m2": 0.68,
-        "relief_height_m": 0.56,
+        "width_m": 0.75,
+        "area_m2": 0.64,
+        "relief_height_m": 0.3,
         "bbox": [
-          538.0,
+          612.0,
           49.0,
-          578.0,
+          640.0,
           90.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "Rec14_wcp_ss_port_00009_png_jpg.rf.b87aa4f960e3b475ec5fded4dc0d17d4.jpg_tgt-04",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.58,
+          11.09
+        ]
+      },
+      "properties": {
+        "image_name": "Rec14_wcp_ss_port_00009_png_jpg.rf.b87aa4f960e3b475ec5fded4dc0d17d4.jpg",
+        "target_id": "tgt-04",
+        "class_name": "crab_pot",
+        "confidence_ai": 0.1407,
+        "confidence_final": 0.1407,
+        "hazard_risk": "LOW",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 2.0,
+        "width_m": 1.95,
+        "area_m2": 3.9,
+        "relief_height_m": 6.91,
+        "bbox": [
+          305.0,
+          217.0,
+          368.0,
+          281.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -8622,26 +8270,26 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          43.75,
-          -43.28
+          43.52,
+          -42.73
         ]
       },
       "properties": {
         "image_name": "Rec14_wcp_ss_port_00009_png_jpg.rf.d7c4975ce6e6f07cf01d32a9033f2a15.jpg",
         "target_id": "tgt-01",
         "class_name": "shipwreck",
-        "confidence_ai": 0.4299,
-        "confidence_final": 0.4299,
+        "confidence_ai": 0.4599,
+        "confidence_final": 0.4599,
         "hazard_risk": "HIGH",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 4.2,
-        "width_m": 3.9,
-        "area_m2": 16.38,
+        "length_m": 4.55,
+        "width_m": 4.05,
+        "area_m2": 18.43,
         "relief_height_m": 0.03,
         "bbox": [
-          549.0,
-          543.0,
+          546.0,
+          536.0,
           640.0,
           640.0
         ],
@@ -8662,20 +8310,84 @@
         "image_name": "Rec14_wcp_ss_port_00009_png_jpg.rf.d7c4975ce6e6f07cf01d32a9033f2a15.jpg",
         "target_id": "tgt-02",
         "class_name": "crab_pot",
-        "confidence_ai": 0.3118,
-        "confidence_final": 0.3118,
+        "confidence_ai": 0.3418,
+        "confidence_final": 0.3418,
+        "hazard_risk": "LOW",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 0.95,
+        "width_m": 0.9,
+        "area_m2": 0.85,
+        "relief_height_m": 0.56,
+        "bbox": [
+          537.0,
+          48.0,
+          579.0,
+          91.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "Rec14_wcp_ss_port_00009_png_jpg.rf.d7c4975ce6e6f07cf01d32a9033f2a15.jpg_tgt-03",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          48.67,
+          39.14
+        ]
+      },
+      "properties": {
+        "image_name": "Rec14_wcp_ss_port_00009_png_jpg.rf.d7c4975ce6e6f07cf01d32a9033f2a15.jpg",
+        "target_id": "tgt-03",
+        "class_name": "crab_pot",
+        "confidence_ai": 0.1958,
+        "confidence_final": 0.1958,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
         "length_m": 0.85,
-        "width_m": 0.8,
-        "area_m2": 0.68,
-        "relief_height_m": 0.56,
+        "width_m": 0.75,
+        "area_m2": 0.64,
+        "relief_height_m": 0.03,
         "bbox": [
-          538.0,
+          612.0,
           49.0,
-          578.0,
+          640.0,
           90.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "Rec14_wcp_ss_port_00009_png_jpg.rf.d7c4975ce6e6f07cf01d32a9033f2a15.jpg_tgt-04",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.5,
+          11.09
+        ]
+      },
+      "properties": {
+        "image_name": "Rec14_wcp_ss_port_00009_png_jpg.rf.d7c4975ce6e6f07cf01d32a9033f2a15.jpg",
+        "target_id": "tgt-04",
+        "class_name": "crab_pot",
+        "confidence_ai": 0.1442,
+        "confidence_final": 0.1442,
+        "hazard_risk": "LOW",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 2.0,
+        "width_m": 2.0,
+        "area_m2": 4.0,
+        "relief_height_m": 6.91,
+        "bbox": [
+          304.0,
+          217.0,
+          368.0,
+          281.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -8686,28 +8398,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -26.8,
-          -8.28
+          -12.89,
+          34.84
         ]
       },
       "properties": {
         "image_name": "Rec14_wcp_ss_port_00010_png_jpg.rf.53ebb13a7cf1411cc92f8389338d5470.jpg",
         "target_id": "tgt-01",
         "class_name": "crab_pot",
-        "confidence_ai": 0.5029,
-        "confidence_final": 0.5029,
+        "confidence_ai": 0.5524,
+        "confidence_final": 0.5524,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 1.6,
-        "width_m": 1.35,
-        "area_m2": 2.16,
-        "relief_height_m": 1.22,
+        "length_m": 1.3,
+        "width_m": 0.85,
+        "area_m2": 1.1,
+        "relief_height_m": 1.68,
         "bbox": [
-          123.0,
-          345.0,
-          174.0,
-          401.0
+          217.0,
+          72.0,
+          258.0,
+          122.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -8718,28 +8430,60 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -12.97,
-          35.0
+          -26.72,
+          -8.28
         ]
       },
       "properties": {
         "image_name": "Rec14_wcp_ss_port_00010_png_jpg.rf.53ebb13a7cf1411cc92f8389338d5470.jpg",
         "target_id": "tgt-02",
         "class_name": "crab_pot",
-        "confidence_ai": 0.2346,
-        "confidence_final": 0.2346,
+        "confidence_ai": 0.5329,
+        "confidence_final": 0.5329,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 1.3,
-        "width_m": 0.8,
-        "area_m2": 1.04,
-        "relief_height_m": 1.62,
+        "length_m": 1.6,
+        "width_m": 1.4,
+        "area_m2": 2.24,
+        "relief_height_m": 1.19,
         "bbox": [
-          217.0,
-          71.0,
-          257.0,
-          121.0
+          123.0,
+          345.0,
+          175.0,
+          401.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "Rec14_wcp_ss_port_00010_png_jpg.rf.53ebb13a7cf1411cc92f8389338d5470.jpg_tgt-03",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.09,
+          -8.83
+        ]
+      },
+      "properties": {
+        "image_name": "Rec14_wcp_ss_port_00010_png_jpg.rf.53ebb13a7cf1411cc92f8389338d5470.jpg",
+        "target_id": "tgt-03",
+        "class_name": "crab_pot",
+        "confidence_ai": 0.3681,
+        "confidence_final": 0.3681,
+        "hazard_risk": "LOW",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 1.75,
+        "width_m": 1.9,
+        "area_m2": 3.32,
+        "relief_height_m": 2.22,
+        "bbox": [
+          456.0,
+          347.0,
+          518.0,
+          406.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -8750,28 +8494,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -8.91,
-          35.23
+          -37.66,
+          34.38
         ]
       },
       "properties": {
         "image_name": "Rec14_wcp_ss_port_00011_png_jpg.rf.248bef1091991fdade425133597b2927.jpg",
         "target_id": "tgt-01",
         "class_name": "crab_pot",
-        "confidence_ai": 0.2981,
-        "confidence_final": 0.2981,
+        "confidence_ai": 0.4124,
+        "confidence_final": 0.4124,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 3.45,
-        "width_m": 2.6,
-        "area_m2": 8.97,
-        "relief_height_m": 2.44,
+        "length_m": 0.8,
+        "width_m": 0.6,
+        "area_m2": 0.48,
+        "relief_height_m": 0.23,
         "bbox": [
-          225.0,
-          48.0,
-          301.0,
-          141.0
+          61.0,
+          80.0,
+          97.0,
+          120.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -8782,28 +8526,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -37.73,
-          34.38
+          -8.67,
+          38.12
         ]
       },
       "properties": {
         "image_name": "Rec14_wcp_ss_port_00011_png_jpg.rf.248bef1091991fdade425133597b2927.jpg",
         "target_id": "tgt-02",
         "class_name": "crab_pot",
-        "confidence_ai": 0.2826,
-        "confidence_final": 0.2826,
+        "confidence_ai": 0.4058,
+        "confidence_final": 0.4058,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 0.7,
-        "width_m": 0.55,
-        "area_m2": 0.39,
-        "relief_height_m": 0.19,
+        "length_m": 1.0,
+        "width_m": 0.75,
+        "area_m2": 0.75,
+        "relief_height_m": 0.77,
         "bbox": [
-          61.0,
-          81.0,
-          96.0,
-          119.0
+          245.0,
+          54.0,
+          284.0,
+          98.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -8814,28 +8558,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -37.89,
-          31.48
+          -8.98,
+          35.7
         ]
       },
       "properties": {
         "image_name": "Rec14_wcp_ss_port_00011_png_jpg.rf.248bef1091991fdade425133597b2927.jpg",
         "target_id": "tgt-03",
         "class_name": "crab_pot",
-        "confidence_ai": 0.2569,
-        "confidence_final": 0.2569,
+        "confidence_ai": 0.3281,
+        "confidence_final": 0.3281,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
         "length_m": 3.05,
-        "width_m": 2.15,
-        "area_m2": 6.56,
-        "relief_height_m": 0.47,
+        "width_m": 2.45,
+        "area_m2": 7.47,
+        "relief_height_m": 2.48,
         "bbox": [
-          44.0,
-          76.0,
-          111.0,
-          161.0
+          226.0,
+          49.0,
+          299.0,
+          134.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -8846,28 +8590,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -47.58,
-          31.25
+          -47.89,
+          31.72
         ]
       },
       "properties": {
         "image_name": "Rec14_wcp_ss_port_00011_png_jpg.rf.248bef1091991fdade425133597b2927.jpg",
         "target_id": "tgt-04",
         "class_name": "crab_pot",
-        "confidence_ai": 0.2522,
-        "confidence_final": 0.2522,
+        "confidence_ai": 0.3122,
+        "confidence_final": 0.3122,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 3.2,
-        "width_m": 1.55,
-        "area_m2": 4.96,
+        "length_m": 2.9,
+        "width_m": 1.35,
+        "area_m2": 3.92,
         "relief_height_m": 0.5,
         "bbox": [
           0.0,
           76.0,
-          43.0,
-          164.0
+          39.0,
+          158.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -8878,13 +8622,77 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          -48.67,
+          33.98
+        ]
+      },
+      "properties": {
+        "image_name": "Rec14_wcp_ss_port_00011_png_jpg.rf.248bef1091991fdade425133597b2927.jpg",
+        "target_id": "tgt-05",
+        "class_name": "crab_pot",
+        "confidence_ai": 0.2921,
+        "confidence_final": 0.2921,
+        "hazard_risk": "LOW",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 1.05,
+        "width_m": 0.75,
+        "area_m2": 0.79,
+        "relief_height_m": 0.03,
+        "bbox": [
+          0.0,
+          80.0,
+          28.0,
+          125.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "Rec14_wcp_ss_port_00011_png_jpg.rf.248bef1091991fdade425133597b2927.jpg_tgt-06",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -37.81,
+          32.03
+        ]
+      },
+      "properties": {
+        "image_name": "Rec14_wcp_ss_port_00011_png_jpg.rf.248bef1091991fdade425133597b2927.jpg",
+        "target_id": "tgt-06",
+        "class_name": "crab_pot",
+        "confidence_ai": 0.2869,
+        "confidence_final": 0.2869,
+        "hazard_risk": "LOW",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 2.7,
+        "width_m": 2.0,
+        "area_m2": 5.4,
+        "relief_height_m": 0.19,
+        "bbox": [
+          46.0,
+          76.0,
+          110.0,
+          154.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "Rec14_wcp_ss_port_00011_png_jpg.rf.248bef1091991fdade425133597b2927.jpg_tgt-07",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           -4.38,
           3.44
         ]
       },
       "properties": {
         "image_name": "Rec14_wcp_ss_port_00011_png_jpg.rf.248bef1091991fdade425133597b2927.jpg",
-        "target_id": "tgt-05",
+        "target_id": "tgt-07",
         "class_name": "crab_pot",
         "confidence_ai": 0.2018,
         "confidence_final": 0.2018,
@@ -8910,7 +8718,7 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -37.73,
+          -37.66,
           34.38
         ]
       },
@@ -8918,20 +8726,20 @@
         "image_name": "Rec14_wcp_ss_port_00011_png_jpg.rf.4bb7317a94cdabcc589f17ea8fc5055f.jpg",
         "target_id": "tgt-01",
         "class_name": "crab_pot",
-        "confidence_ai": 0.3058,
-        "confidence_final": 0.3058,
+        "confidence_ai": 0.4051,
+        "confidence_final": 0.4051,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 0.7,
-        "width_m": 0.55,
-        "area_m2": 0.39,
+        "length_m": 0.8,
+        "width_m": 0.6,
+        "area_m2": 0.48,
         "relief_height_m": 0.19,
         "bbox": [
           61.0,
-          81.0,
-          96.0,
-          119.0
+          80.0,
+          97.0,
+          120.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -8942,28 +8750,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -8.91,
-          35.16
+          -8.67,
+          38.12
         ]
       },
       "properties": {
         "image_name": "Rec14_wcp_ss_port_00011_png_jpg.rf.4bb7317a94cdabcc589f17ea8fc5055f.jpg",
         "target_id": "tgt-02",
         "class_name": "crab_pot",
-        "confidence_ai": 0.2555,
-        "confidence_final": 0.2555,
+        "confidence_ai": 0.4012,
+        "confidence_final": 0.4012,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 3.5,
-        "width_m": 2.6,
-        "area_m2": 9.1,
-        "relief_height_m": 2.23,
+        "length_m": 1.0,
+        "width_m": 0.75,
+        "area_m2": 0.75,
+        "relief_height_m": 0.89,
         "bbox": [
-          225.0,
-          48.0,
-          301.0,
-          142.0
+          245.0,
+          54.0,
+          284.0,
+          98.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -8974,28 +8782,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -47.58,
-          31.25
+          -48.67,
+          34.06
         ]
       },
       "properties": {
         "image_name": "Rec14_wcp_ss_port_00011_png_jpg.rf.4bb7317a94cdabcc589f17ea8fc5055f.jpg",
         "target_id": "tgt-03",
         "class_name": "crab_pot",
-        "confidence_ai": 0.2235,
-        "confidence_final": 0.2235,
+        "confidence_ai": 0.3233,
+        "confidence_final": 0.3233,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 3.2,
-        "width_m": 1.55,
-        "area_m2": 4.96,
-        "relief_height_m": 0.5,
+        "length_m": 1.1,
+        "width_m": 0.75,
+        "area_m2": 0.83,
+        "relief_height_m": 0.3,
         "bbox": [
           0.0,
-          76.0,
-          43.0,
-          164.0
+          79.0,
+          28.0,
+          125.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -9006,13 +8814,77 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          -47.89,
+          31.8
+        ]
+      },
+      "properties": {
+        "image_name": "Rec14_wcp_ss_port_00011_png_jpg.rf.4bb7317a94cdabcc589f17ea8fc5055f.jpg",
+        "target_id": "tgt-04",
+        "class_name": "crab_pot",
+        "confidence_ai": 0.3016,
+        "confidence_final": 0.3016,
+        "hazard_risk": "LOW",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 2.85,
+        "width_m": 1.35,
+        "area_m2": 3.85,
+        "relief_height_m": 0.5,
+        "bbox": [
+          0.0,
+          76.0,
+          39.0,
+          157.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "Rec14_wcp_ss_port_00011_png_jpg.rf.4bb7317a94cdabcc589f17ea8fc5055f.jpg_tgt-05",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.91,
+          35.62
+        ]
+      },
+      "properties": {
+        "image_name": "Rec14_wcp_ss_port_00011_png_jpg.rf.4bb7317a94cdabcc589f17ea8fc5055f.jpg",
+        "target_id": "tgt-05",
+        "class_name": "crab_pot",
+        "confidence_ai": 0.2855,
+        "confidence_final": 0.2855,
+        "hazard_risk": "LOW",
+        "shadow_evidence": "NEUTRAL",
+        "review_status": "UNVERIFIED",
+        "length_m": 3.1,
+        "width_m": 2.4,
+        "area_m2": 7.44,
+        "relief_height_m": 2.51,
+        "bbox": [
+          227.0,
+          49.0,
+          299.0,
+          135.0
+        ],
+        "coordinate_frame": "LOCAL_TRACK_METRIC"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "Rec14_wcp_ss_port_00011_png_jpg.rf.4bb7317a94cdabcc589f17ea8fc5055f.jpg_tgt-06",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           -37.89,
           31.48
         ]
       },
       "properties": {
         "image_name": "Rec14_wcp_ss_port_00011_png_jpg.rf.4bb7317a94cdabcc589f17ea8fc5055f.jpg",
-        "target_id": "tgt-04",
+        "target_id": "tgt-06",
         "class_name": "crab_pot",
         "confidence_ai": 0.2193,
         "confidence_final": 0.2193,
@@ -9034,32 +8906,32 @@
     },
     {
       "type": "Feature",
-      "id": "Rec14_wcp_ss_port_00011_png_jpg.rf.4bb7317a94cdabcc589f17ea8fc5055f.jpg_tgt-05",
+      "id": "Rec14_wcp_ss_port_00011_png_jpg.rf.4bb7317a94cdabcc589f17ea8fc5055f.jpg_tgt-07",
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -8.91,
-          38.12
+          -4.38,
+          3.52
         ]
       },
       "properties": {
         "image_name": "Rec14_wcp_ss_port_00011_png_jpg.rf.4bb7317a94cdabcc589f17ea8fc5055f.jpg",
-        "target_id": "tgt-05",
+        "target_id": "tgt-07",
         "class_name": "crab_pot",
-        "confidence_ai": 0.1902,
-        "confidence_final": 0.1902,
+        "confidence_ai": 0.1674,
+        "confidence_final": 0.1674,
         "hazard_risk": "LOW",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 1.0,
-        "width_m": 0.7,
-        "area_m2": 0.7,
-        "relief_height_m": 0.76,
+        "length_m": 2.15,
+        "width_m": 1.7,
+        "area_m2": 3.65,
+        "relief_height_m": 4.97,
         "bbox": [
-          244.0,
-          54.0,
-          282.0,
-          98.0
+          263.0,
+          264.0,
+          321.0,
+          331.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -10094,7 +9966,7 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          27.19,
+          27.11,
           20.08
         ]
       },
@@ -10102,19 +9974,19 @@
         "image_name": "synth_ghost_net_00009.png",
         "target_id": "tgt-01",
         "class_name": "ghost_net",
-        "confidence_ai": 0.9242,
-        "confidence_final": 0.9242,
+        "confidence_ai": 0.9633,
+        "confidence_final": 0.9633,
         "hazard_risk": "MEDIUM",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
         "length_m": 5.05,
-        "width_m": 8.2,
-        "area_m2": 41.41,
-        "relief_height_m": 2.15,
+        "width_m": 8.35,
+        "area_m2": 42.17,
+        "relief_height_m": 2.14,
         "bbox": [
-          399.0,
+          397.0,
           129.0,
-          589.0,
+          590.0,
           254.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
@@ -10127,27 +9999,27 @@
         "type": "Point",
         "coordinates": [
           -28.05,
-          26.48
+          26.33
         ]
       },
       "properties": {
         "image_name": "synth_ghost_net_00010.png",
         "target_id": "tgt-01",
         "class_name": "ghost_net",
-        "confidence_ai": 0.9146,
-        "confidence_final": 0.9146,
+        "confidence_ai": 0.9595,
+        "confidence_final": 0.9595,
         "hazard_risk": "MEDIUM",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
         "length_m": 6.35,
-        "width_m": 4.45,
-        "area_m2": 28.26,
-        "relief_height_m": 0.87,
+        "width_m": 4.35,
+        "area_m2": 27.62,
+        "relief_height_m": 0.91,
         "bbox": [
-          84.0,
-          75.0,
-          197.0,
-          226.0
+          85.0,
+          76.0,
+          196.0,
+          227.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -10158,27 +10030,27 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -23.52,
-          -14.84
+          -23.44,
+          -14.92
         ]
       },
       "properties": {
         "image_name": "synth_ghost_net_00011.png",
         "target_id": "tgt-01",
         "class_name": "ghost_net",
-        "confidence_ai": 0.9207,
-        "confidence_final": 0.9207,
+        "confidence_ai": 0.9634,
+        "confidence_final": 0.9634,
         "hazard_risk": "MEDIUM",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 5.6,
-        "width_m": 4.45,
-        "area_m2": 24.92,
+        "length_m": 5.55,
+        "width_m": 4.5,
+        "area_m2": 24.97,
         "relief_height_m": 1.14,
         "bbox": [
           113.0,
-          347.0,
-          226.0,
+          348.0,
+          227.0,
           483.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
@@ -10190,7 +10062,7 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          2.66,
+          2.73,
           2.89
         ]
       },
@@ -10198,19 +10070,19 @@
         "image_name": "synth_ghost_net_00012.png",
         "target_id": "tgt-01",
         "class_name": "ghost_net",
-        "confidence_ai": 0.9425,
-        "confidence_final": 0.9425,
+        "confidence_ai": 0.9725,
+        "confidence_final": 0.9725,
         "hazard_risk": "MEDIUM",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
         "length_m": 5.75,
-        "width_m": 7.4,
-        "area_m2": 42.55,
-        "relief_height_m": 5.11,
+        "width_m": 7.45,
+        "area_m2": 42.84,
+        "relief_height_m": 5.04,
         "bbox": [
           251.0,
           232.0,
-          423.0,
+          424.0,
           371.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
@@ -10222,28 +10094,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          12.5,
-          25.62
+          12.58,
+          25.47
         ]
       },
       "properties": {
         "image_name": "synth_ghost_net_00013.png",
         "target_id": "tgt-01",
         "class_name": "ghost_net",
-        "confidence_ai": 0.8986,
-        "confidence_final": 0.8986,
+        "confidence_ai": 0.9409,
+        "confidence_final": 0.9409,
         "hazard_risk": "MEDIUM",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
         "length_m": 6.4,
-        "width_m": 6.3,
-        "area_m2": 40.32,
-        "relief_height_m": 4.58,
+        "width_m": 6.35,
+        "area_m2": 40.64,
+        "relief_height_m": 4.56,
         "bbox": [
           325.0,
-          80.0,
-          475.0,
-          232.0
+          81.0,
+          476.0,
+          233.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -10262,8 +10134,8 @@
         "image_name": "synth_ghost_net_00014.png",
         "target_id": "tgt-01",
         "class_name": "ghost_net",
-        "confidence_ai": 0.9267,
-        "confidence_final": 0.9267,
+        "confidence_ai": 0.9567,
+        "confidence_final": 0.9567,
         "hazard_risk": "MEDIUM",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
@@ -10286,28 +10158,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          14.84,
-          -17.66
+          14.92,
+          -17.81
         ]
       },
       "properties": {
         "image_name": "synth_ghost_net_00015.png",
         "target_id": "tgt-01",
         "class_name": "ghost_net",
-        "confidence_ai": 0.9397,
-        "confidence_final": 0.9397,
+        "confidence_ai": 0.972,
+        "confidence_final": 0.972,
         "hazard_risk": "MEDIUM",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
         "length_m": 10.1,
-        "width_m": 7.7,
-        "area_m2": 77.77,
+        "width_m": 7.65,
+        "area_m2": 77.27,
         "relief_height_m": 2.53,
         "bbox": [
-          326.0,
-          316.0,
+          327.0,
+          317.0,
           504.0,
-          550.0
+          551.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -10326,8 +10198,8 @@
         "image_name": "synth_ghost_net_00021.png",
         "target_id": "tgt-01",
         "class_name": "ghost_net",
-        "confidence_ai": 0.9191,
-        "confidence_final": 0.9191,
+        "confidence_ai": 0.9491,
+        "confidence_final": 0.9491,
         "hazard_risk": "MEDIUM",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
@@ -10350,7 +10222,7 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -42.11,
+          -42.03,
           48.83
         ]
       },
@@ -10358,17 +10230,17 @@
         "image_name": "synth_ghost_net_00021.png",
         "target_id": "tgt-02",
         "class_name": "shipwreck",
-        "confidence_ai": 0.355,
-        "confidence_final": 0.475,
+        "confidence_ai": 0.4489,
+        "confidence_final": 0.5689,
         "hazard_risk": "HIGH",
         "shadow_evidence": "SUPPORTING",
         "review_status": "VERIFIED_3D",
         "length_m": 0.75,
-        "width_m": 1.25,
-        "area_m2": 0.94,
-        "relief_height_m": 0.99,
+        "width_m": 1.2,
+        "area_m2": 0.9,
+        "relief_height_m": 1.01,
         "bbox": [
-          26.0,
+          27.0,
           0.0,
           75.0,
           27.0
@@ -10382,7 +10254,7 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -2.97,
+          -2.89,
           13.75
         ]
       },
@@ -10390,19 +10262,19 @@
         "image_name": "synth_ghost_net_00029.png",
         "target_id": "tgt-01",
         "class_name": "ghost_net",
-        "confidence_ai": 0.9457,
-        "confidence_final": 0.9457,
+        "confidence_ai": 0.9759,
+        "confidence_final": 0.9759,
         "hazard_risk": "MEDIUM",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
         "length_m": 10.9,
-        "width_m": 8.1,
-        "area_m2": 88.29,
+        "width_m": 8.15,
+        "area_m2": 88.84,
         "relief_height_m": 5.8,
         "bbox": [
-          208.0,
+          207.0,
           106.0,
-          394.0,
+          396.0,
           358.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
@@ -10422,8 +10294,8 @@
         "image_name": "synth_ghost_net_00030.png",
         "target_id": "tgt-01",
         "class_name": "ghost_net",
-        "confidence_ai": 0.9247,
-        "confidence_final": 0.9247,
+        "confidence_ai": 0.9547,
+        "confidence_final": 0.9547,
         "hazard_risk": "MEDIUM",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
@@ -10446,7 +10318,7 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          22.58,
+          22.66,
           10.86
         ]
       },
@@ -10454,19 +10326,19 @@
         "image_name": "synth_ghost_net_00033.png",
         "target_id": "tgt-01",
         "class_name": "ghost_net",
-        "confidence_ai": 0.9282,
-        "confidence_final": 0.9282,
+        "confidence_ai": 0.9582,
+        "confidence_final": 0.9582,
         "hazard_risk": "MEDIUM",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
         "length_m": 5.35,
-        "width_m": 9.45,
-        "area_m2": 50.56,
-        "relief_height_m": 1.26,
+        "width_m": 9.5,
+        "area_m2": 50.82,
+        "relief_height_m": 1.22,
         "bbox": [
           355.0,
           185.0,
-          574.0,
+          575.0,
           316.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
@@ -10478,7 +10350,7 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.94,
+          11.02,
           10.31
         ]
       },
@@ -10486,20 +10358,20 @@
         "image_name": "synth_ghost_net_00037.png",
         "target_id": "tgt-01",
         "class_name": "ghost_net",
-        "confidence_ai": 0.9153,
-        "confidence_final": 0.9153,
+        "confidence_ai": 0.9472,
+        "confidence_final": 0.9472,
         "hazard_risk": "MEDIUM",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
-        "length_m": 8.7,
-        "width_m": 4.1,
-        "area_m2": 35.67,
-        "relief_height_m": 5.54,
+        "length_m": 8.6,
+        "width_m": 4.15,
+        "area_m2": 35.69,
+        "relief_height_m": 5.53,
         "bbox": [
           337.0,
-          154.0,
-          443.0,
-          354.0
+          155.0,
+          444.0,
+          353.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }
@@ -10518,8 +10390,8 @@
         "image_name": "synth_ghost_net_00046.png",
         "target_id": "tgt-01",
         "class_name": "ghost_net",
-        "confidence_ai": 0.9251,
-        "confidence_final": 0.9251,
+        "confidence_ai": 0.9551,
+        "confidence_final": 0.9551,
         "hazard_risk": "MEDIUM",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
@@ -10542,28 +10414,28 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          24.69,
-          -11.25
+          24.84,
+          -11.09
         ]
       },
       "properties": {
         "image_name": "synth_ghost_net_00055.png",
         "target_id": "tgt-01",
         "class_name": "ghost_net",
-        "confidence_ai": 0.9247,
-        "confidence_final": 0.9247,
+        "confidence_ai": 0.9601,
+        "confidence_final": 0.9601,
         "hazard_risk": "MEDIUM",
         "shadow_evidence": "NEUTRAL",
         "review_status": "UNVERIFIED",
         "length_m": 8.3,
         "width_m": 9.1,
         "area_m2": 75.53,
-        "relief_height_m": 2.43,
+        "relief_height_m": 2.4,
         "bbox": [
-          373.0,
-          296.0,
-          583.0,
-          488.0
+          374.0,
+          295.0,
+          584.0,
+          487.0
         ],
         "coordinate_frame": "LOCAL_TRACK_METRIC"
       }

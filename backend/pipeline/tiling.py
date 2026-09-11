@@ -74,33 +74,80 @@ def map_detections_to_global(
     return global_dets
 
 
+def apply_weighted_box_fusion(
+    detections: List[Dict[str, Any]],
+    iou_threshold: float = 0.45
+) -> List[Dict[str, Any]]:
+    """
+    Applies Weighted Box Fusion (WBF) across multi-pass, multi-tile, and TTA detections.
+    Fuses spatial coordinates weighted by AI confidence and boosts consensus scores.
+    """
+    if not detections:
+        return []
+
+    # Sort descending by AI confidence
+    sorted_dets = sorted(detections, key=lambda x: x.get("confidence_ai", 0.0), reverse=True)
+    clusters: List[List[Dict[str, Any]]] = []
+
+    for det in sorted_dets:
+        matched = False
+        for cluster in clusters:
+            # Check overlap with cluster representative (first/highest conf detection)
+            rep = cluster[0]
+            # Prioritize matching same class, or allow compatible general overlap
+            same_class = (det.get("class_id") == rep.get("class_id"))
+            iou = _compute_iou(det, rep)
+
+            if (same_class and iou >= iou_threshold) or (iou >= max(0.60, iou_threshold + 0.15)):
+                cluster.append(det)
+                matched = True
+                break
+
+        if not matched:
+            clusters.append([det])
+
+    fused_results = []
+    for cluster in clusters:
+        if len(cluster) == 1:
+            fused_results.append(cluster[0])
+            continue
+
+        # Weighted spatial coordinate fusion
+        weights = [max(0.1, d.get("confidence_ai", 0.5)) for d in cluster]
+        total_w = sum(weights)
+
+        fused_xmin = sum(d["x_min"] * w for d, w in zip(cluster, weights)) / total_w
+        fused_ymin = sum(d["y_min"] * w for d, w in zip(cluster, weights)) / total_w
+        fused_xmax = sum(d["x_max"] * w for d, w in zip(cluster, weights)) / total_w
+        fused_ymax = sum(d["y_max"] * w for d, w in zip(cluster, weights)) / total_w
+
+        # Take primary class from highest confidence candidate in cluster
+        best_candidate = cluster[0]
+        max_conf = best_candidate.get("confidence_ai", 0.75)
+        # Consensus boost: multi-pass agreement increases detection certainty
+        consensus_bonus = min(0.10, 0.03 * (len(cluster) - 1))
+        fused_conf = min(0.99, max_conf + consensus_bonus)
+
+        fused_item = dict(best_candidate)
+        fused_item["x_min"] = int(round(fused_xmin))
+        fused_item["y_min"] = int(round(fused_ymin))
+        fused_item["x_max"] = int(round(fused_xmax))
+        fused_item["y_max"] = int(round(fused_ymax))
+        fused_item["confidence_ai"] = round(fused_conf, 4)
+
+        fused_results.append(fused_item)
+
+    return fused_results
+
+
 def apply_cross_tile_nms(
     detections: List[Dict[str, Any]],
     iou_threshold: float = 0.45
 ) -> List[Dict[str, Any]]:
     """
-    Applies Cross-Tile Non-Maximum Suppression across merged detections.
+    Applies Weighted Box Fusion across multi-scale / multi-tile detections.
     """
-    if not detections:
-        return []
-
-    # Sort descending by confidence
-    sorted_dets = sorted(detections, key=lambda x: x.get("confidence_ai", 0.0), reverse=True)
-    kept = []
-
-    while sorted_dets:
-        current = sorted_dets.pop(0)
-        kept.append(current)
-
-        remaining = []
-        for other in sorted_dets:
-            # Same class or general overlap
-            iou = _compute_iou(current, other)
-            if iou < iou_threshold:
-                remaining.append(other)
-        sorted_dets = remaining
-
-    return kept
+    return apply_weighted_box_fusion(detections, iou_threshold=iou_threshold)
 
 
 def _compute_iou(d1: Dict[str, Any], d2: Dict[str, Any]) -> float:

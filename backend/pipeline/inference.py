@@ -110,96 +110,150 @@ class AdaptiveInferenceEngine:
         filter_distractors: bool = False
     ) -> List[Dict[str, Any]]:
         """
-        Runs YOLO inference on an image / tile and returns candidate detections.
+        Runs multi-pass YOLO inference with Port/Starboard Acoustic Symmetry TTA
+        and Weighted Box Fusion to unlock maximum detection potential.
         """
         h, w = tile.shape[:2]
-        detections = []
+        all_pass_detections: List[Dict[str, Any]] = []
 
         if self.model_loaded and self.model is not None:
             try:
-                # Use slightly more permissive threshold for YOLO candidate generation so shadow gating can evaluate
-                eval_conf = max(0.12, confidence_threshold * 0.75)
-                results = self.model.predict(
+                eval_conf = max(0.10, confidence_threshold * 0.70)
+
+                # --- PASS 1: Direct Neural Scan ---
+                results_direct = self.model.predict(
                     source=tile,
                     conf=eval_conf,
                     device=self.device,
                     verbose=False,
                     imgsz=640
                 )
-                for r in results:
-                    boxes = r.boxes
-                    masks = getattr(r, "masks", None)
+                self._parse_yolo_results(
+                    results=results_direct,
+                    tile_w=w,
+                    tile_h=h,
+                    is_flipped=False,
+                    filter_distractors=filter_distractors,
+                    out_list=all_pass_detections
+                )
 
-                    for i, box in enumerate(boxes):
-                        raw_cls_id = int(box.cls[0].item())
-                        conf = float(box.conf[0].item())
-                        xyxy = box.xyxy[0].cpu().numpy()
-                        x_min, y_min, x_max, y_max = [int(v) for v in xyxy]
+                # --- PASS 2: Port/Starboard Acoustic Symmetry TTA (Horizontal Flip) ---
+                tile_flipped = cv2.flip(tile, 1)
+                results_flip = self.model.predict(
+                    source=tile_flipped,
+                    conf=eval_conf,
+                    device=self.device,
+                    verbose=False,
+                    imgsz=640
+                )
+                self._parse_yolo_results(
+                    results=results_flip,
+                    tile_w=w,
+                    tile_h=h,
+                    is_flipped=True,
+                    filter_distractors=filter_distractors,
+                    out_list=all_pass_detections
+                )
 
-                        # Clamp to tile boundary
-                        x_min, y_min = max(0, x_min), max(0, y_min)
-                        x_max, y_max = min(w, x_max), min(h, y_max)
+                if all_pass_detections:
+                    from .tiling import apply_weighted_box_fusion
+                    fused = apply_weighted_box_fusion(all_pass_detections, iou_threshold=0.45)
+                    return fused
 
-                        if (x_max - x_min) < 6 or (y_max - y_min) < 6:
-                            continue
-
-                        # Extract class name from model names dictionary or fallback
-                        if hasattr(self.model, "names") and isinstance(self.model.names, dict):
-                            class_name = self.model.names.get(raw_cls_id, CLASS_LABELS.get(raw_cls_id, "mine_cylinder"))
-                            canonical_cls_id = raw_cls_id
-                        elif raw_cls_id in CLASS_LABELS:
-                            canonical_cls_id = raw_cls_id
-                            class_name = CLASS_LABELS[canonical_cls_id]
-                        else:
-                            # Heuristic geometry mapping for out-of-domain generic classes
-                            bw = max(1, x_max - x_min)
-                            bh = max(1, y_max - y_min)
-                            aspect = float(bw) / bh
-                            area = bw * bh
-                            if aspect > 2.2 or aspect < 0.45:
-                                canonical_cls_id = 1  # submarine_pipeline
-                            elif area > 5000:
-                                canonical_cls_id = 2  # shipwreck
-                            elif area < 450 and 0.6 <= aspect <= 1.6:
-                                canonical_cls_id = 0  # crab_pot
-                            elif 450 <= area <= 3000 and 0.5 <= aspect <= 2.0:
-                                canonical_cls_id = 4  # mine_cylinder
-                            else:
-                                canonical_cls_id = 3  # ghost_net
-                            class_name = CLASS_LABELS[canonical_cls_id]
-
-                        if filter_distractors and canonical_cls_id == 0:
-                            continue
-
-                        # Extract segmentation polygon if present, else 4 corners
-                        polygon = []
-                        if masks is not None and i < len(masks):
-                            poly_xy = masks[i].xy[0]
-                            polygon = poly_xy.flatten().tolist()
-                        else:
-                            polygon = [x_min, y_min, x_max, y_min, x_max, y_max, x_min, y_max]
-
-                        frontend_class = FRONTEND_CLASS_MAP.get(class_name, class_name)
-
-                        detections.append({
-                            "class_id": canonical_cls_id,
-                            "class_name": class_name,
-                            "target_class": frontend_class,
-                            "confidence_ai": round(conf, 4),
-                            "x_min": x_min,
-                            "y_min": y_min,
-                            "x_max": x_max,
-                            "y_max": y_max,
-                            "polygon": polygon
-                        })
-
-                if detections:
-                    return detections
             except Exception as e:
                 print(f"[AI ERROR] YOLO tile inference exception: {e}")
 
         # Deterministic Acoustic Anomaly Detector Fallback
         return self._heuristic_sonar_detector(tile, confidence_threshold)
+
+    def _parse_yolo_results(
+        self,
+        results: Any,
+        tile_w: int,
+        tile_h: int,
+        is_flipped: bool,
+        filter_distractors: bool,
+        out_list: List[Dict[str, Any]]
+    ):
+        """
+        Parses YOLO bounding boxes/masks and maps symmetry coordinates.
+        """
+        for r in results:
+            boxes = r.boxes
+            masks = getattr(r, "masks", None)
+
+            for i, box in enumerate(boxes):
+                raw_cls_id = int(box.cls[0].item())
+                conf = float(box.conf[0].item())
+                xyxy = box.xyxy[0].cpu().numpy()
+                x_min, y_min, x_max, y_max = [int(v) for v in xyxy]
+
+                # Remap horizontal flip coordinates if TTA pass
+                if is_flipped:
+                    x_min_orig = tile_w - x_max
+                    x_max_orig = tile_w - x_min
+                    x_min, x_max = max(0, x_min_orig), min(tile_w, x_max_orig)
+                else:
+                    x_min, y_min = max(0, x_min), max(0, y_min)
+                    x_max, y_max = min(tile_w, x_max), min(tile_h, y_max)
+
+                if (x_max - x_min) < 6 or (y_max - y_min) < 6:
+                    continue
+
+                # Extract class name from model names dictionary or fallback
+                if hasattr(self.model, "names") and isinstance(self.model.names, dict):
+                    class_name = self.model.names.get(raw_cls_id, CLASS_LABELS.get(raw_cls_id, "mine_cylinder"))
+                    canonical_cls_id = raw_cls_id
+                elif raw_cls_id in CLASS_LABELS:
+                    canonical_cls_id = raw_cls_id
+                    class_name = CLASS_LABELS[canonical_cls_id]
+                else:
+                    # Heuristic geometry mapping for out-of-domain generic classes
+                    bw = max(1, x_max - x_min)
+                    bh = max(1, y_max - y_min)
+                    aspect = float(bw) / bh
+                    area = bw * bh
+                    if aspect > 2.2 or aspect < 0.45:
+                        canonical_cls_id = 1  # submarine_pipeline
+                    elif area > 5000:
+                        canonical_cls_id = 2  # shipwreck
+                    elif area < 450 and 0.6 <= aspect <= 1.6:
+                        canonical_cls_id = 0  # crab_pot
+                    elif 450 <= area <= 3000 and 0.5 <= aspect <= 2.0:
+                        canonical_cls_id = 4  # mine_cylinder
+                    else:
+                        canonical_cls_id = 3  # ghost_net
+                    class_name = CLASS_LABELS[canonical_cls_id]
+
+                if filter_distractors and canonical_cls_id == 0:
+                    continue
+
+                # Extract segmentation polygon if present, else 4 corners
+                polygon = []
+                if masks is not None and i < len(masks):
+                    poly_xy = masks[i].xy[0]
+                    if is_flipped:
+                        poly_xy_remapped = poly_xy.copy()
+                        poly_xy_remapped[:, 0] = tile_w - poly_xy[:, 0]
+                        polygon = poly_xy_remapped.flatten().tolist()
+                    else:
+                        polygon = poly_xy.flatten().tolist()
+                else:
+                    polygon = [x_min, y_min, x_max, y_min, x_max, y_max, x_min, y_max]
+
+                frontend_class = FRONTEND_CLASS_MAP.get(class_name, class_name)
+
+                out_list.append({
+                    "class_id": canonical_cls_id,
+                    "class_name": class_name,
+                    "target_class": frontend_class,
+                    "confidence_ai": round(conf, 4),
+                    "x_min": x_min,
+                    "y_min": y_min,
+                    "x_max": x_max,
+                    "y_max": y_max,
+                    "polygon": polygon
+                })
 
     def _heuristic_sonar_detector(self, tile: np.ndarray, conf_thresh: float) -> List[Dict[str, Any]]:
         """

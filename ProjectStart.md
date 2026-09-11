@@ -17,10 +17,7 @@ __________________________________________
 ## 📁 Test Script Run
 
 ```bash
-# Normal Run
-python test_run.py --input Test_Data --output outputs --conf 0.25
-
-# Standard run (unprocessed image canvas + 12px padding + GeoJSON/CSV/JSON export)
+# Standard run (Side-by-Side: 1. Original Raw | 2. Preprocessed + AI Detections)
 python test_run.py
 
 # Custom confidence, box padding, and input/output dirs
@@ -29,6 +26,6 @@ python test_run.py --input Test_Data --output outputs --conf 0.25 --pad 12
 # Run with an external navigation GPS log for full WGS84 mapping
 python test_run.py --nav nav_log.csv --altitude 8.5 --swath 120.0
 
-# Save both unprocessed raw and enhanced canvases
+# Save individual raw, enhanced, and side-by-side composite images
 python test_run.py --save-both
 ```

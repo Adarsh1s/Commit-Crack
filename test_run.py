@@ -1,15 +1,16 @@
 """
-Aqua Sentinel — Advanced Sonar Batch Test & Physics Validation Runner
-======================================================================
+Aqua Sentinel — Advanced Sonar Batch Test & Side-by-Side Validation Runner
+==========================================================================
 Processes sonar image surveys through the complete AquaSentinel AI pipeline:
 - Ingests sonar images and auto-detects navigation/telemetry sidecar logs.
 - Evaluates the Graceful Degradation Ladder (FULL, PARTIAL, NONE).
 - Executes DSP enhancements (Slant-Range, CLAHE, Gain Normalization, Nadir Excision).
-- Performs Multi-Scale Tiled + Full-Frame YOLOv8 & heuristic fallback detection.
+- Runs AI tests and multi-scale detections on the PREPROCESSED sonar image.
 - Physics-Informed Acoustic Shadow Gating (highlight-shadow geometry, relief height).
 - Real-world 3D Metric Dimensions & WGS84 Geolocation Projection.
-- Hazard Risk Assessment (CRITICAL, HIGH, MEDIUM, LOW).
-- Renders padded bounding boxes on Unprocessed (Raw) or Enhanced sonar canvases.
+- Hazard Risk Assessment across all 5 Canonical Classes (crab_pot, submarine_pipeline, shipwreck, ghost_net, mine_cylinder).
+- Combines BOTH images in ONE side-by-side composite:
+    [ 1. ORIGINAL RAW SONAR ] | [ 2. PREPROCESSED + AI DETECTIONS ]
 - Exports GIS-ready GeoJSON FeatureCollection, summary CSV, and comprehensive JSON.
 
 Usage:
@@ -174,6 +175,70 @@ def resolve_image_telemetry(
     return "NONE", None
 
 
+def create_side_by_side_comparison(
+    raw_bgr: np.ndarray,
+    processed_annotated_bgr: np.ndarray,
+    target_count: int = 0
+) -> np.ndarray:
+    """
+    Creates a high-contrast side-by-side composite image:
+    [ LEFT: 1. ORIGINAL RAW SONAR ] | [ RIGHT: 2. PREPROCESSED + AI DETECTIONS ]
+    Includes sleek HUD header labels, target count badge, and a clean separating divider.
+    """
+    h_raw, w_raw = raw_bgr.shape[:2]
+    h_proc, w_proc = processed_annotated_bgr.shape[:2]
+
+    # Harmonize heights if slant-range or padding altered dimensions
+    target_h = max(h_raw, h_proc)
+    if h_raw != target_h:
+        w_new = int(w_raw * (target_h / h_raw))
+        raw_bgr = cv2.resize(raw_bgr, (w_new, target_h), interpolation=cv2.INTER_AREA)
+        w_raw = w_new
+    if h_proc != target_h:
+        w_new = int(w_proc * (target_h / h_proc))
+        processed_annotated_bgr = cv2.resize(processed_annotated_bgr, (w_new, target_h), interpolation=cv2.INTER_AREA)
+        w_proc = w_new
+
+    # Header bar height (34px)
+    header_h = 34
+    divider_w = 4
+    total_w = w_raw + w_proc + divider_w
+    total_h = target_h + header_h
+
+    # Create dark HUD canvas (BGR: 16, 20, 24)
+    canvas = np.full((total_h, total_w, 3), (16, 20, 24), dtype=np.uint8)
+
+    # Place left image (Original Raw)
+    canvas[header_h:header_h + target_h, 0:w_raw] = raw_bgr
+
+    # Vertical divider line (Cyan / Electric Blue)
+    div_x = w_raw + (divider_w // 2)
+    cv2.line(canvas, (div_x, 0), (div_x, total_h), (50, 180, 240), 2)
+
+    # Place right image (Preprocessed + AI Detections)
+    canvas[header_h:header_h + target_h, w_raw + divider_w:total_w] = processed_annotated_bgr
+
+    # Render Header HUD Badges
+    font = cv2.FONT_HERSHEY_SIMPLEX
+
+    # Left Badge: "1. ORIGINAL RAW SONAR"
+    cv2.rectangle(canvas, (10, 6), (230, 28), (28, 36, 44), -1)
+    cv2.rectangle(canvas, (10, 6), (230, 28), (60, 80, 100), 1)
+    cv2.putText(canvas, "1. ORIGINAL RAW SONAR", (18, 22), font, 0.46, (210, 225, 240), 1, cv2.LINE_AA)
+
+    # Right Badge: "2. PREPROCESSED + AI DETECTIONS (N targets)"
+    right_x = w_raw + divider_w + 10
+    tgt_suffix = f" ({target_count} target{'s' if target_count != 1 else ''})" if target_count > 0 else " (0 targets)"
+    right_text = f"2. PREPROCESSED + AI DETECTIONS{tgt_suffix}"
+    (tw, th), _ = cv2.getTextSize(right_text, font, 0.46, 1)
+
+    cv2.rectangle(canvas, (right_x, 6), (right_x + tw + 16, 28), (20, 45, 40), -1)
+    cv2.rectangle(canvas, (right_x, 6), (right_x + tw + 16, 28), (0, 200, 150), 1)
+    cv2.putText(canvas, right_text, (right_x + 8, 22), font, 0.46, (0, 240, 180), 1, cv2.LINE_AA)
+
+    return canvas
+
+
 def process_single_image(
     image_path: Path,
     engine: AdaptiveInferenceEngine,
@@ -185,10 +250,11 @@ def process_single_image(
     telemetry_tier: str = "NONE",
     telemetry_data: Optional[Dict[str, float]] = None,
     meters_per_pixel: float = 0.05,
-) -> Tuple[np.ndarray, np.ndarray, List[Dict[str, Any]], Dict[str, Any]]:
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, List[Dict[str, Any]], Dict[str, Any]]:
     """
-    Runs full DSP, multi-scale AI inference, acoustic shadow evidence gating,
-    and geospatial/metric projection on a single sonar image.
+    Runs full DSP preprocessing, multi-scale AI inference on the preprocessed image,
+    acoustic shadow evidence gating, and geospatial/metric projection on a single sonar image.
+    Returns (raw_bgr, annotated_enhanced_bgr, side_by_side_bgr, final_detections, metadata).
     """
     with open(image_path, "rb") as f:
         image_bytes = f.read()
@@ -197,7 +263,7 @@ def process_single_image(
     raw_bgr = norm_input.image_bgr
     img_h, img_w = raw_bgr.shape[:2]
 
-    # Preprocessing for AI detection
+    # 1. DSP Preprocessing for AI detection (Gain Normalization + CLAHE + Slant-Range)
     enhanced_bgr = preprocess_sonar_image(
         raw_bgr,
         remove_water_column=nadir_excision,
@@ -209,7 +275,7 @@ def process_single_image(
     if slant_range:
         enhanced_bgr = apply_slant_range_correction(enhanced_bgr)
 
-    # Multi-Scale Inference: Full-frame + Tiled
+    # 2. Multi-Scale Inference executed ON the PREPROCESSED image
     all_tile_detections = []
     full_frame_dets = engine.predict_tile(
         enhanced_bgr,
@@ -229,7 +295,7 @@ def process_single_image(
             remapped = map_detections_to_global(t_dets, x_off, y_off)
             all_tile_detections.extend(remapped)
 
-    # If enhanced image yielded no detections, try raw image
+    # If enhanced image yielded no detections, try raw image as fallback
     if not all_tile_detections:
         raw_dets = engine.predict_tile(
             raw_bgr,
@@ -245,7 +311,7 @@ def process_single_image(
         fallback_dets = engine._heuristic_sonar_detector(enhanced_bgr, conf_thresh=confidence_threshold)
         merged_detections = fallback_dets
 
-    # Extract platform telemetry parameters
+    # 3. Extract platform telemetry parameters
     vessel_lat = telemetry_data.get("latitude") if telemetry_data else None
     vessel_lon = telemetry_data.get("longitude") if telemetry_data else None
     altitude_m = telemetry_data.get("altitude", 8.0) if telemetry_data else 8.0
@@ -321,10 +387,16 @@ def process_single_image(
             "geolocation": geo_coords,
         })
 
-    # Render annotations directly onto UNPROCESSED (raw) image canvas
-    annotated_raw_bgr = _draw_annotations(raw_bgr, final_detections)
-    # Also render onto enhanced image for dual-output options
+    # 4. Render annotations onto the PREPROCESSED image
     annotated_enhanced_bgr = _draw_annotations(enhanced_bgr, final_detections)
+    annotated_raw_bgr = _draw_annotations(raw_bgr, final_detections)
+
+    # 5. Build Side-by-Side Composite: [ 1. Original Raw ] | [ 2. Preprocessed + Detections ]
+    side_by_side_bgr = create_side_by_side_comparison(
+        raw_bgr=raw_bgr,
+        processed_annotated_bgr=annotated_enhanced_bgr,
+        target_count=len(final_detections)
+    )
 
     metadata = {
         "dimensions": [img_w, img_h],
@@ -332,7 +404,7 @@ def process_single_image(
         "telemetry": telemetry_data,
     }
 
-    return annotated_raw_bgr, annotated_enhanced_bgr, final_detections, metadata
+    return raw_bgr, annotated_enhanced_bgr, side_by_side_bgr, final_detections, metadata
 
 
 def build_geojson_feature_collection(
@@ -407,7 +479,8 @@ def run_batch_test(
     swath_width: float = 100.0,
     heading: float = 0.0,
     save_both: bool = False,
-    use_enhanced: bool = False,
+    only_enhanced: bool = False,
+    only_raw: bool = False,
     export_geojson: bool = True,
     slant_range: bool = True,
     clahe: bool = True,
@@ -441,10 +514,17 @@ def run_batch_test(
         else:
             print(f"⚠️ Navigation file '{nav_file}' not found. Falling back to sidecar/local.")
 
-    mode_label = "Both Raw & Enhanced" if save_both else ("Enhanced" if use_enhanced else "Unprocessed (Raw)")
+    if save_both:
+        mode_label = "Side-by-Side + Raw + Enhanced (All Formats)"
+    elif only_enhanced:
+        mode_label = "Enhanced Only"
+    elif only_raw:
+        mode_label = "Raw Only"
+    else:
+        mode_label = "Side-by-Side Composite (1. Original Raw | 2. Preprocessed + Detections)"
 
     print("=" * 75)
-    print("🌊 Aqua Sentinel — Advanced Sonar Batch Test & Physics Validation Runner")
+    print("🌊 Aqua Sentinel — Advanced Sonar Batch Test & Side-by-Side Runner")
     print("=" * 75)
     print(f"📁 Input Directory:     {input_path}")
     print(f"💾 Output Directory:    {output_path}")
@@ -479,7 +559,7 @@ def run_batch_test(
             )
             tier_counts[tier] = tier_counts.get(tier, 0) + 1
 
-            annotated_raw_img, annotated_enhanced_img, detections, meta = process_single_image(
+            raw_img, annotated_enhanced_img, side_by_side_img, detections, meta = process_single_image(
                 image_path=img_file,
                 engine=engine,
                 confidence_threshold=confidence_threshold,
@@ -495,17 +575,27 @@ def run_batch_test(
             # Ensure output directory exists
             output_path.mkdir(parents=True, exist_ok=True)
 
-            # Save annotated outputs
+            # Save annotated output images
             if save_both:
+                sbs_out_file = output_path / f"annotated_sbs_{img_file.name}"
                 raw_out_file = output_path / f"annotated_raw_{img_file.name}"
                 enh_out_file = output_path / f"annotated_enhanced_{img_file.name}"
-                cv2.imwrite(str(raw_out_file), annotated_raw_img)
+                cv2.imwrite(str(sbs_out_file), side_by_side_img)
+                cv2.imwrite(str(raw_out_file), raw_img)
                 cv2.imwrite(str(enh_out_file), annotated_enhanced_img)
-                primary_out = raw_out_file.name
+                primary_out = sbs_out_file.name
+            elif only_enhanced:
+                out_file = output_path / f"annotated_enhanced_{img_file.name}"
+                cv2.imwrite(str(out_file), annotated_enhanced_img)
+                primary_out = out_file.name
+            elif only_raw:
+                out_file = output_path / f"annotated_raw_{img_file.name}"
+                cv2.imwrite(str(out_file), raw_img)
+                primary_out = out_file.name
             else:
+                # Default: Side-by-Side Comparison Output (1. Original Raw | 2. Preprocessed + Detections)
                 out_file = output_path / f"annotated_{img_file.name}"
-                img_to_save = annotated_enhanced_img if use_enhanced else annotated_raw_img
-                cv2.imwrite(str(out_file), img_to_save)
+                cv2.imwrite(str(out_file), side_by_side_img)
                 primary_out = out_file.name
 
             elapsed = (time.perf_counter() - t0) * 1000
@@ -558,6 +648,7 @@ def run_batch_test(
                 "box_padding_px": padding,
                 "altitude_m": altitude,
                 "swath_width_m": swath_width,
+                "output_mode": mode_label,
             },
             "degradation_distribution": tier_counts,
             "class_distribution": class_counts,
@@ -634,7 +725,7 @@ def run_batch_test(
 
     # Console Summary Presentation
     print("\n" + "=" * 75)
-    print("📊 BATCH INFERENCE & PHYSICS VALIDATION COMPLETE")
+    print("📊 BATCH INFERENCE & SIDE-BY-SIDE COMPOSITING COMPLETE")
     print("=" * 75)
     print(f"⏱️ Total Execution Time: {total_time:.2f}s | Avg Latency: {avg_latency:.1f}ms/img | Throughput: {fps:.1f} FPS")
     print(f"🎯 Total Targets:        {total_detections_count} detections across {total_images} sonar frames")
@@ -658,16 +749,16 @@ def run_batch_test(
         pct = (cnt / max(1, total_detections_count)) * 100
         print(f"   • {ev:<12} : {cnt:3d} ({pct:4.1f}%)")
 
-    print(f"\n✅ Annotated images saved to: {output_path} (Unprocessed Sonar Canvas)")
-    print(f"📄 Summary JSON:              {json_path}")
-    print(f"📄 Summary CSV:               {csv_path}")
+    print(f"\n✅ Side-by-Side Images saved to: {output_path} (1. Original | 2. Preprocessed + Detections)")
+    print(f"📄 Summary JSON:                 {json_path}")
+    print(f"📄 Summary CSV:                  {csv_path}")
     if export_geojson:
-        print(f"🗺️ Summary GeoJSON:           {geojson_path}")
+        print(f"🗺️ Summary GeoJSON:              {geojson_path}")
     print("=" * 75)
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Aqua Sentinel Advanced Sonar Batch Test Runner")
+    parser = argparse.ArgumentParser(description="Aqua Sentinel Advanced Sonar Batch Test Runner (Side-by-Side Output)")
     parser.add_argument("--input", "-i", default="Test_Data", help="Path to input images directory (default: Test_Data)")
     parser.add_argument("--output", "-o", default="outputs", help="Path to output directory (default: outputs)")
     parser.add_argument("--conf", "-c", type=float, default=0.20, help="Confidence threshold (default: 0.20)")
@@ -676,8 +767,9 @@ if __name__ == "__main__":
     parser.add_argument("--altitude", type=float, default=8.0, help="Sonar altitude above seabed in meters (default: 8.0)")
     parser.add_argument("--swath", type=float, default=100.0, help="Sonar swath width in meters (default: 100.0)")
     parser.add_argument("--heading", type=float, default=0.0, help="Platform heading in degrees (default: 0.0)")
-    parser.add_argument("--save-both", action="store_true", help="Save both raw and enhanced annotated images")
-    parser.add_argument("--use-enhanced", action="store_true", help="Draw on enhanced image instead of raw unprocessed image")
+    parser.add_argument("--save-both", action="store_true", help="Save side-by-side, raw, and enhanced images")
+    parser.add_argument("--only-enhanced", action="store_true", help="Save only the enhanced annotated image")
+    parser.add_argument("--only-raw", action="store_true", help="Save only the raw image")
     parser.add_argument("--no-geojson", action="store_true", help="Disable GeoJSON export")
     parser.add_argument("--no-slant", action="store_true", help="Disable Slant-Range Correction")
     parser.add_argument("--no-clahe", action="store_true", help="Disable CLAHE Equalization")
@@ -695,7 +787,8 @@ if __name__ == "__main__":
         swath_width=args.swath,
         heading=args.heading,
         save_both=args.save_both,
-        use_enhanced=args.use_enhanced,
+        only_enhanced=args.only_enhanced,
+        only_raw=args.only_raw,
         export_geojson=not args.no_geojson,
         slant_range=not args.no_slant,
         clahe=not args.no_clahe,
