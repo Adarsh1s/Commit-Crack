@@ -1,0 +1,94 @@
+{
+  "version": "2.0",
+  "model": "yolov8n-uatd-sonar",
+  "source_repository": "https://github.com/ahmad-kaif/UnderWaterObjectDetection",
+  "description": "Maps UATD Underwater Object Detection classes (multibeam sonar) to Aqua Sentinel maritime taxonomy",
+  "dataset": "UATD (Underwater Acoustic Target Detection)",
+  "classes": {
+    "0": {
+      "label": "crab_pot",
+      "display_name": "Cube / Container",
+      "hazard_risk": "LOW",
+      "description": "Submerged rectangular container or acoustic cube target.",
+      "typical_dimensions_m": { "length": 0.8, "width": 0.8, "height": 0.6 },
+      "shadow_signature": "SUPPORTING"
+    },
+    "1": {
+      "label": "mine_cylinder",
+      "display_name": "Cylinder / Pipe",
+      "hazard_risk": "CRITICAL",
+      "description": "Cylindrical objects consistent with seabed pipeline or sea mine profile.",
+      "typical_dimensions_m": { "length": 1.8, "width": 0.6, "height": 0.6 },
+      "shadow_signature": "SUPPORTING"
+    },
+    "2": {
+      "label": "debris_anomaly",
+      "display_name": "Tyre / Round Debris",
+      "hazard_risk": "MEDIUM",
+      "description": "Discarded vehicle tyre or toroidal marine debris.",
+      "typical_dimensions_m": { "length": 0.9, "width": 0.9, "height": 0.3 },
+      "shadow_signature": "NEUTRAL"
+    },
+    "3": {
+      "label": "crab_pot",
+      "display_name": "Ball / Float",
+      "hazard_risk": "LOW",
+      "description": "Spherical mooring buoy or submerged floatation ball.",
+      "typical_dimensions_m": { "length": 0.5, "width": 0.5, "height": 0.5 },
+      "shadow_signature": "SUPPORTING"
+    },
+    "4": {
+      "label": "debris_anomaly",
+      "display_name": "Human Profile",
+      "hazard_risk": "CRITICAL",
+      "description": "Anthropomorphic acoustic silhouette; search & rescue priority target.",
+      "typical_dimensions_m": { "length": 1.8, "width": 0.5, "height": 0.3 },
+      "shadow_signature": "SUPPORTING"
+    },
+    "5": {
+      "label": "ghost_gear",
+      "display_name": "Circle Trap / Cage",
+      "hazard_risk": "MEDIUM",
+      "description": "Circular fishing cage or derelict crab ring.",
+      "typical_dimensions_m": { "length": 1.2, "width": 1.2, "height": 0.5 },
+      "shadow_signature": "NEUTRAL"
+    },
+    "6": {
+      "label": "ghost_gear",
+      "display_name": "Square Cage / Trap",
+      "hazard_risk": "HIGH",
+      "description": "Square commercial fishing cage or abandoned net trap.",
+      "typical_dimensions_m": { "length": 1.5, "width": 1.5, "height": 0.6 },
+      "shadow_signature": "NEUTRAL"
+    },
+    "7": {
+      "label": "debris_anomaly",
+      "display_name": "Metal Bucket / Drum",
+      "hazard_risk": "HIGH",
+      "description": "Submerged oil drum or metallic container hazard.",
+      "typical_dimensions_m": { "length": 0.6, "width": 0.6, "height": 0.8 },
+      "shadow_signature": "SUPPORTING"
+    },
+    "8": {
+      "label": "mine_cylinder",
+      "display_name": "Aircraft Wreckage",
+      "hazard_risk": "CRITICAL",
+      "description": "Aviation fuselage or wing structure wreckage on seabed.",
+      "typical_dimensions_m": { "length": 4.5, "width": 3.0, "height": 1.2 },
+      "shadow_signature": "SUPPORTING"
+    },
+    "9": {
+      "label": "mine_cylinder",
+      "display_name": "Submersible / ROV",
+      "hazard_risk": "HIGH",
+      "description": "Unmanned underwater vehicle or robotic submersible target.",
+      "typical_dimensions_m": { "length": 2.0, "width": 1.2, "height": 0.9 },
+      "shadow_signature": "SUPPORTING"
+    }
+  },
+  "fallback_class": {
+    "label": "debris_anomaly",
+    "hazard_risk": "HIGH"
+  }
+}
+

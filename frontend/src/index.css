@@ -1,0 +1,388 @@
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
+@import '@fontsource/jetbrains-mono/400.css';
+@import '@fontsource/jetbrains-mono/600.css';
+@import 'leaflet/dist/leaflet.css';
+
+@import 'tailwindcss';
+
+/* ─── CSS Custom Properties (Clean Minimalist White Theme) ── */
+:root {
+  --color-bg-void:      #F7F8F4;
+  --color-bg-depth:     #F7F8F4;
+  --color-bg-surface:   #ffffff;
+  --color-bg-elevated:  #F7F8F4;
+  --color-bg-overlay:   #e2e8f0;
+  --color-cyan-dim:     #0284c7;
+  --color-cyan-mid:     #0284c7;
+  --color-cyan-bright:  #0284c7;
+  --color-cyan-glow:    #38bdf8;
+  --color-green-mid:    #10b981;
+  --color-green-bright: #059669;
+  --color-amber-mid:    #d97706;
+  --color-amber-bright: #b45309;
+  --color-red-mid:      #dc2626;
+  --color-red-bright:   #b91c1c;
+  --color-text-primary:   #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted:     #94a3b8;
+  --color-border-subtle:  #e2e8f0;
+  --color-border-default: #cbd5e1;
+  --color-border-focus:   #0f172a;
+  --transition-fast: 100ms ease;
+  --transition-base: 200ms ease;
+  --transition-slow: 350ms ease;
+  --transition-spring: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ─── Reset & Base ───────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #F7F8F4;
+  color: #0f172a;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button, [role="button"], a, input[type="range"], input[type="checkbox"], label {
+  cursor: pointer;
+}
+
+/* ─── Scrollbars (Minimalist Light) ───────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* ─── Focus rings ────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid #0f172a;
+  outline-offset: 2px;
+}
+
+/* ─── Selection ──────────────────────────────────────── */
+::selection { background: rgba(15, 23, 42, 0.12); color: #0f172a; }
+
+/* ─── Typography helpers ─────────────────────────────── */
+.text-mono { font-family: 'JetBrains Mono', monospace; }
+.text-display { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; color: #0f172a; }
+.text-heading { font-size: 1.125rem; font-weight: 700; letter-spacing: -0.01em; color: #0f172a; }
+.text-label { font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #64748b; font-family: 'JetBrains Mono', monospace; }
+.text-kpi { font-size: 2.25rem; font-weight: 800; letter-spacing: -0.03em; color: #0f172a; font-family: 'JetBrains Mono', monospace; }
+
+/* ─── Minimalist White Panel base ─────────────────────── */
+.panel {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+.panel-elevated {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+/* ─── Modern Clean Badge ──────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.65rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.badge-low      { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+.badge-medium   { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+.badge-high     { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+.badge-critical { background: #fef2f2; color: #b91c1c; border: 1px solid #f87171; }
+.badge-cyan     { background: #f0f9ff; color: #0284c7; border: 1px solid #bae6fd; }
+.badge-green    { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+.badge-amber    { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+.badge-purple   { background: #faf5ff; color: #7c3aed; border: 1px solid #ddd6fe; }
+.badge-teal     { background: #f0fdfa; color: #0d9488; border: 1px solid #99f6e4; }
+
+/* ─── Minimalist Toggle Switch ───────────────────────── */
+.toggle-track {
+  position: relative;
+  display: inline-block;
+  width: 38px;
+  height: 20px;
+  background: #e2e8f0;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  transition: background 200ms ease, border-color 200ms ease;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.toggle-track.active {
+  background: #0f172a;
+  border-color: #0f172a;
+}
+.toggle-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  background: #ffffff;
+  border-radius: 50%;
+  transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.toggle-track.active .toggle-knob {
+  transform: translateX(18px);
+  background: #ffffff;
+}
+
+/* ─── Confidence Slider (Exact Match to Reference Photo) ─ */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: #e2e8f0;
+  outline: none;
+  cursor: pointer;
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2.5px solid #0f172a;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+input[type='range']::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+}
+
+/* ─── Modern High-Contrast Primary Button ────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.04em;
+  background: #0f172a;
+  color: #ffffff;
+  border: 1px solid #0f172a;
+  cursor: pointer;
+  transition: background 180ms ease, transform 150ms ease, box-shadow 180ms ease;
+  user-select: none;
+}
+.btn-primary:hover:not(:disabled) {
+  background: #000000;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
+  transform: translateY(-1px);
+}
+.btn-primary:active:not(:disabled) { transform: translateY(0); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ─── Minimalist Sonar Acoustic Dropzone ──────────────── */
+.dropzone {
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 18px 14px;
+  text-align: center;
+  cursor: pointer;
+  background: #ffffff;
+  transition: border-color 200ms ease, background 200ms ease, box-shadow 200ms ease;
+  position: relative;
+  overflow: hidden;
+}
+.dropzone:hover, .dropzone.drag-over {
+  border-color: #0f172a;
+  background: #f8fafc;
+}
+@keyframes dashMove {
+  to { stroke-dashoffset: -20; }
+}
+
+/* ─── Loading Screen ─────────────────────────────────── */
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  background: var(--color-bg-void);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.scanline-overlay {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0, 0, 0, 0.08) 3px,
+    rgba(0, 0, 0, 0.08) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.phosphor-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(16, 185, 129, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 185, 129, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ─── Submarine ──────────────────────────────────────── */
+@keyframes subFly {
+  0%   { transform: translate(120vw, -15vh) rotate(225deg); opacity: 0; }
+  8%   { opacity: 1; }
+  92%  { opacity: 1; }
+  100% { transform: translate(-25vw, 115vh) rotate(225deg); opacity: 0; }
+}
+@keyframes bubbleRise {
+  0%   { transform: translateY(0) translateX(0); opacity: 0.7; }
+  100% { transform: translateY(-40px) translateX(10px); opacity: 0; }
+}
+@keyframes pingSonar {
+  0%   { transform: scale(0.3); opacity: 0.8; }
+  100% { transform: scale(5);   opacity: 0; }
+}
+
+.submarine-wrapper {
+  position: absolute;
+  animation: subFly 3.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* ─── Terminal Window ────────────────────────────────── */
+@keyframes terminalSlideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.terminal-window {
+  animation: terminalSlideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+@keyframes cursorBlink {
+  0%, 49% { opacity: 1; }
+  50%,100% { opacity: 0; }
+}
+.cursor { display: inline-block; width: 7px; height: 13px; background: var(--color-cyan-bright); vertical-align: middle; animation: cursorBlink 1s step-start infinite; }
+
+/* ─── Map overrides ──────────────────────────────────── */
+.leaflet-container {
+  background: #a5cbe6 !important;
+  font-family: 'Inter', sans-serif;
+}
+.leaflet-container .leaflet-tile-pane {
+  filter: contrast(1.04) saturate(1.8) brightness(0.97) !important;
+}
+
+.leaflet-control-zoom a {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #e2e8f0 !important;
+}
+.leaflet-control-zoom a:hover {
+  background: #f8fafc !important;
+  color: #0284c7 !important;
+}
+.leaflet-control-attribution {
+  background: rgba(255, 255, 255, 0.85) !important;
+  color: #64748b !important;
+  font-size: 10px;
+}
+.leaflet-popup-content-wrapper {
+  background: var(--color-bg-elevated) !important;
+  border: 1px solid var(--color-border-default) !important;
+  color: var(--color-text-primary) !important;
+  border-radius: 8px !important;
+}
+.leaflet-popup-tip { background: var(--color-bg-elevated) !important; }
+
+/* ─── Location pulse marker ──────────────────────────── */
+@keyframes locationPulse {
+  0%   { transform: scale(1); opacity: 0.8; }
+  70%  { transform: scale(3); opacity: 0; }
+  100% { transform: scale(3); opacity: 0; }
+}
+.location-marker-dot {
+  width: 12px;
+  height: 12px;
+  background: var(--color-cyan-bright);
+  border-radius: 50%;
+  border: 2px solid var(--color-bg-depth);
+  position: relative;
+}
+.location-marker-dot::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: rgba(34, 211, 238, 0.4);
+  animation: locationPulse 2s ease-out infinite;
+}
+
+/* ─── Tier pill buttons ──────────────────────────────── */
+.tier-pill {
+  padding: 8px 20px;
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  border: 1.5px solid var(--color-border-default);
+  background: var(--color-bg-surface);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 200ms ease;
+  user-select: none;
+}
+.tier-pill:hover { border-color: var(--color-cyan-dim); color: var(--color-text-primary); }
+.tier-pill.selected-A { border-color: #34d399; color: #34d399; background: rgba(52,211,153,0.12); box-shadow: 0 0 12px rgba(52,211,153,0.3); }
+.tier-pill.selected-B { border-color: #0ea5c8; color: #22d3ee; background: rgba(14,165,200,0.12); box-shadow: 0 0 12px rgba(14,165,200,0.3); }
+.tier-pill.selected-C { border-color: #f59e0b; color: #fbbf24; background: rgba(245,158,11,0.12); box-shadow: 0 0 12px rgba(245,158,11,0.3); }
+
+/* ─── Animations ─────────────────────────────────────── */
+@keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes skeletonPulse {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 0.7; }
+}
+.skeleton { animation: skeletonPulse 1.5s ease-in-out infinite; background: var(--color-bg-elevated); border-radius: 4px; }
+
+/* ─── Reduced motion ─────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

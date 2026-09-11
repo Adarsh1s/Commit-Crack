@@ -1,0 +1,73 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./index.html', './src/**/*.{ts,tsx}'],
+  theme: {
+    extend: {
+      colors: {
+        void:     '#050c14',
+        depth:    '#080f1a',
+        surface:  '#0d1929',
+        elevated: '#112238',
+        overlay:  '#162d48',
+        'cyan-dim':    '#0e4f6e',
+        'cyan-mid':    '#0ea5c8',
+        'cyan-bright': '#22d3ee',
+        'cyan-glow':   '#67e8f9',
+        'green-dim':   '#0a3d2b',
+        'green-mid':   '#10b981',
+        'green-bright':'#34d399',
+        'amber-mid':   '#f59e0b',
+        'amber-bright':'#fbbf24',
+        'red-mid':     '#ef4444',
+        'red-bright':  '#f87171',
+        'risk-low':      '#34d399',
+        'risk-medium':   '#fbbf24',
+        'risk-high':     '#f87171',
+        'risk-critical': '#ff3b3b',
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+      },
+      boxShadow: {
+        'cyan-glow':    '0 0 16px rgba(14, 165, 200, 0.35)',
+        'cyan-glow-lg': '0 0 32px rgba(14, 165, 200, 0.5)',
+        'panel':        '0 4px 24px rgba(5, 12, 20, 0.8)',
+        'card':         '0 2px 12px rgba(5, 12, 20, 0.6)',
+        'critical-glow':'0 0 24px rgba(255, 59, 59, 0.5)',
+      },
+      animation: {
+        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'fade-in': 'fadeIn 0.4s ease forwards',
+        'slide-up': 'slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+        'slide-in-right': 'slideInRight 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+        'scan': 'scan 2s linear infinite',
+        'blink': 'blink 1s step-start infinite',
+        'sub-fly': 'subFly 3.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards',
+        'ping-sonar': 'pingSonar 1.5s ease-out forwards',
+        'gps-spin': 'spin 1s linear infinite',
+      },
+      keyframes: {
+        fadeIn: { from: { opacity: '0' }, to: { opacity: '1' } },
+        slideUp: { from: { opacity: '0', transform: 'translateY(24px)' }, to: { opacity: '1', transform: 'translateY(0)' } },
+        slideInRight: { from: { opacity: '0', transform: 'translateX(40px)' }, to: { opacity: '1', transform: 'translateX(0)' } },
+        scan: {
+          '0%': { transform: 'translateY(-100%)' },
+          '100%': { transform: 'translateY(100vh)' },
+        },
+        blink: { '50%': { opacity: '0' } },
+        subFly: {
+          '0%': { transform: 'translate(110vw, -10vh) rotate(225deg)', opacity: '0' },
+          '10%': { opacity: '1' },
+          '90%': { opacity: '1' },
+          '100%': { transform: 'translate(-20vw, 110vh) rotate(225deg)', opacity: '0' },
+        },
+        pingSonar: {
+          '0%': { transform: 'scale(0)', opacity: '1' },
+          '100%': { transform: 'scale(4)', opacity: '0' },
+        },
+      },
+    },
+  },
+  plugins: [],
+};
