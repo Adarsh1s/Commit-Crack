@@ -8,7 +8,7 @@ import { useAppContext } from '../../store/AppContext';
 const CLASS_LABELS: Record<string, string> = {
   crab_pot: 'Crab Pot',
   ghost_gear: 'Ghost Gear',
-  mine_cylinder: 'Mine / Cylinder',
+  mine_cylinder: 'Underwater_pipeline',
   debris_anomaly: 'Debris Anomaly',
 };
 
