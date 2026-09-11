@@ -3,9 +3,13 @@ import type { ComputeTier, SystemInfo } from '../types/sonar';
 
 export function detectComputeTier(info: SystemInfo): ComputeTier {
   const cores = info.cpuCores;
-  const memGb = info.deviceMemoryGb ?? 4;
+  const memGb = info.ramTotalGb ?? info.deviceMemoryGb ?? 4;
+  const hasDedicatedGpu = Boolean(
+    info.vramGb ||
+    (info.gpuName && /nvidia|rtx|gtx|radeon rx|geforce|arc/i.test(info.gpuName))
+  );
 
-  if (cores >= 8 && memGb >= 8) return 'A';
+  if ((cores >= 8 && memGb >= 8) || (cores >= 6 && hasDedicatedGpu)) return 'A';
   if (cores >= 4 && memGb >= 4) return 'B';
   return 'C';
 }

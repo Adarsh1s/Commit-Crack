@@ -20,4 +20,3 @@ See the parent `ml/README.md` for full training instructions.
 If no custom weights are found, the backend automatically downloads
 `yolov8n.pt` (YOLOv8 Nano, COCO-pretrained) from Ultralytics CDN.
 
-Source model repository: https://github.com/ahmad-kaif/UnderWaterObjectDetection

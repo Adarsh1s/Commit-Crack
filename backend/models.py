@@ -69,8 +69,28 @@ class AnalysisResult(BaseModel):
     processing_meta: ProcessingMeta
 
 
+class GpuInfo(BaseModel):
+    name: str
+    vram_gb: Optional[float] = None
+
+
+class SystemHardwareResponse(BaseModel):
+    cpu_name: str
+    physical_cores: int
+    logical_cores: int
+    ram_total_gb: float
+    ram_available_gb: float
+    gpus: list[GpuInfo] = []
+    primary_gpu: Optional[str] = None
+    vram_gb: Optional[float] = None
+
+
 class HealthResponse(BaseModel):
+    model_config = {"protected_namespaces": ()}
     status: str
     model: str
     model_path: str
     version: str = "1.0.0"
+    hardware: Optional[SystemHardwareResponse] = None
+
+

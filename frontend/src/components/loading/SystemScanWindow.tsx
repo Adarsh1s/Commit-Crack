@@ -15,11 +15,25 @@ interface ScanLine {
 }
 
 function buildScanLines(info: SystemInfo): ScanLine[] {
+  const ramDisplay = info.ramTotalGb != null
+    ? `${info.ramTotalGb} GB Total${info.ramAvailableGb != null ? ` (${info.ramAvailableGb} GB free)` : ''}`
+    : info.deviceMemoryGb != null
+    ? `${info.deviceMemoryGb} GB RAM`
+    : 'Not reported by browser';
+
+  const cpuDisplay = info.cpuName
+    ? `${info.cpuName} (${info.cpuCores} threads${info.physicalCores ? `, ${info.physicalCores} cores` : ''})`
+    : `${info.cpuCores} logical processors`;
+
+  const gpuDisplay = info.gpuName
+    ? `${info.gpuName}${info.vramGb ? ` (${info.vramGb} GB VRAM)` : ''}`
+    : info.gpuRenderer;
+
   return [
     { label: 'RUNTIME', value: info.userAgent.slice(0, 60) + '...', status: 'ok' },
-    { label: 'CPU CORES', value: `${info.cpuCores} logical processors`, status: info.cpuCores >= 4 ? 'ok' : 'warn' },
-    { label: 'DEVICE MEMORY', value: info.deviceMemoryGb != null ? `${info.deviceMemoryGb} GB RAM` : 'Not reported by browser', status: info.deviceMemoryGb == null || info.deviceMemoryGb >= 4 ? 'ok' : 'warn' },
-    { label: 'GPU RENDERER', value: info.gpuRenderer, status: info.webgl ? 'ok' : 'warn' },
+    { label: 'CPU ARCHITECTURE', value: cpuDisplay, status: info.cpuCores >= 4 ? 'ok' : 'warn' },
+    { label: 'SYSTEM MEMORY', value: ramDisplay, status: (info.ramTotalGb ?? info.deviceMemoryGb ?? 4) >= 4 ? 'ok' : 'warn' },
+    { label: 'PRIMARY GPU', value: gpuDisplay, status: info.webgl ? 'ok' : 'warn' },
     { label: 'WEBGL SUPPORT', value: info.webgl ? 'Hardware accelerated — available' : 'Not available', status: info.webgl ? 'ok' : 'warn' },
     { label: 'CANVAS 2D', value: info.canvas2d ? 'Supported' : 'Not supported', status: info.canvas2d ? 'ok' : 'warn' },
     { label: 'SHARED ARRAY BUFFER', value: info.sharedArrayBuffer ? 'Enabled — multi-thread ready' : 'Disabled — single-thread mode', status: info.sharedArrayBuffer ? 'ok' : 'warn' },

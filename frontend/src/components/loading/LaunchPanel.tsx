@@ -27,7 +27,15 @@ type LocState =
 export function LaunchPanel({ systemInfo, onConfirm, visible = true }: Props) {
   const autoTier = detectComputeTier(systemInfo);
   const [tier, setTier] = useState<ComputeTier>(autoTier);
+  const [userSelected, setUserSelected] = useState(false);
   const [locState, setLocState] = useState<LocState>({ phase: 'fetching' });
+
+  // Update tier when autoTier is detected unless user manually selected one
+  useEffect(() => {
+    if (!userSelected) {
+      setTier(autoTier);
+    }
+  }, [autoTier, userSelected]);
 
   // Acquire geolocation
   useEffect(() => {
@@ -50,9 +58,26 @@ export function LaunchPanel({ systemInfo, onConfirm, visible = true }: Props) {
     onConfirm(tier, loc);
   }, [tier, locState, onConfirm]);
 
-  const cleanGpu = systemInfo.gpuRenderer
-    ? systemInfo.gpuRenderer.replace(/ANGLE \((.*?), (.*?) Direct3D.*/, '$2').slice(0, 24)
+  const cleanGpu = systemInfo.gpuName
+    ? systemInfo.gpuName
+    : systemInfo.gpuRenderer
+    ? systemInfo.gpuRenderer.replace(/^ANGLE \([^,]+,\s*(.+?)\s*Direct3D.*?\)$/i, '$1').replace(/^ANGLE \((.+?)\)$/i, '$1').replace(/\(R\)/gi, '®').replace(/\(TM\)/gi, '™')
     : 'Hardware Accelerated';
+
+  const displayRam = systemInfo.ramTotalGb != null
+    ? `${Math.round(systemInfo.ramTotalGb)} GB`
+    : systemInfo.deviceMemoryGb != null
+    ? `${systemInfo.deviceMemoryGb} GB`
+    : '8 GB';
+
+  const displayCpu = `${systemInfo.cpuCores} Cores`;
+  const cpuSubtitle = systemInfo.cpuName
+    ? systemInfo.cpuName.length > 28
+      ? systemInfo.cpuName.slice(0, 26) + '…'
+      : systemInfo.cpuName
+    : systemInfo.cpuCores >= 4
+    ? 'Multi-thread enabled'
+    : 'Single-thread mode';
 
   const tierDetails = {
     A: {
@@ -444,10 +469,21 @@ export function LaunchPanel({ systemInfo, onConfirm, visible = true }: Props) {
                   Compute Cores
                 </div>
                 <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em', marginTop: 1 }}>
-                  {systemInfo.cpuCores} Cores
+                  {displayCpu}
                 </div>
-                <div style={{ fontSize: '0.62rem', fontWeight: 700, color: '#10b981', marginTop: 2 }}>
-                  {systemInfo.cpuCores >= 4 ? 'Multi-thread enabled' : 'Single-thread mode'}
+                <div
+                  style={{
+                    fontSize: '0.62rem',
+                    fontWeight: 700,
+                    color: '#10b981',
+                    marginTop: 2,
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                  title={systemInfo.cpuName || `${systemInfo.cpuCores} Cores`}
+                >
+                  {cpuSubtitle}
                 </div>
               </div>
             </div>
@@ -500,10 +536,22 @@ export function LaunchPanel({ systemInfo, onConfirm, visible = true }: Props) {
                   Device Memory
                 </div>
                 <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em', marginTop: 1 }}>
-                  {systemInfo.deviceMemoryGb != null ? `${systemInfo.deviceMemoryGb} GB` : '4 GB RAM'}
+                  {displayRam}
                 </div>
-                <div style={{ fontSize: '0.62rem', fontWeight: 700, color: '#3b82f6', marginTop: 2 }}>
-                  Dedicated Heap · {systemInfo.sharedArrayBuffer ? 'SAB Ready' : 'SingleThread'}
+                <div
+                  style={{
+                    fontSize: '0.62rem',
+                    fontWeight: 700,
+                    color: '#3b82f6',
+                    marginTop: 2,
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {systemInfo.ramAvailableGb != null
+                    ? `${systemInfo.ramAvailableGb} GB Free · Dedicated`
+                    : `Dedicated Heap · ${systemInfo.sharedArrayBuffer ? 'SAB Ready' : 'SingleThread'}`}
                 </div>
               </div>
             </div>
@@ -556,7 +604,7 @@ export function LaunchPanel({ systemInfo, onConfirm, visible = true }: Props) {
                   GPU Engine
                 </div>
                 <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em', marginTop: 1 }}>
-                  WebGL Active
+                  {systemInfo.vramGb != null ? `${systemInfo.vramGb} GB VRAM` : 'WebGL Active'}
                 </div>
                 <div
                   style={{
@@ -568,7 +616,7 @@ export function LaunchPanel({ systemInfo, onConfirm, visible = true }: Props) {
                     textOverflow: 'ellipsis',
                     marginTop: 2,
                   }}
-                  title={systemInfo.gpuRenderer || 'AMD Radeon(TM) Vega 8 Graphics'}
+                  title={cleanGpu}
                 >
                   {cleanGpu}
                 </div>
@@ -1063,12 +1111,16 @@ export function LaunchPanel({ systemInfo, onConfirm, visible = true }: Props) {
             const isSel = tier === t;
             const details = tierDetails[t];
             const isLast = idx === 2;
+            const isRecommended = autoTier === t;
 
             return (
               <div key={t} style={{ position: 'relative' }}>
                 {/* Floating Shelf Platform Base (from photo) */}
                 <div
-                  onClick={() => setTier(t)}
+                  onClick={() => {
+                    setTier(t);
+                    setUserSelected(true);
+                  }}
                   style={{
                     background: '#ffffff',
                     borderRadius: 14,
@@ -1148,7 +1200,7 @@ export function LaunchPanel({ systemInfo, onConfirm, visible = true }: Props) {
                     <span style={{ fontSize: '0.62rem', fontWeight: 500, color: '#64748b', lineHeight: 1.3 }}>
                       {details.desc}
                     </span>
-                    {details.badge === 'RECOMMENDED' && (
+                    {isRecommended && (
                       <span
                         style={{
                           fontSize: '0.54rem',

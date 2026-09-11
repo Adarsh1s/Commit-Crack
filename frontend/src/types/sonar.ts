@@ -61,10 +61,22 @@ export interface ProcessingParams {
   confidence_threshold: number;
 }
 
+export interface GpuDetail {
+  name: string;
+  vram_gb: number | null;
+}
+
 export interface SystemInfo {
   cpuCores: number;
+  cpuName?: string;
+  physicalCores?: number;
   deviceMemoryGb: number | null;
+  ramTotalGb?: number | null;
+  ramAvailableGb?: number | null;
   gpuRenderer: string;
+  gpuName?: string;
+  vramGb?: number | null;
+  gpus?: GpuDetail[];
   webgl: boolean;
   canvas2d: boolean;
   sharedArrayBuffer: boolean;

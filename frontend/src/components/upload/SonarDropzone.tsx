@@ -49,13 +49,21 @@ export function SonarDropzone() {
     if (inputRef.current) inputRef.current.value = '';
   }, [dispatch, preview]);
 
-  // One-click loader for the authentic sample sonar image from the ML repo
-  const loadSampleSonar = useCallback(async () => {
+  const SAMPLE_PRESETS = [
+    { name: 'Pipeline Survey', path: '/samples/pipeline_survey.jpg', desc: 'Subsea Pipeline' },
+    { name: 'Mine Cylinder', path: '/samples/mine_cylinder_tile.png', desc: 'Cylinder Contact' },
+    { name: 'Ghost Gear', path: '/samples/sonar_sample_07600.jpg', desc: 'Derelict Fishing Net' },
+    { name: 'Shipwreck Anomaly', path: '/samples/shipwreck_anomaly.png', desc: 'Seabed Anomaly' },
+  ];
+
+  // One-click loader for sample sonar images
+  const loadPresetSonar = useCallback(async (samplePath: string, sampleName: string) => {
     setLoadingSample(true);
     try {
-      const res = await fetch('/samples/sonar_sample_07600.jpg');
+      const res = await fetch(samplePath);
       const blob = await res.blob();
-      const file = new File([blob], 'sonar_sample_07600.jpg', { type: 'image/jpeg' });
+      const ext = samplePath.endsWith('.png') ? 'png' : 'jpg';
+      const file = new File([blob], sampleName, { type: ext === 'png' ? 'image/png' : 'image/jpeg' });
       handleFile(file);
     } catch (err) {
       console.error('Failed to load sample sonar:', err);
@@ -83,30 +91,51 @@ export function SonarDropzone() {
           <span>Primary Sonar Image</span>
           <span style={{ color: '#ef4444' }}>*</span>
         </div>
-
-        {!state.sonarFile && (
-          <button
-            type="button"
-            onClick={loadSampleSonar}
-            disabled={loadingSample}
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              color: '#0284c7',
-              fontSize: '0.65rem',
-              fontWeight: 700,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 4,
-              padding: 0,
-            }}
-          >
-            <Sparkles size={11} />
-            <span>{loadingSample ? 'Loading...' : 'Load Repo Sample (07600.jpg)'}</span>
-          </button>
-        )}
       </div>
+
+      {/* Preset Sonar Survey Chips */}
+      {!state.sonarFile && (
+        <div style={{ marginBottom: 10 }}>
+          <div style={{ fontSize: '0.62rem', color: '#94a3b8', fontWeight: 600, marginBottom: 5, display: 'flex', alignItems: 'center', gap: 4 }}>
+            <Sparkles size={11} color="#0284c7" />
+            <span>QUICK PRESETS (CLICK TO LOAD)</span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+            {SAMPLE_PRESETS.map((preset) => (
+              <button
+                key={preset.name}
+                type="button"
+                onClick={() => loadPresetSonar(preset.path, `${preset.name.toLowerCase().replace(/\\s+/g, '_')}.jpg`)}
+                disabled={loadingSample}
+                style={{
+                  background: '#ffffff',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: 8,
+                  padding: '6px 8px',
+                  cursor: loadingSample ? 'wait' : 'pointer',
+                  textAlign: 'left',
+                  transition: 'all 150ms ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = '#0f172a';
+                  e.currentTarget.style.background = '#f8fafc';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = '#e2e8f0';
+                  e.currentTarget.style.background = '#ffffff';
+                }}
+              >
+                <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#0f172a' }}>
+                  {preset.name}
+                </div>
+                <div style={{ fontSize: '0.58rem', color: '#64748b', marginTop: 1 }}>
+                  {preset.desc}
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {state.sonarFile ? (
         <div
