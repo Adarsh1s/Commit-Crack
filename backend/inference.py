@@ -92,7 +92,7 @@ def _draw_annotations(
 
         risk = d.get("hazard_risk", "MEDIUM")
         color = color_map.get(risk, (0, 200, 255))
-        cls_name = d.get("target_class", "debris_anomaly").replace("_", " ").title()
+        cls_name = d.get("target_class", "mine_cylinder").replace("_", " ").title()
         conf = int(d.get("confidence", 0.75) * 100)
         shadow_ev = d.get("shadow_evidence", "NEUTRAL")
 
@@ -114,17 +114,28 @@ def _draw_annotations(
         cv2.line(canvas, (x2, y2), (x2 - corner_len, y2), color, 3, cv2.LINE_AA)
         cv2.line(canvas, (x2, y2), (x2, y2 - corner_len), color, 3, cv2.LINE_AA)
 
-        # 3. Label tag
+        # 3. Label tag — always kept inside image bounds
         label_text = f"{cls_name} {conf}%"
         font = cv2.FONT_HERSHEY_SIMPLEX
         font_scale = 0.42
         thickness = 1
         (tw, th), baseline = cv2.getTextSize(label_text, font, font_scale, thickness)
 
-        tag_y1 = max(0, y1 - th - 8)
-        tag_y2 = y1
-        tag_x1 = x1
-        tag_x2 = min(w, x1 + tw + 10)
+        tag_h = th + 8
+        tag_w = min(w, tw + 10)
+
+        # If the label above the box would clip outside the image, put it INSIDE the box
+        if y1 - tag_h < 0:
+            # Place label inside the box at the top
+            tag_y1 = y1
+            tag_y2 = min(h, y1 + tag_h)
+        else:
+            # Place label above the box (normal case)
+            tag_y1 = y1 - tag_h
+            tag_y2 = y1
+
+        tag_x1 = max(0, x1)
+        tag_x2 = min(w, tag_x1 + tag_w)
 
         # Dark translucent badge background
         overlay = canvas.copy()
@@ -239,6 +250,13 @@ def run_inference(
     final_detections = []
     for idx, d in enumerate(merged_detections):
         x1, y1, x2, y2 = d["x_min"], d["y_min"], d["x_max"], d["y_max"]
+
+        # Skip whole-canvas false positives (only reject if covering nearly the full frame in BOTH dimensions or >75% total area)
+        det_w = max(1, x2 - x1)
+        det_h = max(1, y2 - y1)
+        if (det_w > img_w * 0.85 and det_h > img_h * 0.85) or (det_w * det_h > img_w * img_h * 0.75):
+            continue
+
         bbox = (float(x1), float(y1), float(x2), float(y2))
 
         # Acoustic shadow physics evaluation
@@ -288,7 +306,7 @@ def run_inference(
         # Thumbnail crop
         thumbnail_b64 = _crop_thumbnail(raw_bgr, int(x1), int(y1), int(x2), int(y2))
 
-        target_cls = d.get("target_class", "debris_anomaly")
+        target_cls = d.get("target_class", "mine_cylinder")
 
         final_detections.append({
             "id": f"tgt-{uuid.uuid4().hex[:6]}-{idx + 1:02d}",

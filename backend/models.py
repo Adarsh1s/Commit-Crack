@@ -8,7 +8,7 @@ from pydantic import BaseModel
 
 
 HazardRisk = Literal["LOW", "MEDIUM", "HIGH", "CRITICAL"]
-TargetClass = Literal["crab_pot", "ghost_gear", "mine_cylinder", "debris_anomaly"]
+TargetClass = Literal["crab_pot", "submarine_pipeline", "shipwreck", "ghost_net", "mine_cylinder"]
 ShadowEvidence = Literal["SUPPORTING", "NEUTRAL", "ABSENT"]
 
 

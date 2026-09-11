@@ -10,9 +10,10 @@ import { RISK_COLORS } from '../../utils/colorScale';
 
 const CLASS_LABELS: Record<string, string> = {
   crab_pot: 'Crab Pot',
-  ghost_gear: 'Ghost Gear',
+  submarine_pipeline: 'Submarine Pipeline',
+  shipwreck: 'Shipwreck',
+  ghost_net: 'Ghost Net',
   mine_cylinder: 'Mine / Cylinder',
-  debris_anomaly: 'Debris Anomaly',
 };
 
 interface Props {

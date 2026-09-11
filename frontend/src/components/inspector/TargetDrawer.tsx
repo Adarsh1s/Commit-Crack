@@ -8,16 +8,18 @@ import type { Detection } from '../../types/sonar';
 
 const CLASS_LABELS: Record<string, string> = {
   crab_pot: 'Crab Pot',
-  ghost_gear: 'Ghost Gear',
-  mine_cylinder: 'Underwater_pipeline',
-  debris_anomaly: 'Debris Anomaly',
+  submarine_pipeline: 'Submarine Pipeline',
+  shipwreck: 'Shipwreck',
+  ghost_net: 'Ghost Net',
+  mine_cylinder: 'Mine / Cylinder',
 };
 
 const CLASS_COLORS_MAP: Record<string, string> = {
   crab_pot: '#2dd4bf',
-  ghost_gear: '#fbbf24',
-  mine_cylinder: '#f87171',
-  debris_anomaly: '#a78bfa',
+  submarine_pipeline: '#0ea5e9',
+  shipwreck: '#a855f7',
+  ghost_net: '#fbbf24',
+  mine_cylinder: '#ef4444',
 };
 
 function ShadowBadge({ evidence }: { evidence: Detection['shadow_evidence'] }) {

@@ -1,7 +1,7 @@
 // src/types/sonar.ts
 
 export type HazardRisk = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-export type TargetClass = 'crab_pot' | 'ghost_gear' | 'mine_cylinder' | 'debris_anomaly';
+export type TargetClass = 'crab_pot' | 'submarine_pipeline' | 'shipwreck' | 'ghost_net' | 'mine_cylinder';
 export type ShadowEvidence = 'SUPPORTING' | 'NEUTRAL' | 'ABSENT';
 export type AnalysisStatus = 'idle' | 'uploading' | 'processing' | 'complete' | 'error';
 export type ComputeTier = 'A' | 'B' | 'C';

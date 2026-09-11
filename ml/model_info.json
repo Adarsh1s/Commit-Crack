@@ -3,8 +3,8 @@
   "base_architecture": "YOLOv8n",
   "framework": "ultralytics",
   "input_size": [640, 640],
-  "num_classes": 4,
-  "class_names": ["crab_pot", "ghost_gear", "mine_cylinder", "debris_anomaly"],
+  "num_classes": 5,
+  "class_names": ["crab_pot", "submarine_pipeline", "shipwreck", "ghost_net", "mine_cylinder"],
   "source_repo": "https://github.com/ahmad-kaif/UnderWaterObjectDetection",
   "performance": {
     "mAP_50": 0.83,

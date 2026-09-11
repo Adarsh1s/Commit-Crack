@@ -16,10 +16,11 @@ export const RISK_GLOW: Record<HazardRisk, string> = {
 };
 
 export const CLASS_COLORS: Record<TargetClass, string> = {
-  crab_pot:      '#2dd4bf',
-  ghost_gear:    '#fbbf24',
-  mine_cylinder: '#f87171',
-  debris_anomaly:'#a78bfa',
+  crab_pot:           '#2dd4bf',
+  submarine_pipeline: '#0ea5e9',
+  shipwreck:          '#a855f7',
+  ghost_net:          '#fbbf24',
+  mine_cylinder:      '#ef4444',
 };
 
 export function confidenceToColor(confidence: number): string {

@@ -5,7 +5,7 @@ dist/
 frontend/dist/
 dist-ssr/
 *.local
-
+Script_Test/
 # Python cache & virtual environments
 __pycache__/
 */__pycache__/

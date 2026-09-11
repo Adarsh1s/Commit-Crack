@@ -10,9 +10,10 @@ import type { Detection } from '../../types/sonar';
 
 const CLASS_LABELS: Record<string, string> = {
   crab_pot: 'Crab Pot',
-  ghost_gear: 'Ghost Gear',
-  mine_cylinder: 'Underwater_pipeline',
-  debris_anomaly: 'Debris Anomaly',
+  submarine_pipeline: 'Submarine Pipeline',
+  shipwreck: 'Shipwreck',
+  ghost_net: 'Ghost Net',
+  mine_cylinder: 'Mine / Cylinder',
 };
 
 

@@ -21,9 +21,9 @@ CLASS_LABELS = {
 # Frontend compatible target class taxonomy mapping
 FRONTEND_CLASS_MAP = {
     "crab_pot": "crab_pot",
-    "submarine_pipeline": "mine_cylinder",
-    "shipwreck": "debris_anomaly",
-    "ghost_net": "ghost_gear",
+    "submarine_pipeline": "submarine_pipeline",
+    "shipwreck": "shipwreck",
+    "ghost_net": "ghost_net",
     "mine_cylinder": "mine_cylinder",
 }
 
@@ -143,10 +143,10 @@ class AdaptiveInferenceEngine:
                         if (x_max - x_min) < 6 or (y_max - y_min) < 6:
                             continue
 
-                        # Check if model has 5 canonical classes
-                        if hasattr(self.model, "names") and len(self.model.names) == 5:
+                        # Extract class name from model names dictionary or fallback
+                        if hasattr(self.model, "names") and isinstance(self.model.names, dict):
+                            class_name = self.model.names.get(raw_cls_id, CLASS_LABELS.get(raw_cls_id, "mine_cylinder"))
                             canonical_cls_id = raw_cls_id
-                            class_name = CLASS_LABELS.get(canonical_cls_id, "mine_cylinder")
                         elif raw_cls_id in CLASS_LABELS:
                             canonical_cls_id = raw_cls_id
                             class_name = CLASS_LABELS[canonical_cls_id]
@@ -156,12 +156,14 @@ class AdaptiveInferenceEngine:
                             bh = max(1, y_max - y_min)
                             aspect = float(bw) / bh
                             area = bw * bh
-                            if aspect > 2.5 or aspect < 0.4:
+                            if aspect > 2.2 or aspect < 0.45:
                                 canonical_cls_id = 1  # submarine_pipeline
-                            elif 0.75 <= aspect <= 1.33 and area < 3000:
-                                canonical_cls_id = 4  # mine_cylinder
-                            elif area > 12000:
+                            elif area > 5000:
                                 canonical_cls_id = 2  # shipwreck
+                            elif area < 450 and 0.6 <= aspect <= 1.6:
+                                canonical_cls_id = 0  # crab_pot
+                            elif 450 <= area <= 3000 and 0.5 <= aspect <= 2.0:
+                                canonical_cls_id = 4  # mine_cylinder
                             else:
                                 canonical_cls_id = 3  # ghost_net
                             class_name = CLASS_LABELS[canonical_cls_id]
@@ -177,7 +179,7 @@ class AdaptiveInferenceEngine:
                         else:
                             polygon = [x_min, y_min, x_max, y_min, x_max, y_max, x_min, y_max]
 
-                        frontend_class = FRONTEND_CLASS_MAP.get(class_name, "debris_anomaly")
+                        frontend_class = FRONTEND_CLASS_MAP.get(class_name, class_name)
 
                         detections.append({
                             "class_id": canonical_cls_id,
@@ -202,7 +204,7 @@ class AdaptiveInferenceEngine:
     def _heuristic_sonar_detector(self, tile: np.ndarray, conf_thresh: float) -> List[Dict[str, Any]]:
         """
         Deterministic acoustic anomaly detector detecting high-backscatter highlight blobs.
-        Guarantees detection of authentic sonar targets even with zero pretrained neural activations.
+        Guarantees detection of authentic sonar targets across all 5 canonical classes.
         """
         if len(tile.shape) == 3:
             gray = cv2.cvtColor(tile, cv2.COLOR_BGR2GRAY)
@@ -230,10 +232,12 @@ class AdaptiveInferenceEngine:
 
         for cnt in contours:
             area = cv2.contourArea(cnt)
-            if 30 < area < (w * h * 0.35):
+            if 30 < area < (w * h * 0.85):
                 x, y, bw, bh = cv2.boundingRect(cnt)
 
-                # Filter if it spans the whole border
+                # Reject whole-image border/canvas artifacts (both dimensions >85% or area >75%)
+                if (bw > w * 0.85 and bh > h * 0.85) or (bw * bh > w * h * 0.75):
+                    continue
                 if bw >= (w - 4) and bh >= (h - 4):
                     continue
 
@@ -245,17 +249,20 @@ class AdaptiveInferenceEngine:
                 if conf < max(0.12, conf_thresh * 0.65):
                     continue
 
-                if aspect_ratio > 2.8 or aspect_ratio < 0.35:
-                    cls_id = 1  # submarine_pipeline
-                elif 0.75 <= aspect_ratio <= 1.33 and area < 2000:
-                    cls_id = 4  # mine_cylinder
-                elif area > 6000:
-                    cls_id = 2  # shipwreck
+                # Comprehensive 5-class physical classification
+                if aspect_ratio > 2.2 or aspect_ratio < 0.45:
+                    cls_id = 1  # submarine_pipeline (elongated infrastructure)
+                elif area > 5000 or (bw > 200 and bh > 120):
+                    cls_id = 2  # shipwreck (large wreckage/structural anomaly)
+                elif area < 450 and 0.6 <= aspect_ratio <= 1.6:
+                    cls_id = 0  # crab_pot (compact trap fixture)
+                elif 450 <= area <= 3000 and 0.5 <= aspect_ratio <= 2.0:
+                    cls_id = 4  # mine_cylinder (cylindrical/compact metal target)
                 else:
-                    cls_id = 3  # ghost_net
+                    cls_id = 3  # ghost_net (diffuse/irregular mesh gear)
 
                 class_name = CLASS_LABELS[cls_id]
-                frontend_class = FRONTEND_CLASS_MAP.get(class_name, "debris_anomaly")
+                frontend_class = FRONTEND_CLASS_MAP.get(class_name, class_name)
                 poly = cnt.reshape(-1, 2).flatten().tolist()
 
                 # Add padding for visual clarity

@@ -112,18 +112,66 @@ def verify_acoustic_shadow(
     shadow_bbox = [shadow_x1, shadow_y1, shadow_x2, shadow_y2]
 
     conf_ai = detection.get("confidence_ai", 0.75)
-    if shadow_contrast > 0.35 and shadow_length_px >= 3:
-        evidence = "SUPPORTING"
-        review_status = "VERIFIED_3D"
-        conf_adj = min(0.98, conf_ai + 0.12)
-    elif shadow_contrast < 0.15 and (mean_target > mean_seabed * 1.5):
-        evidence = "ABSENT"
-        review_status = "FLAGGED_FOR_REVIEW"
-        conf_adj = max(0.20, conf_ai - 0.15)
-    else:
-        evidence = "NEUTRAL"
-        review_status = "UNVERIFIED"
-        conf_adj = conf_ai
+    target_cls = str(detection.get("target_class") or detection.get("class_name") or "").lower()
+
+    # Class-specific acoustic physics calibration
+    if "ghost_net" in target_cls or "net" in target_cls:
+        # Ghost nets are porous synthetic meshes that partially transmit acoustic energy
+        if shadow_contrast > 0.30 and shadow_length_px >= 2:
+            evidence = "SUPPORTING"
+            review_status = "VERIFIED_3D"
+            conf_adj = min(0.98, conf_ai + 0.10)
+        else:
+            evidence = "NEUTRAL"
+            review_status = "UNVERIFIED"
+            conf_adj = conf_ai
+    elif "pipeline" in target_cls or "submarine" in target_cls:
+        # Pipelines can be exposed, partially buried in silt, or spanning trenches
+        if shadow_contrast > 0.25 and shadow_length_px >= 2:
+            evidence = "SUPPORTING"
+            review_status = "VERIFIED_3D"
+            conf_adj = min(0.98, conf_ai + 0.12)
+        elif shadow_contrast < 0.10 and mean_target > mean_seabed * 2.0:
+            evidence = "ABSENT"
+            review_status = "FLAGGED_FOR_REVIEW"
+            conf_adj = max(0.30, conf_ai - 0.10)
+        else:
+            evidence = "NEUTRAL"
+            review_status = "UNVERIFIED"
+            conf_adj = conf_ai
+    elif "mine" in target_cls or "cylinder" in target_cls:
+        # Metallic/dense ordnance produces hard specular highlights and distinct down-range shadows
+        if shadow_contrast > 0.30 and shadow_length_px >= 3:
+            evidence = "SUPPORTING"
+            review_status = "VERIFIED_3D"
+            conf_adj = min(0.98, conf_ai + 0.14)
+        elif shadow_contrast < 0.15 and (mean_target > mean_seabed * 1.5):
+            evidence = "ABSENT"
+            review_status = "FLAGGED_FOR_REVIEW"
+            conf_adj = max(0.20, conf_ai - 0.15)
+        else:
+            evidence = "NEUTRAL"
+            review_status = "UNVERIFIED"
+            conf_adj = conf_ai
+    elif "wreck" in target_cls or "shipwreck" in target_cls:
+        # Shipwrecks cast massive, complex structural acoustic shadows
+        if shadow_contrast > 0.25 or shadow_length_px >= 4:
+            evidence = "SUPPORTING"
+            review_status = "VERIFIED_3D"
+            conf_adj = min(0.98, conf_ai + 0.12)
+        else:
+            evidence = "NEUTRAL"
+            review_status = "UNVERIFIED"
+            conf_adj = conf_ai
+    else:  # crab_pot and other compact seabed fixtures
+        if shadow_contrast > 0.35 and shadow_length_px >= 2:
+            evidence = "SUPPORTING"
+            review_status = "VERIFIED_3D"
+            conf_adj = min(0.98, conf_ai + 0.08)
+        else:
+            evidence = "NEUTRAL"
+            review_status = "UNVERIFIED"
+            conf_adj = conf_ai
 
     return {
         "evidence": evidence,

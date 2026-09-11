@@ -21,9 +21,10 @@
 | Class ID | Label | Hazard Risk | Description |
 |---|---|---|---|
 | 0 | `crab_pot` | LOW | Submerged crab/lobster traps |
-| 1 | `ghost_gear` | MEDIUM | Abandoned fishing nets / derelict gear |
-| 2 | `mine_cylinder` | CRITICAL | Cylindrical mine-like objects |
-| 3 | `debris_anomaly` | HIGH | Unclassified debris or anomalous returns |
+| 1 | `submarine_pipeline` | HIGH | Subsea oil/gas or water pipelines |
+| 2 | `shipwreck` | HIGH | Sunken vessel wreckage & hull structures |
+| 3 | `ghost_net` | MEDIUM | Abandoned fishing nets & derelict gear |
+| 4 | `mine_cylinder` | CRITICAL | Cylindrical sea mines & unexploded ordnance |
 
 ## Performance Benchmarks
 
@@ -53,8 +54,8 @@ dataset.yaml:
 path: ./dataset
 train: images/train
 val: images/val
-nc: 4
-names: ['crab_pot', 'ghost_gear', 'mine_cylinder', 'debris_anomaly']
+nc: 5
+names: ['crab_pot', 'submarine_pipeline', 'shipwreck', 'ghost_net', 'mine_cylinder']
 ```
 
 *Aqua Sentinel v1.0 — Maritime Acoustic Intelligence*

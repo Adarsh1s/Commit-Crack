@@ -7,16 +7,18 @@ import { useAppContext } from '../../store/AppContext';
 
 const CLASS_LABELS: Record<string, string> = {
   crab_pot: 'Crab Pot',
-  ghost_gear: 'Ghost Gear',
-  mine_cylinder: 'Underwater_pipeline',
-  debris_anomaly: 'Debris Anomaly',
+  submarine_pipeline: 'Submarine Pipeline',
+  shipwreck: 'Shipwreck',
+  ghost_net: 'Ghost Net',
+  mine_cylinder: 'Mine / Cylinder',
 };
 
 const CLASS_BADGE: Record<string, string> = {
   crab_pot: 'badge-teal',
-  ghost_gear: 'badge-amber',
+  submarine_pipeline: 'badge-cyan',
+  shipwreck: 'badge-purple',
+  ghost_net: 'badge-amber',
   mine_cylinder: 'badge-high',
-  debris_anomaly: 'badge-purple',
 };
 
 interface Props {
