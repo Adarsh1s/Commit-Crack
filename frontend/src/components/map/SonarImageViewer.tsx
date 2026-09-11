@@ -11,7 +11,7 @@ import { RISK_COLORS } from '../../utils/colorScale';
 const CLASS_LABELS: Record<string, string> = {
   crab_pot: 'Crab Pot',
   ghost_gear: 'Ghost Gear',
-  mine_cylinder: 'Underwater_pipeline',
+  mine_cylinder: 'Mine / Cylinder',
   debris_anomaly: 'Debris Anomaly',
 };
 
