@@ -338,8 +338,13 @@ export function MissionMap() {
           >
             <Popup>
               <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', color: '#0f172a', background: '#ffffff', padding: 10, borderRadius: 8, border: '1px solid #e2e8f0' }}>
-                <div style={{ color: RISK_COLORS[det.hazard_risk], fontWeight: 800, marginBottom: 4 }}>
-                  {CLASS_LABELS[det.target_class] ?? det.target_class.toUpperCase()} · {det.hazard_risk}
+                <div style={{ color: RISK_COLORS[det.hazard_risk], fontWeight: 800, marginBottom: 4, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span>{CLASS_LABELS[det.target_class] ?? det.target_class.toUpperCase()} · {det.hazard_risk}</span>
+                  {det.expert_verified && (
+                    <span style={{ fontSize: '0.55rem', background: '#dcfce7', color: '#15803d', padding: '1px 5px', borderRadius: 4, border: '1px solid #86efac' }}>
+                      EXPERT VERIFIED
+                    </span>
+                  )}
                 </div>
                 <div style={{ color: '#0f172a', fontWeight: 600 }}>Confidence: {formatConfidence(det.confidence)}</div>
                 <div style={{ color: '#64748b' }}>Size: {det.dimensions.length_m.toFixed(1)}m × {det.dimensions.width_m.toFixed(1)}m</div>

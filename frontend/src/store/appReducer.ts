@@ -22,6 +22,9 @@ export type AppAction =
   | { type: 'SET_STATUS'; payload: AppState['status'] }
   | { type: 'SET_RESULT'; payload: AnalysisResult }
   | { type: 'SELECT_DETECTION'; payload: string | null }
+  | { type: 'CONFIRM_EXPERT_VERIFICATION'; payload: { detectionId: string } }
+  | { type: 'REJECT_DETECTION'; payload: { detectionId: string } }
+  | { type: 'SKIP_EXPERT_VERIFICATION'; payload: { detectionId: string } }
   | { type: 'SET_ERROR'; payload: string }
   | { type: 'SET_COMPUTE_TIER'; payload: ComputeTier }
   | { type: 'SET_LOCATION'; payload: GeoCoordinate }
@@ -158,6 +161,74 @@ export function appReducer(state: AppState, action: AppAction): AppState {
 
     case 'SELECT_DETECTION':
       return { ...state, selectedDetectionId: action.payload };
+
+    case 'CONFIRM_EXPERT_VERIFICATION': {
+      if (!state.result) return state;
+      const updatedDetections = state.result.detections.map((d) => {
+        if (d.id === action.payload.detectionId) {
+          return {
+            ...d,
+            expert_verified: true,
+            expert_status: 'CONFIRMED' as const,
+          };
+        }
+        return d;
+      });
+      return {
+        ...state,
+        result: {
+          ...state.result,
+          detections: updatedDetections,
+        },
+      };
+    }
+
+    case 'REJECT_DETECTION': {
+      if (!state.result) return state;
+      const updatedDetections = state.result.detections.filter(
+        (d) => d.id !== action.payload.detectionId
+      );
+      const isSelected = state.selectedDetectionId === action.payload.detectionId;
+      const newCritical = updatedDetections.filter((d) => d.hazard_risk === 'CRITICAL').length;
+      const newVerified3d = updatedDetections.filter(
+        (d) => d.shadow_evidence === 'SUPPORTING' || d.expert_verified
+      ).length;
+
+      return {
+        ...state,
+        selectedDetectionId: isSelected ? null : state.selectedDetectionId,
+        result: {
+          ...state.result,
+          detections: updatedDetections,
+          kpis: {
+            ...state.result.kpis,
+            total_detections: updatedDetections.length,
+            critical_hazards: newCritical,
+            verified_3d_objects: newVerified3d,
+          },
+        },
+      };
+    }
+
+    case 'SKIP_EXPERT_VERIFICATION': {
+      if (!state.result) return state;
+      const updatedDetections = state.result.detections.map((d) => {
+        if (d.id === action.payload.detectionId) {
+          return {
+            ...d,
+            expert_status: 'SKIPPED' as const,
+          };
+        }
+        return d;
+      });
+      return {
+        ...state,
+        result: {
+          ...state.result,
+          detections: updatedDetections,
+        },
+      };
+    }
 
     case 'SET_ERROR':
       return { ...state, error: action.payload, status: 'error' };

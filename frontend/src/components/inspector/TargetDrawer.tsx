@@ -1,10 +1,11 @@
 // src/components/inspector/TargetDrawer.tsx
-import React from 'react';
-import { X, ShieldCheck, ShieldOff, Minus, MapPin, Ruler } from 'lucide-react';
+import { X, ShieldCheck, ShieldOff, Minus, MapPin, Ruler, CheckCircle2, Trash2 } from 'lucide-react';
 import { useAppContext } from '../../store/AppContext';
 import { RISK_COLORS, confidenceToColor } from '../../utils/colorScale';
 import { formatConfidence, formatCoord, formatDimension, formatArea } from '../../utils/formatters';
 import type { Detection } from '../../types/sonar';
+import { shouldShowHighRiskAlert, isVerificationEligible } from '../../utils/expertVerification';
+import { HighRiskAlertBanner } from './HighRiskAlertBanner';
 
 const CLASS_LABELS: Record<string, string> = {
   crab_pot: 'Crab Pot',
@@ -94,6 +95,13 @@ export function TargetDrawer() {
 
           {/* Scrollable body */}
           <div style={{ flex: 1, overflowY: 'auto', padding: '16px' }}>
+            {/* High-Risk Alert Banner (Requirement 2) */}
+            {shouldShowHighRiskAlert(detection.hazard_risk, detection.confidence) && (
+              <div style={{ marginBottom: 14 }}>
+                <HighRiskAlertBanner detection={detection} />
+              </div>
+            )}
+
             {/* Thumbnail */}
             {detection.thumbnail_base64 && (
               <div style={{ marginBottom: 14 }}>
@@ -211,6 +219,115 @@ export function TargetDrawer() {
                 {detection.hazard_risk}
               </div>
             </div>
+
+            {/* Expert Verification Section (Requirements 3, 4, 5, 6) */}
+            {(isVerificationEligible(detection.hazard_risk, detection.confidence) || detection.expert_verified) && (
+              <div style={{ marginTop: 18, paddingTop: 14, borderTop: '1px solid #e2e8f0' }}>
+                <div style={{ marginBottom: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ fontSize: '0.65rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 5 }}>
+                    <ShieldCheck size={12} color="#0f172a" />
+                    EXPERT VERIFICATION
+                  </div>
+                  {detection.expert_verified ? (
+                    <span style={{ fontSize: '0.6rem', fontWeight: 800, padding: '2px 6px', borderRadius: 4, background: '#dcfce7', color: '#15803d', border: '1px solid #86efac' }}>
+                      CONFIRMED
+                    </span>
+                  ) : (
+                    <span style={{ fontSize: '0.6rem', fontWeight: 700, padding: '2px 6px', borderRadius: 4, background: '#fef3c7', color: '#92400e', border: '1px solid #fcd34d' }}>
+                      OPTIONAL
+                    </span>
+                  )}
+                </div>
+
+                {detection.expert_verified ? (
+                  <div style={{ padding: '10px 12px', background: '#f0fdf4', border: '1px solid #86efac', borderRadius: 8 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#15803d', fontSize: '0.75rem', fontWeight: 700 }}>
+                      <CheckCircle2 size={16} />
+                      Target Verified by Maritime Expert
+                    </div>
+                    <p style={{ margin: '4px 0 0', fontSize: '0.68rem', color: '#166534', lineHeight: 1.35 }}>
+                      Original AI confidence ({Math.round(detection.confidence * 100)}%) and all physical/geospatial metrics have been preserved and included in deliverables.
+                    </p>
+                  </div>
+                ) : (
+                  <div style={{ padding: '12px', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: 8 }}>
+                    <p style={{ margin: '0 0 10px', fontSize: '0.72rem', color: '#334155', lineHeight: 1.4 }}>
+                      The AI has detected a potentially high-risk target (<strong>{CLASS_LABELS[detection.target_class] ?? detection.target_class}</strong>, {detection.hazard_risk}) with lower confidence (<strong>{Math.round(detection.confidence * 100)}%</strong>). Expert verification is available.
+                    </p>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      <button
+                        onClick={() => dispatch({ type: 'CONFIRM_EXPERT_VERIFICATION', payload: { detectionId: detection.id } })}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: 6,
+                          width: '100%',
+                          padding: '9px 12px',
+                          borderRadius: 6,
+                          background: '#0f172a',
+                          color: '#ffffff',
+                          border: 'none',
+                          cursor: 'pointer',
+                          fontSize: '0.75rem',
+                          fontWeight: 700,
+                          transition: 'all 150ms ease',
+                        }}
+                      >
+                        <CheckCircle2 size={14} color="#4ade80" />
+                        <span>Confirm Target (Expert Verified)</span>
+                      </button>
+
+                      <button
+                        onClick={() => dispatch({ type: 'REJECT_DETECTION', payload: { detectionId: detection.id } })}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: 6,
+                          width: '100%',
+                          padding: '8px 12px',
+                          borderRadius: 6,
+                          background: '#fee2e2',
+                          color: '#991b1b',
+                          border: '1px solid #fca5a5',
+                          cursor: 'pointer',
+                          fontSize: '0.75rem',
+                          fontWeight: 700,
+                          transition: 'all 150ms ease',
+                        }}
+                      >
+                        <Trash2 size={13} color="#dc2626" />
+                        <span>Nothing There (Remove Detection)</span>
+                      </button>
+
+                      <button
+                        onClick={() => dispatch({ type: 'SKIP_EXPERT_VERIFICATION', payload: { detectionId: detection.id } })}
+                        style={{
+                          width: '100%',
+                          padding: '6px 12px',
+                          borderRadius: 6,
+                          background: '#ffffff',
+                          color: '#64748b',
+                          border: '1px solid #e2e8f0',
+                          cursor: 'pointer',
+                          fontSize: '0.7rem',
+                          fontWeight: 600,
+                          transition: 'all 150ms ease',
+                        }}
+                      >
+                        Continue Without Verification / Skip
+                      </button>
+                    </div>
+
+                    <div style={{ marginTop: 8, fontSize: '0.62rem', color: '#94a3b8', textAlign: 'center' }}>
+                      Verification is strictly optional. Skipped detections remain fully active.
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </>
       )}

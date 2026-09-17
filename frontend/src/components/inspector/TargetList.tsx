@@ -3,9 +3,11 @@ import React from 'react';
 import { Crosshair } from 'lucide-react';
 import { useAppContext } from '../../store/AppContext';
 import { TargetCard } from './TargetCard';
+import { shouldShowHighRiskAlert } from '../../utils/expertVerification';
+import { HighRiskAlertBanner } from './HighRiskAlertBanner';
 
 export function TargetList() {
-  const { state } = useAppContext();
+  const { state, dispatch } = useAppContext();
   const detections = state.result?.detections ?? [];
 
   if (detections.length === 0) {
@@ -44,8 +46,23 @@ export function TargetList() {
   const riskOrder = { CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
   const sorted = [...detections].sort((a, b) => riskOrder[a.hazard_risk] - riskOrder[b.hazard_risk]);
 
+  // High-risk alerts (conf > 75% on HIGH/CRITICAL)
+  const highRiskAlertDets = sorted.filter(
+    (d) => shouldShowHighRiskAlert(d.hazard_risk, d.confidence) && !d.expert_verified
+  );
+
   return (
     <div style={{ flex: 1, overflowY: 'auto', padding: '8px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+      {/* Top High-Risk Alert Notice Banner (Requirement 2) */}
+      {highRiskAlertDets.map((det) => (
+        <HighRiskAlertBanner
+          key={`alert-${det.id}`}
+          detection={det}
+          onOpenInspector={() => dispatch({ type: 'SELECT_DETECTION', payload: det.id })}
+          compact
+        />
+      ))}
+
       {sorted.map((det) => (
         <TargetCard
           key={det.id}

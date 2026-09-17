@@ -18,6 +18,8 @@ export interface LocalOffset {
   y_m: number;
 }
 
+export type ExpertStatus = 'UNVERIFIED' | 'CONFIRMED' | 'SKIPPED';
+
 export interface Detection {
   id: string;
   target_class: TargetClass;
@@ -26,6 +28,8 @@ export interface Detection {
   shadow_evidence: ShadowEvidence;
   review_status?: string;
   shadow_contrast?: number;
+  expert_status?: ExpertStatus;
+  expert_verified?: boolean;
   dimensions: {
     length_m: number;
     width_m: number;

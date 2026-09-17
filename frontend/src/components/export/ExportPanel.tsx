@@ -24,6 +24,8 @@ function toGeoJSON(detections: Detection[]): string {
         confidence: d.confidence,
         hazard_risk: d.hazard_risk,
         shadow_evidence: d.shadow_evidence,
+        expert_status: d.expert_status ?? 'UNVERIFIED',
+        expert_verified: d.expert_verified ?? false,
         length_m: d.dimensions.length_m,
         width_m: d.dimensions.width_m,
         area_m2: d.dimensions.area_m2,
@@ -36,13 +38,15 @@ function toGeoJSON(detections: Detection[]): string {
 }
 
 function toCSV(detections: Detection[]): string {
-  const header = 'id,target_class,confidence_pct,hazard_risk,shadow_evidence,length_m,width_m,area_m2,relief_height_m,latitude,longitude,local_x_m,local_y_m';
+  const header = 'id,target_class,confidence_pct,hazard_risk,shadow_evidence,expert_status,expert_verified,length_m,width_m,area_m2,relief_height_m,latitude,longitude,local_x_m,local_y_m';
   const rows = detections.map((d) => [
     d.id,
     d.target_class,
     (d.confidence * 100).toFixed(1),
     d.hazard_risk,
     d.shadow_evidence,
+    d.expert_status ?? 'UNVERIFIED',
+    d.expert_verified ? 'TRUE' : 'FALSE',
     d.dimensions.length_m.toFixed(2),
     d.dimensions.width_m.toFixed(2),
     d.dimensions.area_m2.toFixed(2),

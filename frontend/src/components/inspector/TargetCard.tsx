@@ -4,6 +4,7 @@ import type { Detection } from '../../types/sonar';
 import { RISK_COLORS, CLASS_COLORS, confidenceToColor } from '../../utils/colorScale';
 import { formatConfidence } from '../../utils/formatters';
 import { useAppContext } from '../../store/AppContext';
+import { shouldShowHighRiskAlert, isVerificationEligible } from '../../utils/expertVerification';
 
 const CLASS_LABELS: Record<string, string> = {
   crab_pot: 'Crab Pot',
@@ -84,19 +85,68 @@ export function TargetCard({ detection: det, isSelected }: Props) {
         </span>
       </div>
 
-      {/* Shadow evidence */}
-      <div style={{ marginTop: 6, display: 'flex', alignItems: 'center', gap: 4 }}>
-        <span style={{ fontSize: '0.6rem', color: '#94a3b8', letterSpacing: '0.04em', fontWeight: 600 }}>SHADOW</span>
-        <span
-          style={{
-            fontSize: '0.6rem',
-            fontWeight: 700,
-            letterSpacing: '0.05em',
-            color: det.shadow_evidence === 'SUPPORTING' ? '#0f172a' : det.shadow_evidence === 'NEUTRAL' ? '#64748b' : '#94a3b8',
-          }}
-        >
-          {det.shadow_evidence}
-        </span>
+      {/* Shadow evidence & Expert Status */}
+      <div style={{ marginTop: 6, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <span style={{ fontSize: '0.6rem', color: '#94a3b8', letterSpacing: '0.04em', fontWeight: 600 }}>SHADOW</span>
+          <span
+            style={{
+              fontSize: '0.6rem',
+              fontWeight: 700,
+              letterSpacing: '0.05em',
+              color: det.shadow_evidence === 'SUPPORTING' ? '#0f172a' : det.shadow_evidence === 'NEUTRAL' ? '#64748b' : '#94a3b8',
+            }}
+          >
+            {det.shadow_evidence}
+          </span>
+        </div>
+
+        {det.expert_verified ? (
+          <span
+            style={{
+              fontSize: '0.58rem',
+              fontWeight: 800,
+              padding: '1px 6px',
+              borderRadius: 4,
+              background: '#dcfce7',
+              color: '#15803d',
+              border: '1px solid #86efac',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 3,
+            }}
+          >
+            VERIFIED
+          </span>
+        ) : shouldShowHighRiskAlert(det.hazard_risk, det.confidence) ? (
+          <span
+            style={{
+              fontSize: '0.58rem',
+              fontWeight: 800,
+              padding: '1px 6px',
+              borderRadius: 4,
+              background: '#fee2e2',
+              color: '#b91c1c',
+              border: '1px solid #fca5a5',
+            }}
+          >
+            HIGH-RISK
+          </span>
+        ) : isVerificationEligible(det.hazard_risk, det.confidence) ? (
+          <span
+            style={{
+              fontSize: '0.58rem',
+              fontWeight: 700,
+              padding: '1px 6px',
+              borderRadius: 4,
+              background: det.expert_status === 'SKIPPED' ? '#f1f5f9' : '#fef3c7',
+              color: det.expert_status === 'SKIPPED' ? '#64748b' : '#92400e',
+              border: `1px solid ${det.expert_status === 'SKIPPED' ? '#e2e8f0' : '#fcd34d'}`,
+            }}
+          >
+            {det.expert_status === 'SKIPPED' ? 'SKIPPED' : 'VERIFY?'}
+          </span>
+        ) : null}
       </div>
     </div>
   );
