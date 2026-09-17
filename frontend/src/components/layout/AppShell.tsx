@@ -32,12 +32,14 @@ export function AppShell() {
   // 'map' | 'sonar' — auto-switch to sonar when analysis completes
   const [centerView, setCenterView] = useState<'map' | 'sonar'>('map');
 
-  // Auto-switch to sonar viewer when new results arrive
+  // Auto-switch to sonar viewer in single mode, but keep map view in folder batch mode
   useEffect(() => {
-    if (state.result) {
+    if (state.uploadMode === 'folder') {
+      setCenterView('map');
+    } else if (state.result && state.uploadMode === 'single') {
       setCenterView('sonar');
     }
-  }, [state.result]);
+  }, [state.result, state.uploadMode]);
 
   const prevLeftWidth = useRef(DEFAULT_LEFT);
   const prevRightWidth = useRef(DEFAULT_RIGHT);

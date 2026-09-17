@@ -1,10 +1,18 @@
-###### Start Backend
+#### Start whole project at once.
+
+Open Command Prompt in the terminal
+
+```cmd
+start.bat
+```
+__________________________________________
+
+## Start Backend
 
 ```bash
 cd backend
 python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
-_________________________________________
 
 ## 📁Frontend Start
 
@@ -28,4 +36,14 @@ python test_run.py --nav nav_log.csv --altitude 8.5 --swath 120.0
 
 # Save individual raw, enhanced, and side-by-side composite images
 python test_run.py --save-both
-```
+
+# Custom confidence, box padding, and input/output dirs with the ROUTE SIMULATION
+python test_run.py --input Test_Data --output outputs --conf 0.25 --pad 12 --sim-route
+
+# Single image TEST
+python test_run.py --single Test_Data/0001_2010.jpg
+
+# Saves both altitude and swath with the test run
+python test_run.py --save-both --altitude 8.5 --swath 120.0
+
+``` 

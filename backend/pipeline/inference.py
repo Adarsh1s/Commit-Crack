@@ -118,7 +118,7 @@ class AdaptiveInferenceEngine:
 
         if self.model_loaded and self.model is not None:
             try:
-                eval_conf = max(0.10, confidence_threshold * 0.70)
+                eval_conf = max(0.01, float(confidence_threshold))
 
                 # --- PASS 1: Direct Neural Scan ---
                 results_direct = self.model.predict(

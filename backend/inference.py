@@ -272,6 +272,10 @@ def run_inference(
         conf_adj = shadow_eval.get("confidence_adjusted", d.get("confidence_ai", 0.75))
         relief_h = shadow_eval.get("relief_height_m", 0.5)
 
+        # Enforce user-configured confidence threshold
+        if conf_adj < confidence_threshold:
+            continue
+
         # Physical metric dimensions
         dims_metric = compute_target_dimensions(d, meters_per_pixel=0.05)
         dimensions = {

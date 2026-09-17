@@ -1,8 +1,10 @@
 // src/components/export/ExportPanel.tsx
 import React, { useCallback } from 'react';
-import { Download, FileJson, FileText } from 'lucide-react';
+import { Download, FileJson, FileText, Archive, CheckCircle2, Layers } from 'lucide-react';
 import { useAppContext } from '../../store/AppContext';
 import type { Detection } from '../../types/sonar';
+
+const BACKEND_URL = 'http://localhost:8000';
 
 function toGeoJSON(detections: Detection[]): string {
   const features = detections
@@ -65,8 +67,10 @@ function downloadBlob(content: string, filename: string, mime: string) {
 
 export function ExportPanel() {
   const { state } = useAppContext();
+  const isBatch = state.uploadMode === 'folder';
+  const batchDone = isBatch && state.batchDownloadUrls != null;
   const detections = state.result?.detections;
-  const disabled = !detections || detections.length === 0;
+  const singleDisabled = !detections || detections.length === 0;
   const ts = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
 
   const exportGeoJSON = useCallback(() => {
@@ -74,10 +78,26 @@ export function ExportPanel() {
     downloadBlob(toGeoJSON(detections), `sonar_detections_${ts}.geojson`, 'application/geo+json');
   }, [detections, ts]);
 
-  const exportCSV = useCallback(() => {
+  const exportSingleCSV = useCallback(() => {
     if (!detections) return;
     downloadBlob(toCSV(detections), `sonar_catalog_${ts}.csv`, 'text/csv;charset=utf-8');
   }, [detections, ts]);
+
+  // Batch download handlers
+  const downloadBatchCSV = useCallback(() => {
+    if (!state.batchId) return;
+    window.open(`${BACKEND_URL}/api/v1/batch/${state.batchId}/download/csv`, '_blank');
+  }, [state.batchId]);
+
+  const downloadBatchJSON = useCallback(() => {
+    if (!state.batchId) return;
+    window.open(`${BACKEND_URL}/api/v1/batch/${state.batchId}/download/json`, '_blank');
+  }, [state.batchId]);
+
+  const downloadBatchZIP = useCallback(() => {
+    if (!state.batchId) return;
+    window.open(`${BACKEND_URL}/api/v1/batch/${state.batchId}/download/zip`, '_blank');
+  }, [state.batchId]);
 
   return (
     <div>
@@ -89,96 +109,236 @@ export function ExportPanel() {
           letterSpacing: '0.04em',
           textTransform: 'uppercase',
           marginBottom: 10,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
         }}
       >
-        Export Deliverables
-      </div>
-      <div style={{ display: 'flex', gap: 8 }}>
-        <button
-          id="export-geojson-btn"
-          onClick={exportGeoJSON}
-          disabled={disabled}
-          aria-label="Export GeoJSON"
-          style={{
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 6,
-            padding: '9px 12px',
-            borderRadius: 20,
-            border: `1px solid ${disabled ? '#e2e8f0' : '#0f172a'}`,
-            background: disabled ? '#f8fafc' : '#ffffff',
-            color: disabled ? '#94a3b8' : '#0f172a',
-            cursor: disabled ? 'not-allowed' : 'pointer',
-            fontSize: '0.75rem',
-            fontWeight: 700,
-            transition: 'all 180ms ease',
-          }}
-          onMouseEnter={(e) => {
-            if (!disabled) {
-              e.currentTarget.style.background = '#0f172a';
-              e.currentTarget.style.color = '#ffffff';
-              e.currentTarget.style.transform = 'translateY(-1px)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (!disabled) {
-              e.currentTarget.style.background = '#ffffff';
-              e.currentTarget.style.color = '#0f172a';
-              e.currentTarget.style.transform = 'translateY(0)';
-            }
-          }}
-        >
-          <FileJson size={14} />
-          <span>GeoJSON</span>
-        </button>
-
-        <button
-          id="export-csv-btn"
-          onClick={exportCSV}
-          disabled={disabled}
-          aria-label="Export CSV catalog"
-          style={{
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 6,
-            padding: '9px 12px',
-            borderRadius: 20,
-            border: `1px solid ${disabled ? '#e2e8f0' : '#0f172a'}`,
-            background: disabled ? '#f8fafc' : '#ffffff',
-            color: disabled ? '#94a3b8' : '#0f172a',
-            cursor: disabled ? 'not-allowed' : 'pointer',
-            fontSize: '0.75rem',
-            fontWeight: 700,
-            transition: 'all 180ms ease',
-          }}
-          onMouseEnter={(e) => {
-            if (!disabled) {
-              e.currentTarget.style.background = '#0f172a';
-              e.currentTarget.style.color = '#ffffff';
-              e.currentTarget.style.transform = 'translateY(-1px)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (!disabled) {
-              e.currentTarget.style.background = '#ffffff';
-              e.currentTarget.style.color = '#0f172a';
-              e.currentTarget.style.transform = 'translateY(0)';
-            }
-          }}
-        >
-          <FileText size={14} />
-          <span>CSV</span>
-        </button>
+        <span>{isBatch ? 'Batch Mission Deliverables' : 'Export Deliverables'}</span>
+        {isBatch && batchDone && (
+          <span style={{ fontSize: '0.62rem', color: '#15803d', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 3 }}>
+            <CheckCircle2 size={12} />
+            <span>Ready</span>
+          </span>
+        )}
       </div>
 
-      {disabled && (
-        <p style={{ fontSize: '0.65rem', color: '#94a3b8', textAlign: 'center', marginTop: 8, marginBottom: 0 }}>
-          Run analysis to enable deliverables
-        </p>
+      {/* BATCH DOWNLOADS */}
+      {isBatch ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <button
+              id="download-batch-csv-btn"
+              onClick={downloadBatchCSV}
+              disabled={!batchDone}
+              aria-label="Download Batch CSV"
+              style={{
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 5,
+                padding: '8px 10px',
+                borderRadius: 8,
+                border: `1px solid ${batchDone ? '#0f172a' : '#e2e8f0'}`,
+                background: batchDone ? '#ffffff' : '#f8fafc',
+                color: batchDone ? '#0f172a' : '#94a3b8',
+                cursor: batchDone ? 'pointer' : 'not-allowed',
+                fontSize: '0.72rem',
+                fontWeight: 700,
+                transition: 'all 150ms ease',
+              }}
+              onMouseEnter={(e) => {
+                if (batchDone) {
+                  e.currentTarget.style.background = '#0f172a';
+                  e.currentTarget.style.color = '#ffffff';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (batchDone) {
+                  e.currentTarget.style.background = '#ffffff';
+                  e.currentTarget.style.color = '#0f172a';
+                }
+              }}
+            >
+              <FileText size={13} />
+              <span>Batch CSV</span>
+            </button>
+
+            <button
+              id="download-batch-json-btn"
+              onClick={downloadBatchJSON}
+              disabled={!batchDone}
+              aria-label="Download Batch JSON"
+              style={{
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 5,
+                padding: '8px 10px',
+                borderRadius: 8,
+                border: `1px solid ${batchDone ? '#0f172a' : '#e2e8f0'}`,
+                background: batchDone ? '#ffffff' : '#f8fafc',
+                color: batchDone ? '#0f172a' : '#94a3b8',
+                cursor: batchDone ? 'pointer' : 'not-allowed',
+                fontSize: '0.72rem',
+                fontWeight: 700,
+                transition: 'all 150ms ease',
+              }}
+              onMouseEnter={(e) => {
+                if (batchDone) {
+                  e.currentTarget.style.background = '#0f172a';
+                  e.currentTarget.style.color = '#ffffff';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (batchDone) {
+                  e.currentTarget.style.background = '#ffffff';
+                  e.currentTarget.style.color = '#0f172a';
+                }
+              }}
+            >
+              <FileJson size={13} />
+              <span>Batch JSON</span>
+            </button>
+          </div>
+
+          {/* Full Archive ZIP Button */}
+          <button
+            id="download-batch-zip-btn"
+            onClick={downloadBatchZIP}
+            disabled={!batchDone}
+            aria-label="Download Complete Batch ZIP"
+            style={{
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 6,
+              padding: '9px 12px',
+              borderRadius: 8,
+              border: 'none',
+              background: batchDone ? '#0284c7' : '#f1f5f9',
+              color: batchDone ? '#ffffff' : '#94a3b8',
+              cursor: batchDone ? 'pointer' : 'not-allowed',
+              fontSize: '0.75rem',
+              fontWeight: 700,
+              boxShadow: batchDone ? '0 2px 8px rgba(2, 132, 199, 0.25)' : 'none',
+              transition: 'all 180ms ease',
+            }}
+            onMouseEnter={(e) => {
+              if (batchDone) {
+                e.currentTarget.style.background = '#0369a1';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (batchDone) {
+                e.currentTarget.style.background = '#0284c7';
+              }
+            }}
+          >
+            <Archive size={14} />
+            <span>Download Complete Batch (.ZIP)</span>
+          </button>
+
+          {!batchDone && (
+            <p style={{ fontSize: '0.62rem', color: '#94a3b8', textAlign: 'center', margin: '4px 0 0' }}>
+              Run batch survey to generate deliverable archive
+            </p>
+          )}
+        </div>
+      ) : (
+        /* SINGLE IMAGE EXPORT BUTTONS */
+        <div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button
+              id="export-geojson-btn"
+              onClick={exportGeoJSON}
+              disabled={singleDisabled}
+              aria-label="Export GeoJSON"
+              style={{
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 6,
+                padding: '9px 12px',
+                borderRadius: 20,
+                border: `1px solid ${singleDisabled ? '#e2e8f0' : '#0f172a'}`,
+                background: singleDisabled ? '#f8fafc' : '#ffffff',
+                color: singleDisabled ? '#94a3b8' : '#0f172a',
+                cursor: singleDisabled ? 'not-allowed' : 'pointer',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                transition: 'all 180ms ease',
+              }}
+              onMouseEnter={(e) => {
+                if (!singleDisabled) {
+                  e.currentTarget.style.background = '#0f172a';
+                  e.currentTarget.style.color = '#ffffff';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!singleDisabled) {
+                  e.currentTarget.style.background = '#ffffff';
+                  e.currentTarget.style.color = '#0f172a';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }
+              }}
+            >
+              <FileJson size={14} />
+              <span>GeoJSON</span>
+            </button>
+
+            <button
+              id="export-csv-btn"
+              onClick={exportSingleCSV}
+              disabled={singleDisabled}
+              aria-label="Export CSV catalog"
+              style={{
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 6,
+                padding: '9px 12px',
+                borderRadius: 20,
+                border: `1px solid ${singleDisabled ? '#e2e8f0' : '#0f172a'}`,
+                background: singleDisabled ? '#f8fafc' : '#ffffff',
+                color: singleDisabled ? '#94a3b8' : '#0f172a',
+                cursor: singleDisabled ? 'not-allowed' : 'pointer',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                transition: 'all 180ms ease',
+              }}
+              onMouseEnter={(e) => {
+                if (!singleDisabled) {
+                  e.currentTarget.style.background = '#0f172a';
+                  e.currentTarget.style.color = '#ffffff';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!singleDisabled) {
+                  e.currentTarget.style.background = '#ffffff';
+                  e.currentTarget.style.color = '#0f172a';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }
+              }}
+            >
+              <FileText size={14} />
+              <span>CSV</span>
+            </button>
+          </div>
+
+          {singleDisabled && (
+            <p style={{ fontSize: '0.65rem', color: '#94a3b8', textAlign: 'center', marginTop: 8, marginBottom: 0 }}>
+              Run analysis to enable deliverables
+            </p>
+          )}
+        </div>
       )}
     </div>
   );

@@ -2,33 +2,45 @@
 Aqua Sentinel — Advanced Sonar Batch Test & Side-by-Side Validation Runner
 ==========================================================================
 Processes sonar image surveys through the complete AquaSentinel AI pipeline:
-- Ingests sonar images and auto-detects navigation/telemetry sidecar logs.
+- Authoritative Batch Processor & Scheduler with configurable test interval.
+- Arabian Sea Submarine Route & GPS Telemetry Simulator (Mumbai -> Kochi).
 - Evaluates the Graceful Degradation Ladder (FULL, PARTIAL, NONE).
 - Executes DSP enhancements (Slant-Range, CLAHE, Gain Normalization, Nadir Excision).
 - Runs AI tests and multi-scale detections on the PREPROCESSED sonar image.
 - Physics-Informed Acoustic Shadow Gating (highlight-shadow geometry, relief height).
 - Real-world 3D Metric Dimensions & WGS84 Geolocation Projection.
-- Hazard Risk Assessment across all 5 Canonical Classes (crab_pot, submarine_pipeline, shipwreck, ghost_net, mine_cylinder).
+- Hazard Risk Assessment across all 5 Canonical Classes.
 - Combines BOTH images in ONE side-by-side composite:
     [ 1. ORIGINAL RAW SONAR ] | [ 2. PREPROCESSED + AI DETECTIONS ]
-- Exports GIS-ready GeoJSON FeatureCollection, summary CSV, and comprehensive JSON.
+- Exports batch-dedicated artifacts:
+    outputs/batch_YYYYMMDD_HHMMSS/
+      ├── processed/
+      ├── csv/batch_results.csv
+      ├── json/batch_results.json
+      └── run_summary.json
+      └── outputs/batch_YYYYMMDD_HHMMSS.zip
 
 Usage:
     python test_run.py
-    python test_run.py --input Test_Data --output outputs --conf 0.25 --pad 12
+    python test_run.py --input Test_Data --output outputs --conf 0.25 --pad 12 --sim-route
+    python test_run.py --single Test_Data/0001_2010.jpg
     python test_run.py --save-both --altitude 8.5 --swath 120.0
 """
 
 import argparse
 import csv
+from datetime import datetime, timezone
 import io
 import json
 import math
 import os
+from pathlib import Path
+import shutil
 import sys
 import time
-from pathlib import Path
-from typing import Dict, Any, List, Optional, Tuple
+from typing import Dict, Any, List, Optional, Tuple, Callable, Generator
+import uuid
+import zipfile
 
 # Reconfigure stdout/stderr for Windows console unicode support
 if hasattr(sys.stdout, "reconfigure"):
@@ -55,10 +67,20 @@ from pipeline.geolocation import (
     project_detection_geolocation,
     compute_risk_score,
 )
-from inference import _draw_annotations, get_inference_engine
+from pipeline.simulation import (
+    interpolate_route,
+    get_mumbai_kochi_route,
+    ARABIAN_SEA_MUMBAI_KOCHI_WAYPOINTS,
+)
+from inference import _draw_annotations, get_inference_engine, _crop_thumbnail, _img_to_data_url
 
+# ==============================================================================
+# CONFIGURABLE BATCH TEST SETTINGS (EDITABLE DIRECTLY FROM PYTHON FILE)
+# ==============================================================================
+TEST_INTERVAL_SECONDS: float = 2.0  # Configurable delay in seconds between sequential frames
+# ==============================================================================
 
-SUPPORTED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".tif", ".webp"}
+SUPPORTED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".tif", ".webp", ".pbm"}
 
 
 def parse_nav_csv_log(csv_path: Path) -> List[Dict[str, float]]:
@@ -96,62 +118,76 @@ def parse_nav_csv_log(csv_path: Path) -> List[Dict[str, float]]:
 
 
 def resolve_image_telemetry(
-    image_path: Path,
+    image_path: Optional[Path],
     global_nav_fixes: List[Dict[str, float]],
+    simulated_gps: Optional[Dict[str, float]] = None,
     default_altitude: float = 8.0,
     default_swath: float = 100.0,
     default_heading: float = 0.0,
 ) -> Tuple[str, Optional[Dict[str, float]]]:
     """
     Resolves telemetry and Graceful Degradation Tier for a sonar image:
-    - Tier 'FULL': Has GPS coordinates + Altitude + Heading (from sidecar CSV/JSON or global log)
+    - If simulated_gps is provided (DEMO mode), uses simulated Arabian Sea WGS84 fix.
+    - Otherwise checks sidecar JSON/CSV or global nav log.
+    - Tier 'FULL': Has GPS coordinates + Altitude + Heading
     - Tier 'PARTIAL': Has Altitude/metadata without full GPS
     - Tier 'NONE': Raw imagery only
     """
-    stem = image_path.stem
-    parent = image_path.parent
+    if simulated_gps and simulated_gps.get("lat") is not None and simulated_gps.get("lon") is not None:
+        return "FULL", {
+            "latitude": float(simulated_gps["lat"]),
+            "longitude": float(simulated_gps["lon"]),
+            "altitude": float(simulated_gps.get("alt", default_altitude)),
+            "heading": float(simulated_gps.get("heading", default_heading)),
+            "swath_width_m": default_swath,
+            "simulated": True,
+        }
 
-    # 1. Check for sidecar JSON
-    sidecar_json = parent / f"{stem}.json"
-    if sidecar_json.exists():
-        try:
-            with open(sidecar_json, "r", encoding="utf-8") as f:
-                data = json.load(f)
-                lat = data.get("latitude") or data.get("lat")
-                lon = data.get("longitude") or data.get("lon")
-                alt = data.get("altitude_m") or data.get("altitude") or default_altitude
-                hdg = data.get("heading_deg") or data.get("heading") or default_heading
-                swath = data.get("swath_width_m") or data.get("swath") or default_swath
-                if lat is not None and lon is not None:
-                    return "FULL", {
-                        "latitude": float(lat),
-                        "longitude": float(lon),
-                        "altitude": float(alt),
-                        "heading": float(hdg),
-                        "swath_width_m": float(swath),
-                    }
-                elif alt is not None:
-                    return "PARTIAL", {
-                        "altitude": float(alt),
-                        "heading": float(hdg),
-                        "swath_width_m": float(swath),
-                    }
-        except Exception:
-            pass
+    if image_path:
+        stem = image_path.stem
+        parent = image_path.parent
 
-    # 2. Check for sidecar CSV
-    sidecar_csv = parent / f"{stem}.csv"
-    if sidecar_csv.exists():
-        fixes = parse_nav_csv_log(sidecar_csv)
-        if fixes:
-            first_fix = fixes[0]
-            return "FULL", {
-                "latitude": first_fix["latitude"],
-                "longitude": first_fix["longitude"],
-                "altitude": first_fix["altitude"],
-                "heading": first_fix["heading"],
-                "swath_width_m": default_swath,
-            }
+        # 1. Check for sidecar JSON
+        sidecar_json = parent / f"{stem}.json"
+        if sidecar_json.exists():
+            try:
+                with open(sidecar_json, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    lat = data.get("latitude") or data.get("lat")
+                    lon = data.get("longitude") or data.get("lon")
+                    alt = data.get("altitude_m") or data.get("altitude") or default_altitude
+                    hdg = data.get("heading_deg") or data.get("heading") or default_heading
+                    swath = data.get("swath_width_m") or data.get("swath") or default_swath
+                    if lat is not None and lon is not None:
+                        return "FULL", {
+                            "latitude": float(lat),
+                            "longitude": float(lon),
+                            "altitude": float(alt),
+                            "heading": float(hdg),
+                            "swath_width_m": float(swath),
+                        }
+                    elif alt is not None:
+                        return "PARTIAL", {
+                            "altitude": float(alt),
+                            "heading": float(hdg),
+                            "swath_width_m": float(swath),
+                        }
+            except Exception:
+                pass
+
+        # 2. Check for sidecar CSV
+        sidecar_csv = parent / f"{stem}.csv"
+        if sidecar_csv.exists():
+            fixes = parse_nav_csv_log(sidecar_csv)
+            if fixes:
+                first_fix = fixes[0]
+                return "FULL", {
+                    "latitude": first_fix["latitude"],
+                    "longitude": first_fix["longitude"],
+                    "altitude": first_fix["altitude"],
+                    "heading": first_fix["heading"],
+                    "swath_width_m": default_swath,
+                }
 
     # 3. Check global navigation fixes
     if global_nav_fixes:
@@ -183,23 +219,22 @@ def create_side_by_side_comparison(
     """
     Creates a high-contrast side-by-side composite image:
     [ LEFT: 1. ORIGINAL RAW SONAR ] | [ RIGHT: 2. PREPROCESSED + AI DETECTIONS ]
-    Includes sleek HUD header labels, target count badge, and a clean separating divider.
+    Includes HUD header labels, target count badge, and a clean separating divider.
     """
     h_raw, w_raw = raw_bgr.shape[:2]
     h_proc, w_proc = processed_annotated_bgr.shape[:2]
 
-    # Harmonize heights if slant-range or padding altered dimensions
+    # Harmonize heights
     target_h = max(h_raw, h_proc)
     if h_raw != target_h:
-        w_new = int(w_raw * (target_h / h_raw))
+        w_new = int(w_raw * (target_h / max(1, h_raw)))
         raw_bgr = cv2.resize(raw_bgr, (w_new, target_h), interpolation=cv2.INTER_AREA)
         w_raw = w_new
     if h_proc != target_h:
-        w_new = int(w_proc * (target_h / h_proc))
+        w_new = int(w_proc * (target_h / max(1, h_proc)))
         processed_annotated_bgr = cv2.resize(processed_annotated_bgr, (w_new, target_h), interpolation=cv2.INTER_AREA)
         w_proc = w_new
 
-    # Header bar height (34px)
     header_h = 34
     divider_w = 4
     total_w = w_raw + w_proc + divider_w
@@ -240,8 +275,8 @@ def create_side_by_side_comparison(
 
 
 def process_single_image(
-    image_path: Path,
-    engine: AdaptiveInferenceEngine,
+    image_input: Any,  # Path or bytes
+    engine: Optional[AdaptiveInferenceEngine] = None,
     confidence_threshold: float = 0.20,
     padding: int = 12,
     slant_range: bool = True,
@@ -252,18 +287,26 @@ def process_single_image(
     meters_per_pixel: float = 0.05,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, List[Dict[str, Any]], Dict[str, Any]]:
     """
-    Runs full DSP preprocessing, multi-scale AI inference on the preprocessed image,
-    acoustic shadow evidence gating, and geospatial/metric projection on a single sonar image.
+    Runs full DSP preprocessing, multi-scale AI inference, acoustic shadow gating,
+    and geolocation projection on a single sonar image.
     Returns (raw_bgr, annotated_enhanced_bgr, side_by_side_bgr, final_detections, metadata).
     """
-    with open(image_path, "rb") as f:
-        image_bytes = f.read()
+    if engine is None:
+        engine = get_inference_engine()
+
+    if isinstance(image_input, (str, Path)):
+        with open(image_input, "rb") as f:
+            image_bytes = f.read()
+    elif isinstance(image_input, bytes):
+        image_bytes = image_input
+    else:
+        raise ValueError(f"Unsupported image_input type: {type(image_input)}")
 
     norm_input = normalize_input_sources(image_bytes)
     raw_bgr = norm_input.image_bgr
     img_h, img_w = raw_bgr.shape[:2]
 
-    # 1. DSP Preprocessing for AI detection (Gain Normalization + CLAHE + Slant-Range)
+    # 1. DSP Preprocessing (Gain Normalization + CLAHE + Slant-Range)
     enhanced_bgr = preprocess_sonar_image(
         raw_bgr,
         remove_water_column=nadir_excision,
@@ -322,13 +365,12 @@ def process_single_image(
     for idx, d in enumerate(merged_detections):
         x1, y1, x2, y2 = d["x_min"], d["y_min"], d["x_max"], d["y_max"]
 
-        # Skip whole-canvas false positives (only reject if covering nearly the full frame in BOTH dimensions or >75% total area)
+        # Reject full-canvas false positives
         det_w = max(1, x2 - x1)
         det_h = max(1, y2 - y1)
         if (det_w > img_w * 0.85 and det_h > img_h * 0.85) or (det_w * det_h > img_w * img_h * 0.75):
             continue
 
-        # Apply configurable bounding box padding around detected object
         pad_x = max(padding, int(det_w * 0.08))
         pad_y = max(padding, int(det_h * 0.08))
         bx1 = max(0, x1 - pad_x)
@@ -352,6 +394,10 @@ def process_single_image(
         relief_h = shadow_eval.get("relief_height_m", 0.5)
         shadow_contrast = shadow_eval.get("shadow_contrast", 0.0)
 
+        # Enforce user-configured confidence threshold
+        if conf_adj < confidence_threshold:
+            continue
+
         # Physical 3D dimensions
         dimensions = compute_target_dimensions(d, meters_per_pixel=meters_per_pixel)
         dimensions["relief_height_m"] = relief_h
@@ -371,6 +417,18 @@ def process_single_image(
             heading_deg=heading_deg,
         )
 
+        # Polygon contour mask points
+        poly = d.get("polygon", [])
+        mask_contour = []
+        if poly and len(poly) >= 6:
+            for i in range(0, len(poly) - 1, 2):
+                mask_contour.append((float(poly[i]), float(poly[i + 1])))
+        else:
+            mask_contour = [(float(bx1), float(by1)), (float(bx2), float(by1)), (float(bx2), float(by2)), (float(bx1), float(by2))]
+
+        # Thumbnail crop
+        thumbnail_b64 = _crop_thumbnail(raw_bgr, int(bx1), int(by1), int(bx2), int(by2))
+
         final_detections.append({
             "id": f"tgt-{idx + 1:02d}",
             "target_class": target_cls,
@@ -378,16 +436,18 @@ def process_single_image(
             "confidence": round(float(conf_adj), 4),
             "shadow_evidence": shadow_ev,
             "review_status": review_status,
-            "shadow_contrast": shadow_contrast,
+            "shadow_contrast": round(float(shadow_contrast), 4),
             "dimensions": dimensions,
             "hazard_risk": hazard_risk,
             "bounding_box": padded_bbox,
             "raw_box": [float(x1), float(y1), float(x2), float(y2)],
             "local_offset_m": local_offset,
             "geolocation": geo_coords,
+            "mask_contour": mask_contour,
+            "thumbnail_base64": thumbnail_b64,
         })
 
-    # 4. Render annotations onto the PREPROCESSED image
+    # 4. Render annotations onto images
     annotated_enhanced_bgr = _draw_annotations(enhanced_bgr, final_detections)
     annotated_raw_bgr = _draw_annotations(raw_bgr, final_detections)
 
@@ -407,160 +467,116 @@ def process_single_image(
     return raw_bgr, annotated_enhanced_bgr, side_by_side_bgr, final_detections, metadata
 
 
-def build_geojson_feature_collection(
-    all_results: List[Dict[str, Any]]
-) -> Dict[str, Any]:
-    """
-    Compiles all detected sonar targets into a valid GeoJSON FeatureCollection.
-    Ready for import into QGIS, ArcGIS, Mapbox, or Leaflet.
-    """
-    features = []
-
-    for res in all_results:
-        img_name = res["filename"]
-        for d in res["detections"]:
-            geo = d.get("geolocation")
-            local = d.get("local_offset_m") or {}
-            dim = d.get("dimensions") or {}
-
-            # Use WGS84 GPS if available; otherwise use local metric offset
-            if geo and geo.get("lon") is not None and geo.get("lat") is not None:
-                geometry = {
-                    "type": "Point",
-                    "coordinates": [geo["lon"], geo["lat"]]
-                }
-            else:
-                geometry = {
-                    "type": "Point",
-                    "coordinates": [local.get("x_m", 0.0), local.get("y_m", 0.0)]
-                }
-
-            feature = {
-                "type": "Feature",
-                "id": f"{img_name}_{d['id']}",
-                "geometry": geometry,
-                "properties": {
-                    "image_name": img_name,
-                    "target_id": d["id"],
-                    "class_name": d["target_class"],
-                    "confidence_ai": d.get("confidence_ai", d["confidence"]),
-                    "confidence_final": d["confidence"],
-                    "hazard_risk": d["hazard_risk"],
-                    "shadow_evidence": d["shadow_evidence"],
-                    "review_status": d["review_status"],
-                    "length_m": dim.get("length_m"),
-                    "width_m": dim.get("width_m"),
-                    "area_m2": dim.get("area_m2"),
-                    "relief_height_m": dim.get("relief_height_m"),
-                    "bbox": d["bounding_box"],
-                    "coordinate_frame": "WGS84" if geo else "LOCAL_TRACK_METRIC",
-                }
-            }
-            features.append(feature)
-
-    return {
-        "type": "FeatureCollection",
-        "name": "AquaSentinel_Sonar_Detections",
-        "crs": {
-            "type": "name",
-            "properties": {"name": "urn:ogc:def:crs:OGC:1.3:CRS84"}
-        },
-        "features": features,
-    }
-
-
-def run_batch_test(
-    input_dir: str = "Test_Data",
-    output_dir: str = "outputs",
+def execute_batch_generator(
+    images_list: List[Tuple[str, Any]],  # List of (filename, Path_or_bytes)
+    batch_id: Optional[str] = None,
+    output_root: str = "outputs",
+    interval_seconds: float = TEST_INTERVAL_SECONDS,
+    sim_route: bool = True,
+    cancellation_check: Optional[Callable[[str], bool]] = None,
     confidence_threshold: float = 0.20,
     padding: int = 12,
-    nav_file: Optional[str] = None,
     altitude: float = 8.0,
     swath_width: float = 100.0,
     heading: float = 0.0,
-    save_both: bool = False,
-    only_enhanced: bool = False,
-    only_raw: bool = False,
-    export_geojson: bool = True,
     slant_range: bool = True,
     clahe: bool = True,
     nadir_excision: bool = False,
-):
-    input_path = Path(input_dir).resolve()
-    output_path = Path(output_dir).resolve()
-    output_path.mkdir(parents=True, exist_ok=True)
+) -> Generator[Dict[str, Any], None, Dict[str, Any]]:
+    """
+    Authoritative sequential batch execution generator with streaming events.
+    Yields events:
+      - 'batch_started'
+      - 'image_started'
+      - 'image_processed'
+      - 'image_failed'
+      - 'batch_cancelled'
+      - 'batch_completed'
+    """
+    started_at = datetime.now(timezone.utc).isoformat()
+    total_images = len(images_list)
 
-    if not input_path.exists():
-        print(f"❌ Error: Input directory '{input_path}' does not exist.")
-        sys.exit(1)
+    if not batch_id:
+        batch_id = f"batch_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:4]}"
 
-    image_files = sorted([
-        f for f in input_path.iterdir()
-        if f.is_file() and f.suffix.lower() in SUPPORTED_EXTENSIONS
-    ])
+    batch_dir = Path(output_root).resolve() / batch_id
+    processed_dir = batch_dir / "processed"
+    csv_dir = batch_dir / "csv"
+    json_dir = batch_dir / "json"
 
-    total_images = len(image_files)
-    if total_images == 0:
-        print(f"⚠️ No supported images found in '{input_path}'.")
-        return
+    processed_dir.mkdir(parents=True, exist_ok=True)
+    csv_dir.mkdir(parents=True, exist_ok=True)
+    json_dir.mkdir(parents=True, exist_ok=True)
 
-    # Ingest global navigation CSV if provided
-    global_nav_fixes = []
-    if nav_file:
-        nav_path = Path(nav_file).resolve()
-        if nav_path.exists():
-            global_nav_fixes = parse_nav_csv_log(nav_path)
-            print(f"📡 Loaded {len(global_nav_fixes)} GPS navigation fixes from: {nav_path.name}")
-        else:
-            print(f"⚠️ Navigation file '{nav_file}' not found. Falling back to sidecar/local.")
+    # Compute Arabian Sea simulation route coordinates for all frames
+    sim_coordinates: List[Dict[str, float]] = []
+    if sim_route and total_images > 0:
+        sim_coordinates = interpolate_route(total_images)
 
-    if save_both:
-        mode_label = "Side-by-Side + Raw + Enhanced (All Formats)"
-    elif only_enhanced:
-        mode_label = "Enhanced Only"
-    elif only_raw:
-        mode_label = "Raw Only"
-    else:
-        mode_label = "Side-by-Side Composite (1. Original Raw | 2. Preprocessed + Detections)"
-
-    print("=" * 75)
-    print("🌊 Aqua Sentinel — Advanced Sonar Batch Test & Side-by-Side Runner")
-    print("=" * 75)
-    print(f"📁 Input Directory:     {input_path}")
-    print(f"💾 Output Directory:    {output_path}")
-    print(f"🖼️ Total Images:        {total_images}")
-    print(f"🎯 Conf Threshold:      {confidence_threshold:.2f}")
-    print(f"📦 Box Padding:         {padding}px")
-    print(f"🎨 Output Image Canvas: {mode_label}")
-    print(f"📐 Swath / Altitude:    {swath_width:.1f}m / {altitude:.1f}m")
-    print(f"⚙️ DSP Pipeline:        Slant-Range={'ON' if slant_range else 'OFF'}, CLAHE={'ON' if clahe else 'OFF'}, Nadir={'ON' if nadir_excision else 'OFF'}")
-    print("=" * 75)
+    # Yield initial start event immediately
+    yield {
+        "type": "batch_started",
+        "batch_id": batch_id,
+        "total_images": total_images,
+        "processing_interval_seconds": interval_seconds,
+        "started_at": started_at,
+        "gps_mode": "SIMULATION" if sim_route else "LIVE/SIDECAR",
+        "route": {
+            "start": "Mumbai Offshore Anchorage",
+            "end": "Kochi Roadstead Channel",
+            "waypoints": get_mumbai_kochi_route(),
+        } if sim_route else None,
+    }
 
     engine = get_inference_engine()
-    all_results = []
+    batch_image_records: List[Dict[str, Any]] = []
+    csv_rows: List[List[Any]] = []
     class_counts: Dict[str, int] = {}
     risk_counts: Dict[str, int] = {"LOW": 0, "MEDIUM": 0, "HIGH": 0, "CRITICAL": 0}
     evidence_counts: Dict[str, int] = {"SUPPORTING": 0, "NEUTRAL": 0, "ABSENT": 0}
     tier_counts: Dict[str, int] = {"FULL": 0, "PARTIAL": 0, "NONE": 0}
     total_detections_count = 0
+    processed_count = 0
+    failed_count = 0
+    was_cancelled = False
 
-    t_start = time.perf_counter()
+    t_batch_start = time.perf_counter()
 
-    for idx, img_file in enumerate(image_files, 1):
+    for seq_idx, (img_name, img_data) in enumerate(images_list, 1):
+        # 1. Check for cancellation before processing frame
+        if cancellation_check and cancellation_check(batch_id):
+            was_cancelled = True
+            break
+
+        frame_start_time = datetime.now(timezone.utc).isoformat()
+        current_gps = sim_coordinates[seq_idx - 1] if sim_route and (seq_idx - 1) < len(sim_coordinates) else None
+
+        yield {
+            "type": "image_started",
+            "batch_id": batch_id,
+            "sequence": seq_idx,
+            "total": total_images,
+            "filename": img_name,
+            "timestamp": frame_start_time,
+            "gps": current_gps if current_gps else None,
+        }
+
         t0 = time.perf_counter()
         try:
-            # Resolve Degradation Tier and Telemetry Fixes
+            # Resolve Telemetry
+            img_path = Path(img_data) if isinstance(img_data, (str, Path)) else None
             tier, telemetry = resolve_image_telemetry(
-                image_path=img_file,
-                global_nav_fixes=global_nav_fixes,
+                image_path=img_path,
+                global_nav_fixes=[],
+                simulated_gps=current_gps,
                 default_altitude=altitude,
                 default_swath=swath_width,
-                default_heading=heading,
+                default_heading=current_gps.get("heading", heading) if current_gps else heading,
             )
             tier_counts[tier] = tier_counts.get(tier, 0) + 1
 
-            raw_img, annotated_enhanced_img, side_by_side_img, detections, meta = process_single_image(
-                image_path=img_file,
+            raw_bgr, enh_bgr, sbs_bgr, detections, meta = process_single_image(
+                image_input=img_data,
                 engine=engine,
                 confidence_threshold=confidence_threshold,
                 padding=padding,
@@ -572,37 +588,16 @@ def run_batch_test(
                 meters_per_pixel=0.05,
             )
 
-            # Ensure output directory exists
-            output_path.mkdir(parents=True, exist_ok=True)
+            # Save processed side-by-side composite
+            out_img_filename = f"annotated_{img_name}"
+            out_img_path = processed_dir / out_img_filename
+            cv2.imwrite(str(out_img_path), sbs_bgr)
 
-            # Save annotated output images
-            if save_both:
-                sbs_out_file = output_path / f"annotated_sbs_{img_file.name}"
-                raw_out_file = output_path / f"annotated_raw_{img_file.name}"
-                enh_out_file = output_path / f"annotated_enhanced_{img_file.name}"
-                cv2.imwrite(str(sbs_out_file), side_by_side_img)
-                cv2.imwrite(str(raw_out_file), raw_img)
-                cv2.imwrite(str(enh_out_file), annotated_enhanced_img)
-                primary_out = sbs_out_file.name
-            elif only_enhanced:
-                out_file = output_path / f"annotated_enhanced_{img_file.name}"
-                cv2.imwrite(str(out_file), annotated_enhanced_img)
-                primary_out = out_file.name
-            elif only_raw:
-                out_file = output_path / f"annotated_raw_{img_file.name}"
-                cv2.imwrite(str(out_file), raw_img)
-                primary_out = out_file.name
-            else:
-                # Default: Side-by-Side Comparison Output (1. Original Raw | 2. Preprocessed + Detections)
-                out_file = output_path / f"annotated_{img_file.name}"
-                cv2.imwrite(str(out_file), side_by_side_img)
-                primary_out = out_file.name
-
-            elapsed = (time.perf_counter() - t0) * 1000
-
-            # Record metrics
+            elapsed_ms = round((time.perf_counter() - t0) * 1000, 1)
+            processed_count += 1
             total_detections_count += len(detections)
-            det_summaries = []
+
+            # Update metrics
             for d in detections:
                 cls = d["target_class"]
                 risk = d["hazard_risk"]
@@ -610,59 +605,264 @@ def run_batch_test(
                 class_counts[cls] = class_counts.get(cls, 0) + 1
                 risk_counts[risk] = risk_counts.get(risk, 0) + 1
                 evidence_counts[ev] = evidence_counts.get(ev, 0) + 1
-                det_summaries.append(f"{cls} ({d['confidence']*100:.0f}%, {risk}, {ev[:4]})")
 
-            summary_str = ", ".join(det_summaries) if det_summaries else "No targets detected"
-            print(f"[{idx:02d}/{total_images:02d}] [{tier:<7}] {img_file.name[:28]:<28} -> {len(detections)} targets ({elapsed:4.0f}ms) | {summary_str}")
+            # Format detection items for structured JSON
+            json_detections = []
+            for d in detections:
+                box = d["bounding_box"]
+                dim = d.get("dimensions") or {}
+                json_detections.append({
+                    "id": d["id"],
+                    "class": d["target_class"],
+                    "confidence": d["confidence"],
+                    "confidence_ai": d.get("confidence_ai", d["confidence"]),
+                    "hazard_risk": d["hazard_risk"],
+                    "shadow_evidence": d["shadow_evidence"],
+                    "review_status": d["review_status"],
+                    "bbox": {
+                        "x": box[0],
+                        "y": box[1],
+                        "width": box[2] - box[0],
+                        "height": box[3] - box[1],
+                    },
+                    "dimensions": {
+                        "length_m": dim.get("length_m"),
+                        "width_m": dim.get("width_m"),
+                        "area_m2": dim.get("area_m2"),
+                        "relief_height_m": dim.get("relief_height_m"),
+                    },
+                    "geolocation": d.get("geolocation"),
+                })
 
-            all_results.append({
-                "filename": img_file.name,
-                "output_image": primary_out,
-                "degradation_tier": tier,
-                "dimensions": meta["dimensions"],
+            # Record JSON entry for this image
+            image_record = {
+                "sequence": seq_idx,
+                "filename": img_name,
+                "timestamp": frame_start_time,
+                "image_width": meta["dimensions"][0],
+                "image_height": meta["dimensions"][1],
                 "detection_count": len(detections),
-                "inference_time_ms": round(elapsed, 1),
+                "gps": {
+                    "lat": current_gps["lat"] if current_gps else (telemetry.get("latitude") if telemetry else None),
+                    "lon": current_gps["lon"] if current_gps else (telemetry.get("longitude") if telemetry else None),
+                    "latitude": current_gps["lat"] if current_gps else (telemetry.get("latitude") if telemetry else None),
+                    "longitude": current_gps["lon"] if current_gps else (telemetry.get("longitude") if telemetry else None),
+                    "heading": current_gps.get("heading") if current_gps else (telemetry.get("heading") if telemetry else None),
+                    "progress_pct": current_gps.get("progress_pct") if current_gps else None,
+                },
+                "degradation_tier": tier,
+                "detections": json_detections,
+                "evaluation": {
+                    "slant_range_corrected": slant_range,
+                    "clahe_applied": clahe,
+                    "nadir_excised": nadir_excision,
+                    "confidence_threshold": confidence_threshold,
+                },
+                "processing_time_ms": elapsed_ms,
+                "status": "processed",
+                "processed_image_file": out_img_filename,
+            }
+            batch_image_records.append(image_record)
+
+            # Record CSV Rows (One row per detection; or 1 row if 0 detections)
+            gps_lat = current_gps["lat"] if current_gps else (telemetry.get("latitude") if telemetry else "")
+            gps_lon = current_gps["lon"] if current_gps else (telemetry.get("longitude") if telemetry else "")
+            hdg = current_gps.get("heading") if current_gps else (telemetry.get("heading") if telemetry else "")
+
+            if detections:
+                for d in detections:
+                    box = d["bounding_box"]
+                    dim = d.get("dimensions") or {}
+                    geo = d.get("geolocation") or {}
+                    csv_rows.append([
+                        seq_idx,
+                        img_name,
+                        frame_start_time,
+                        "processed",
+                        d["id"],
+                        d["target_class"],
+                        f"{d.get('confidence_ai', d['confidence'])*100:.1f}",
+                        f"{d['confidence']*100:.1f}",
+                        d["hazard_risk"],
+                        d["shadow_evidence"],
+                        d["review_status"],
+                        dim.get("relief_height_m", ""),
+                        dim.get("length_m", ""),
+                        dim.get("width_m", ""),
+                        dim.get("area_m2", ""),
+                        gps_lat,
+                        gps_lon,
+                        hdg,
+                        geo.get("lat", ""),
+                        geo.get("lon", ""),
+                        f"{box[0]:.0f}",
+                        f"{box[1]:.0f}",
+                        f"{box[2]:.0f}",
+                        f"{box[3]:.0f}",
+                        tier,
+                        elapsed_ms,
+                        "",
+                    ])
+            else:
+                # 0-detection row so image is never lost
+                csv_rows.append([
+                    seq_idx,
+                    img_name,
+                    frame_start_time,
+                    "processed",
+                    "",
+                    "no_targets",
+                    "",
+                    "",
+                    "NONE",
+                    "NONE",
+                    "UNVERIFIED",
+                    "",
+                    "",
+                    "",
+                    "",
+                    gps_lat,
+                    gps_lon,
+                    hdg,
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    tier,
+                    elapsed_ms,
+                    "",
+                ])
+
+            # Prepare live frontend payload
+            raw_url = _img_to_data_url(raw_bgr)
+            enh_url = _img_to_data_url(enh_bgr)
+
+            yield {
+                "type": "image_processed",
+                "batch_id": batch_id,
+                "sequence": seq_idx,
+                "total": total_images,
+                "filename": img_name,
+                "timestamp": frame_start_time,
+                "gps": image_record["gps"],
                 "detections": detections,
-            })
+                "detection_count": len(detections),
+                "processing_time_ms": elapsed_ms,
+                "status": "processed",
+                "result": {
+                    "raw_image_url": raw_url,
+                    "enhanced_image_url": enh_url,
+                    "detections": detections,
+                    "kpis": {
+                        "total_surveys": seq_idx,
+                        "total_detections": total_detections_count,
+                        "verified_3d_objects": sum(1 for det in detections if det.get("shadow_evidence") == "SUPPORTING"),
+                        "critical_hazards": sum(1 for det in detections if det.get("hazard_risk") == "CRITICAL"),
+                    },
+                    "processing_meta": {
+                        "slant_range_corrected": slant_range,
+                        "clahe_applied": clahe,
+                        "nadir_excised": nadir_excision,
+                        "confidence_threshold": confidence_threshold,
+                        "processing_time_ms": elapsed_ms,
+                    }
+                }
+            }
 
-        except Exception as e:
-            print(f"[{idx:02d}/{total_images:02d}] ❌ Error processing {img_file.name}: {e}")
+        except Exception as err:
+            failed_count += 1
+            elapsed_ms = round((time.perf_counter() - t0) * 1000, 1)
+            err_msg = str(err)
 
-    total_time = time.perf_counter() - t_start
-    fps = total_images / max(0.001, total_time)
-    avg_latency = (total_time / max(1, total_images)) * 1000
+            failed_record = {
+                "sequence": seq_idx,
+                "filename": img_name,
+                "timestamp": frame_start_time,
+                "image_width": None,
+                "image_height": None,
+                "detection_count": 0,
+                "gps": {
+                    "latitude": current_gps["lat"] if current_gps else None,
+                    "longitude": current_gps["lon"] if current_gps else None,
+                },
+                "detections": [],
+                "evaluation": {},
+                "processing_time_ms": elapsed_ms,
+                "status": "failed",
+                "error": err_msg,
+            }
+            batch_image_records.append(failed_record)
 
-    output_path.mkdir(parents=True, exist_ok=True)
+            csv_rows.append([
+                seq_idx,
+                img_name,
+                frame_start_time,
+                "failed",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                current_gps["lat"] if current_gps else "",
+                current_gps["lon"] if current_gps else "",
+                current_gps.get("heading", "") if current_gps else "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "NONE",
+                elapsed_ms,
+                err_msg,
+            ])
 
-    # 1. Save Summary JSON
-    json_path = output_path / "summary.json"
-    with open(json_path, "w", encoding="utf-8") as f:
-        json.dump({
-            "survey_metadata": {
-                "total_images": total_images,
-                "total_detections": total_detections_count,
-                "total_time_seconds": round(total_time, 2),
-                "throughput_fps": round(fps, 2),
-                "avg_latency_ms": round(avg_latency, 1),
-                "confidence_threshold": confidence_threshold,
-                "box_padding_px": padding,
-                "altitude_m": altitude,
-                "swath_width_m": swath_width,
-                "output_mode": mode_label,
-            },
-            "degradation_distribution": tier_counts,
-            "class_distribution": class_counts,
-            "risk_distribution": risk_counts,
-            "evidence_distribution": evidence_counts,
-            "results": all_results,
-        }, f, indent=2)
+            yield {
+                "type": "image_failed",
+                "batch_id": batch_id,
+                "sequence": seq_idx,
+                "total": total_images,
+                "filename": img_name,
+                "timestamp": frame_start_time,
+                "gps": failed_record["gps"],
+                "error": err_msg,
+                "status": "failed",
+            }
 
-    # 2. Save Summary CSV
-    csv_path = output_path / "summary.csv"
-    with open(csv_path, "w", encoding="utf-8", newline="") as f:
+        # Pause for configured interval between frames (unless last frame or cancelled)
+        if seq_idx < total_images and interval_seconds > 0:
+            sleep_step = 0.1
+            slept = 0.0
+            while slept < interval_seconds:
+                if cancellation_check and cancellation_check(batch_id):
+                    was_cancelled = True
+                    break
+                time.sleep(min(sleep_step, interval_seconds - slept))
+                slept += sleep_step
+            if was_cancelled:
+                break
+
+    completed_at = datetime.now(timezone.utc).isoformat()
+    total_batch_time = round(time.perf_counter() - t_batch_start, 2)
+    final_status = "cancelled" if was_cancelled else "completed"
+
+    # 1. Write CSV
+    csv_file = csv_dir / "batch_results.csv"
+    with open(csv_file, "w", encoding="utf-8", newline="") as f:
         writer = csv.writer(f)
         writer.writerow([
+            "sequence",
             "image_name",
+            "timestamp",
+            "status",
             "target_id",
             "target_class",
             "confidence_ai_pct",
@@ -674,106 +874,201 @@ def run_batch_test(
             "length_m",
             "width_m",
             "area_m2",
-            "latitude",
-            "longitude",
-            "local_x_m",
-            "local_y_m",
+            "vessel_latitude",
+            "vessel_longitude",
+            "vessel_heading",
+            "target_latitude",
+            "target_longitude",
             "bbox_x1",
             "bbox_y1",
             "bbox_x2",
             "bbox_y2",
             "degradation_tier",
+            "processing_time_ms",
+            "error_info",
         ])
-        for res in all_results:
-            img_name = res["filename"]
-            tier = res["degradation_tier"]
-            for d in res["detections"]:
-                dim = d.get("dimensions", {})
-                box = d["bounding_box"]
-                geo = d.get("geolocation") or {}
-                local = d.get("local_offset_m") or {}
-                writer.writerow([
-                    img_name,
-                    d["id"],
-                    d["target_class"],
-                    f"{d.get('confidence_ai', d['confidence'])*100:.1f}",
-                    f"{d['confidence']*100:.1f}",
-                    d["hazard_risk"],
-                    d["shadow_evidence"],
-                    d["review_status"],
-                    dim.get("relief_height_m", ""),
-                    dim.get("length_m", ""),
-                    dim.get("width_m", ""),
-                    dim.get("area_m2", ""),
-                    geo.get("lat", ""),
-                    geo.get("lon", ""),
-                    local.get("x_m", ""),
-                    local.get("y_m", ""),
-                    f"{box[0]:.0f}",
-                    f"{box[1]:.0f}",
-                    f"{box[2]:.0f}",
-                    f"{box[3]:.0f}",
-                    tier,
-                ])
+        writer.writerows(csv_rows)
 
-    # 3. Save GeoJSON FeatureCollection
-    geojson_path = output_path / "summary.geojson"
-    if export_geojson:
-        geojson_data = build_geojson_feature_collection(all_results)
-        with open(geojson_path, "w", encoding="utf-8") as f:
-            json.dump(geojson_data, f, indent=2)
+    # 2. Write JSON
+    full_batch_json = {
+        "run_id": batch_id,
+        "source_folder": str(images_list[0][0]) if images_list else "unknown",
+        "total_images": total_images,
+        "processed_images": processed_count,
+        "failed_images": failed_count,
+        "processing_interval_seconds": interval_seconds,
+        "started_at": started_at,
+        "completed_at": completed_at,
+        "gps_mode": "SIMULATION" if sim_route else "LIVE/SIDECAR",
+        "status": final_status,
+        "route": {
+            "start": "Mumbai",
+            "end": "Kochi",
+        } if sim_route else None,
+        "summary": {
+            "total_detections": total_detections_count,
+            "total_time_seconds": total_batch_time,
+            "class_distribution": class_counts,
+            "risk_distribution": risk_counts,
+            "evidence_distribution": evidence_counts,
+            "degradation_distribution": tier_counts,
+        },
+        "images": batch_image_records,
+    }
 
-    # Console Summary Presentation
-    print("\n" + "=" * 75)
-    print("📊 BATCH INFERENCE & SIDE-BY-SIDE COMPOSITING COMPLETE")
-    print("=" * 75)
-    print(f"⏱️ Total Execution Time: {total_time:.2f}s | Avg Latency: {avg_latency:.1f}ms/img | Throughput: {fps:.1f} FPS")
-    print(f"🎯 Total Targets:        {total_detections_count} detections across {total_images} sonar frames")
+    json_file = json_dir / "batch_results.json"
+    with open(json_file, "w", encoding="utf-8") as f:
+        json.dump(full_batch_json, f, indent=2)
 
-    print("\n🪜 Degradation Ladder Distribution:")
-    for t, cnt in tier_counts.items():
-        print(f"   • {t:<10} : {cnt:3d} images")
+    summary_file = batch_dir / "run_summary.json"
+    with open(summary_file, "w", encoding="utf-8") as f:
+        json.dump({
+            "run_id": batch_id,
+            "status": final_status,
+            "started_at": started_at,
+            "completed_at": completed_at,
+            "total_images": total_images,
+            "processed_images": processed_count,
+            "failed_images": failed_count,
+            "total_detections": total_detections_count,
+            "total_time_seconds": total_batch_time,
+            "class_distribution": class_counts,
+            "risk_distribution": risk_counts,
+        }, f, indent=2)
 
-    print("\n📦 Target Class Breakdown:")
-    for cls, cnt in sorted(class_counts.items()):
-        pct = (cnt / max(1, total_detections_count)) * 100
-        print(f"   • {cls:<22} : {cnt:3d} ({pct:4.1f}%)")
+    # 3. Create ZIP archive of the batch folder
+    zip_path = Path(output_root).resolve() / f"{batch_id}.zip"
+    with zipfile.ZipFile(str(zip_path), "w", zipfile.ZIP_DEFLATED) as zf:
+        for root, _, files in os.walk(str(batch_dir)):
+            for file in files:
+                file_full = Path(root) / file
+                rel_path = file_full.relative_to(batch_dir)
+                zf.write(file_full, arcname=f"{batch_id}/{rel_path}")
 
-    print("\n⚠️ Hazard Risk Distribution:")
-    for risk, cnt in risk_counts.items():
-        pct = (cnt / max(1, total_detections_count)) * 100
-        print(f"   • {risk:<12} : {cnt:3d} ({pct:4.1f}%)")
+    final_event = {
+        "type": "batch_cancelled" if was_cancelled else "batch_completed",
+        "batch_id": batch_id,
+        "status": final_status,
+        "total_images": total_images,
+        "processed_images": processed_count,
+        "failed_images": failed_count,
+        "total_detections": total_detections_count,
+        "total_time_seconds": total_batch_time,
+        "download_urls": {
+            "csv": f"/api/v1/batch/{batch_id}/download/csv",
+            "json": f"/api/v1/batch/{batch_id}/download/json",
+            "zip": f"/api/v1/batch/{batch_id}/download/zip",
+        },
+        "output_directory": str(batch_dir),
+        "zip_path": str(zip_path),
+    }
 
-    print("\n🔍 Acoustic Shadow Evidence Distribution:")
-    for ev, cnt in evidence_counts.items():
-        pct = (cnt / max(1, total_detections_count)) * 100
-        print(f"   • {ev:<12} : {cnt:3d} ({pct:4.1f}%)")
+    yield final_event
+    return final_event
 
-    print(f"\n✅ Side-by-Side Images saved to: {output_path} (1. Original | 2. Preprocessed + Detections)")
-    print(f"📄 Summary JSON:                 {json_path}")
-    print(f"📄 Summary CSV:                  {csv_path}")
-    if export_geojson:
-        print(f"🗺️ Summary GeoJSON:              {geojson_path}")
-    print("=" * 75)
+
+def run_batch_test(
+    input_dir: str = "Test_Data",
+    output_dir: str = "outputs",
+    confidence_threshold: float = 0.20,
+    padding: int = 12,
+    nav_file: Optional[str] = None,
+    altitude: float = 8.0,
+    swath_width: float = 100.0,
+    heading: float = 0.0,
+    sim_route: bool = True,
+    interval_seconds: float = TEST_INTERVAL_SECONDS,
+    save_both: bool = False,
+    single_file: Optional[str] = None,
+):
+    """
+    CLI runner that invokes the authoritative execute_batch_generator.
+    """
+    input_path = Path(input_dir).resolve()
+    image_files: List[Path] = []
+
+    if single_file:
+        single_path = Path(single_file).resolve()
+        if not single_path.exists():
+            print(f"❌ Error: Single file '{single_path}' not found.")
+            return
+        image_files = [single_path]
+    elif input_path.is_file():
+        image_files = [input_path]
+    elif input_path.is_dir():
+        image_files = sorted([
+            f for f in input_path.iterdir()
+            if f.is_file() and f.suffix.lower() in SUPPORTED_EXTENSIONS
+        ])
+    else:
+        print(f"❌ Error: Input path '{input_path}' does not exist.")
+        return
+
+    if not image_files:
+        print(f"⚠️ No supported images found in '{input_path}'.")
+        return
+
+    images_payload = [(f.name, f) for f in image_files]
+
+    print("=" * 78)
+    print("🌊 Aqua Sentinel — Authoritative Sonar Batch Runner & Arabian Sea Simulator")
+    print("=" * 78)
+    print(f"📁 Input Target:       {input_path}")
+    print(f"🖼️ Total Images:       {len(image_files)}")
+    print(f"⏱️ Interval:           {interval_seconds:.1f}s")
+    print(f"⚓ Arabian Sea Route:  {'ON (Mumbai -> Kochi)' if sim_route else 'OFF'}")
+    print(f"🎯 Conf Threshold:     {confidence_threshold:.2f}")
+    print("=" * 78)
+
+    generator = execute_batch_generator(
+        images_list=images_payload,
+        output_root=output_dir,
+        interval_seconds=interval_seconds,
+        sim_route=sim_route,
+        confidence_threshold=confidence_threshold,
+        padding=padding,
+        altitude=altitude,
+        swath_width=swath_width,
+        heading=heading,
+    )
+
+    for event in generator:
+        ev_type = event.get("type")
+        if ev_type == "batch_started":
+            print(f"🚀 Batch started: {event['batch_id']} ({event['total_images']} frames)")
+        elif ev_type == "image_processed":
+            seq = event["sequence"]
+            tot = event["total"]
+            name = event["filename"]
+            t_ms = event["processing_time_ms"]
+            dets = event["detection_count"]
+            gps = event["gps"] or {}
+            gps_str = f"[{gps.get('latitude', 0.0):.4f}N, {gps.get('longitude', 0.0):.4f}E]" if gps else "[No GPS]"
+            print(f"[{seq:02d}/{tot:02d}] {gps_str} {name[:24]:<24} -> {dets} targets ({t_ms:4.0f}ms)")
+        elif ev_type == "image_failed":
+            print(f"[{event['sequence']:02d}/{event['total']:02d}] ❌ Failed: {event['filename']} ({event['error']})")
+        elif ev_type in ("batch_completed", "batch_cancelled"):
+            print("\n" + "=" * 78)
+            print(f"🏁 Batch {event['status'].upper()}: {event['batch_id']}")
+            print(f"📦 Outputs: {event['output_directory']}")
+            print(f"🗜️ Archive: {event['zip_path']}")
+            print("=" * 78)
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Aqua Sentinel Advanced Sonar Batch Test Runner (Side-by-Side Output)")
-    parser.add_argument("--input", "-i", default="Test_Data", help="Path to input images directory (default: Test_Data)")
-    parser.add_argument("--output", "-o", default="outputs", help="Path to output directory (default: outputs)")
-    parser.add_argument("--conf", "-c", type=float, default=0.20, help="Confidence threshold (default: 0.20)")
-    parser.add_argument("--pad", "-p", type=int, default=12, help="Padding in pixels added around bounding boxes (default: 12)")
-    parser.add_argument("--nav", default=None, help="Optional path to navigation CSV log (for WGS84 GPS mapping)")
-    parser.add_argument("--altitude", type=float, default=8.0, help="Sonar altitude above seabed in meters (default: 8.0)")
-    parser.add_argument("--swath", type=float, default=100.0, help="Sonar swath width in meters (default: 100.0)")
-    parser.add_argument("--heading", type=float, default=0.0, help="Platform heading in degrees (default: 0.0)")
-    parser.add_argument("--save-both", action="store_true", help="Save side-by-side, raw, and enhanced images")
-    parser.add_argument("--only-enhanced", action="store_true", help="Save only the enhanced annotated image")
-    parser.add_argument("--only-raw", action="store_true", help="Save only the raw image")
-    parser.add_argument("--no-geojson", action="store_true", help="Disable GeoJSON export")
-    parser.add_argument("--no-slant", action="store_true", help="Disable Slant-Range Correction")
-    parser.add_argument("--no-clahe", action="store_true", help="Disable CLAHE Equalization")
-    parser.add_argument("--nadir", action="store_true", help="Enable Nadir Excision")
+    parser = argparse.ArgumentParser(description="Aqua Sentinel Authoritative Batch Runner & GPS Simulator")
+    parser.add_argument("--input", "-i", default="Test_Data", help="Input directory or image file")
+    parser.add_argument("--single", "-s", default=None, help="Evaluate a single image file")
+    parser.add_argument("--output", "-o", default="outputs", help="Output directory root")
+    parser.add_argument("--conf", "-c", type=float, default=0.20, help="Confidence threshold")
+    parser.add_argument("--pad", "-p", type=int, default=12, help="Padding in pixels")
+    parser.add_argument("--interval", type=float, default=TEST_INTERVAL_SECONDS, help="Delay in seconds between frames")
+    parser.add_argument("--sim-route", action="store_true", default=True, help="Enable simulated Arabian Sea route")
+    parser.add_argument("--no-sim-route", action="store_false", dest="sim_route", help="Disable simulated route")
+    parser.add_argument("--altitude", type=float, default=8.0, help="Altitude in meters")
+    parser.add_argument("--swath", type=float, default=100.0, help="Swath width in meters")
+    parser.add_argument("--heading", type=float, default=0.0, help="Platform heading")
+    parser.add_argument("--save-both", action="store_true", help="Save side-by-side images")
 
     args = parser.parse_args()
 
@@ -782,15 +1077,11 @@ if __name__ == "__main__":
         output_dir=args.output,
         confidence_threshold=args.conf,
         padding=args.pad,
-        nav_file=args.nav,
         altitude=args.altitude,
         swath_width=args.swath,
         heading=args.heading,
+        sim_route=args.sim_route,
+        interval_seconds=args.interval,
         save_both=args.save_both,
-        only_enhanced=args.only_enhanced,
-        only_raw=args.only_raw,
-        export_geojson=not args.no_geojson,
-        slant_range=not args.no_slant,
-        clahe=not args.no_clahe,
-        nadir_excision=args.nadir,
+        single_file=args.single,
     )

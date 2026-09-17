@@ -5,10 +5,12 @@ export type TargetClass = 'crab_pot' | 'submarine_pipeline' | 'shipwreck' | 'gho
 export type ShadowEvidence = 'SUPPORTING' | 'NEUTRAL' | 'ABSENT';
 export type AnalysisStatus = 'idle' | 'uploading' | 'processing' | 'complete' | 'error';
 export type ComputeTier = 'A' | 'B' | 'C';
+export type UploadMode = 'single' | 'folder';
 
 export interface GeoCoordinate {
   lat: number;
   lon: number;
+  heading?: number;
 }
 
 export interface LocalOffset {
@@ -20,7 +22,10 @@ export interface Detection {
   id: string;
   target_class: TargetClass;
   confidence: number;
+  confidence_ai?: number;
   shadow_evidence: ShadowEvidence;
+  review_status?: string;
+  shadow_contrast?: number;
   dimensions: {
     length_m: number;
     width_m: number;
@@ -31,6 +36,7 @@ export interface Detection {
   local_offset: LocalOffset | null;
   hazard_risk: HazardRisk;
   bounding_box: [number, number, number, number];
+  raw_box?: [number, number, number, number];
   mask_contour: Array<[number, number]>;
   thumbnail_base64: string;
 }
@@ -59,6 +65,7 @@ export interface ProcessingParams {
   clahe_equalization: boolean;
   nadir_excision: boolean;
   confidence_threshold: number;
+  test_interval_seconds?: number;
 }
 
 export interface GpuDetail {
@@ -85,8 +92,44 @@ export interface SystemInfo {
   userAgent: string;
 }
 
+export interface BatchImageRecord {
+  sequence: number;
+  filename: string;
+  timestamp: string;
+  image_width?: number | null;
+  image_height?: number | null;
+  detection_count: number;
+  gps: {
+    latitude: number | null;
+    longitude: number | null;
+    heading?: number | null;
+    progress_pct?: number | null;
+  } | null;
+  status: 'processed' | 'failed';
+  error?: string;
+  processing_time_ms: number;
+  detections?: Detection[];
+}
+
+export interface BatchProgressState {
+  sequence: number;
+  total: number;
+  currentFilename: string;
+  processedCount: number;
+  failedCount: number;
+  status: 'running' | 'completed' | 'cancelled' | 'error';
+}
+
+export interface BatchDownloadUrls {
+  csv: string;
+  json: string;
+  zip: string;
+}
+
 export interface AppState {
+  uploadMode: UploadMode;
   sonarFile: File | null;
+  batchFiles: File[];
   navCsvFile: File | null;
   params: ProcessingParams;
   status: AnalysisStatus;
@@ -97,4 +140,14 @@ export interface AppState {
   userLocation: GeoCoordinate | null;
   locationError: string | null;
   backendOnline: boolean;
+  
+  // Batch & Arabian Sea Simulation State
+  isSimulationMode: boolean;
+  batchId: string | null;
+  batchProgress: BatchProgressState | null;
+  batchResults: BatchImageRecord[];
+  simulatedBaseRoute: GeoCoordinate[];
+  travelledRoute: GeoCoordinate[];
+  currentSubmarineLocation: GeoCoordinate | null;
+  batchDownloadUrls: BatchDownloadUrls | null;
 }
