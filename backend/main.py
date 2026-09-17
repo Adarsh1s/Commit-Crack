@@ -127,6 +127,10 @@ async def analyze(
                     break
         except Exception:
             pass
+    if lat is None or lon is None:
+        # Default to Arabian Sea operational transit corridor if external navigation telemetry is omitted
+        lat = 15.2993
+        lon = 73.7240
     try:
         res = run_inference(
             img_bytes,

@@ -18,6 +18,14 @@ import uuid
 import cv2
 import numpy as np
 from PIL import Image, ImageFile
+import sys
+
+_BACKEND_DIR = Path(__file__).resolve().parent
+if str(_BACKEND_DIR) not in sys.path:
+    sys.path.insert(0, str(_BACKEND_DIR))
+_ROOT_DIR = _BACKEND_DIR.parent
+if str(_ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(_ROOT_DIR))
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -178,9 +186,11 @@ def run_inference(
     3. Slant-range ground mapping.
     4. Swath tiling + Adaptive YOLOv8 / Deterministic Acoustic Anomaly Detection.
     5. Acoustic shadow physics gating & relief height estimation.
-    6. Metric dimensions & GPS geolocation projection.
-    7. High-visibility overlay generation & thumbnail crop.
     """
+    if vessel_lat is None or vessel_lon is None:
+        vessel_lat = 15.2993
+        vessel_lon = 73.7240
+
     t_start = time.perf_counter()
 
     # 1. Normalization & Decode

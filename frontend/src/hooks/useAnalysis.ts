@@ -49,16 +49,20 @@ export function useAnalysis() {
     form.append('nadir_excision', String(state.params.nadir_excision));
     form.append('confidence_threshold', String(state.params.confidence_threshold));
 
-    if (
-      state.userLocation &&
-      typeof state.userLocation.lat === 'number' &&
-      Number.isFinite(state.userLocation.lat) &&
-      typeof state.userLocation.lon === 'number' &&
-      Number.isFinite(state.userLocation.lon)
-    ) {
-      form.append('vessel_lat', String(state.userLocation.lat));
-      form.append('vessel_lon', String(state.userLocation.lon));
-    }
+    const activeLat =
+      (state.userLocation && Number.isFinite(state.userLocation.lat) ? state.userLocation.lat : null) ??
+      (state.currentSubmarineLocation && Number.isFinite(state.currentSubmarineLocation.lat) ? state.currentSubmarineLocation.lat : null) ??
+      (state.simulatedBaseRoute[0] && Number.isFinite(state.simulatedBaseRoute[0].lat) ? state.simulatedBaseRoute[0].lat : null) ??
+      15.2993;
+
+    const activeLon =
+      (state.userLocation && Number.isFinite(state.userLocation.lon) ? state.userLocation.lon : null) ??
+      (state.currentSubmarineLocation && Number.isFinite(state.currentSubmarineLocation.lon) ? state.currentSubmarineLocation.lon : null) ??
+      (state.simulatedBaseRoute[0] && Number.isFinite(state.simulatedBaseRoute[0].lon) ? state.simulatedBaseRoute[0].lon : null) ??
+      73.7240;
+
+    form.append('vessel_lat', String(activeLat));
+    form.append('vessel_lon', String(activeLon));
 
     try {
       dispatch({ type: 'SET_STATUS', payload: 'processing' });

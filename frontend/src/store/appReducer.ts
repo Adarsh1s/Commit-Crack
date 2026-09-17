@@ -9,6 +9,8 @@ import type {
   BatchProgressState,
   BatchImageRecord,
   BatchDownloadUrls,
+  ClusterInfo,
+  MapFilterState,
 } from '../types/sonar';
 
 export type AppAction =
@@ -22,6 +24,8 @@ export type AppAction =
   | { type: 'SET_STATUS'; payload: AppState['status'] }
   | { type: 'SET_RESULT'; payload: AnalysisResult }
   | { type: 'SELECT_DETECTION'; payload: string | null }
+  | { type: 'SELECT_CLUSTER'; payload: ClusterInfo | null }
+  | { type: 'SET_MAP_FILTERS'; payload: Partial<MapFilterState> }
   | { type: 'CONFIRM_EXPERT_VERIFICATION'; payload: { detectionId: string } }
   | { type: 'REJECT_DETECTION'; payload: { detectionId: string } }
   | { type: 'SKIP_EXPERT_VERIFICATION'; payload: { detectionId: string } }
@@ -77,6 +81,11 @@ export const initialState: AppState = {
   status: 'idle',
   result: null,
   selectedDetectionId: null,
+  selectedCluster: null,
+  mapFilters: {
+    risk: 'ALL',
+    targetClass: 'ALL',
+  },
   error: null,
   computeTier: 'B',
   userLocation: null,
@@ -160,73 +169,137 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, result: action.payload, status: 'complete', error: null };
 
     case 'SELECT_DETECTION':
-      return { ...state, selectedDetectionId: action.payload };
-
-    case 'CONFIRM_EXPERT_VERIFICATION': {
-      if (!state.result) return state;
-      const updatedDetections = state.result.detections.map((d) => {
-        if (d.id === action.payload.detectionId) {
-          return {
-            ...d,
-            expert_verified: true,
-            expert_status: 'CONFIRMED' as const,
-          };
-        }
-        return d;
-      });
       return {
         ...state,
-        result: {
-          ...state.result,
-          detections: updatedDetections,
+        selectedDetectionId: action.payload,
+        selectedCluster: action.payload ? null : state.selectedCluster,
+      };
+
+    case 'SELECT_CLUSTER':
+      return {
+        ...state,
+        selectedCluster: action.payload,
+        selectedDetectionId: action.payload ? null : state.selectedDetectionId,
+      };
+
+    case 'SET_MAP_FILTERS':
+      return {
+        ...state,
+        mapFilters: {
+          ...state.mapFilters,
+          ...action.payload,
         },
+      };
+
+    case 'CONFIRM_EXPERT_VERIFICATION': {
+      const detectionId = action.payload.detectionId;
+      const updateDet = (d: any) =>
+        d.id === detectionId ? { ...d, expert_verified: true, expert_status: 'CONFIRMED' as const } : d;
+
+      const updatedResult = state.result
+        ? {
+            ...state.result,
+            detections: state.result.detections.map(updateDet),
+          }
+        : null;
+
+      const updatedBatchResults = state.batchResults.map((rec) => ({
+        ...rec,
+        detections: rec.detections ? rec.detections.map(updateDet) : [],
+      }));
+
+      const updatedSelectedCluster = state.selectedCluster
+        ? {
+            ...state.selectedCluster,
+            detections: state.selectedCluster.detections.map(updateDet),
+            expertVerifiedCount: state.selectedCluster.detections.filter((d) => d.expert_verified || d.id === detectionId).length,
+          }
+        : null;
+
+      return {
+        ...state,
+        result: updatedResult,
+        batchResults: updatedBatchResults,
+        selectedCluster: updatedSelectedCluster,
       };
     }
 
     case 'REJECT_DETECTION': {
-      if (!state.result) return state;
-      const updatedDetections = state.result.detections.filter(
-        (d) => d.id !== action.payload.detectionId
-      );
-      const isSelected = state.selectedDetectionId === action.payload.detectionId;
-      const newCritical = updatedDetections.filter((d) => d.hazard_risk === 'CRITICAL').length;
-      const newVerified3d = updatedDetections.filter(
-        (d) => d.shadow_evidence === 'SUPPORTING' || d.expert_verified
-      ).length;
+      const detectionId = action.payload.detectionId;
+      const isSelected = state.selectedDetectionId === detectionId;
+
+      const updatedResult = state.result
+        ? (() => {
+            const nextDets = state.result.detections.filter((d) => d.id !== detectionId);
+            const newCritical = nextDets.filter((d) => d.hazard_risk === 'CRITICAL').length;
+            const newVerified3d = nextDets.filter((d) => d.shadow_evidence === 'SUPPORTING' || d.expert_verified).length;
+            return {
+              ...state.result,
+              detections: nextDets,
+              kpis: {
+                ...state.result.kpis,
+                total_detections: nextDets.length,
+                critical_hazards: newCritical,
+                verified_3d_objects: newVerified3d,
+              },
+            };
+          })()
+        : null;
+
+      const updatedBatchResults = state.batchResults.map((rec) => {
+        const nextDets = rec.detections ? rec.detections.filter((d) => d.id !== detectionId) : [];
+        return {
+          ...rec,
+          detections: nextDets,
+          detection_count: nextDets.length,
+        };
+      });
+
+      let updatedSelectedCluster = state.selectedCluster;
+      if (updatedSelectedCluster) {
+        const nextClusterDets = updatedSelectedCluster.detections.filter((d) => d.id !== detectionId);
+        if (nextClusterDets.length === 0) {
+          updatedSelectedCluster = null;
+        } else {
+          updatedSelectedCluster = {
+            ...updatedSelectedCluster,
+            count: nextClusterDets.length,
+            detections: nextClusterDets,
+            expertVerifiedCount: nextClusterDets.filter((d) => d.expert_verified).length,
+          };
+        }
+      }
 
       return {
         ...state,
         selectedDetectionId: isSelected ? null : state.selectedDetectionId,
-        result: {
-          ...state.result,
-          detections: updatedDetections,
-          kpis: {
-            ...state.result.kpis,
-            total_detections: updatedDetections.length,
-            critical_hazards: newCritical,
-            verified_3d_objects: newVerified3d,
-          },
-        },
+        selectedCluster: updatedSelectedCluster,
+        result: updatedResult,
+        batchResults: updatedBatchResults,
       };
     }
 
     case 'SKIP_EXPERT_VERIFICATION': {
-      if (!state.result) return state;
-      const updatedDetections = state.result.detections.map((d) => {
-        if (d.id === action.payload.detectionId) {
-          return {
-            ...d,
-            expert_status: 'SKIPPED' as const,
-          };
-        }
-        return d;
-      });
+      const detectionId = action.payload.detectionId;
+      const updateDet = (d: any) =>
+        d.id === detectionId ? { ...d, expert_status: 'SKIPPED' as const } : d;
+
+      const updatedResult = state.result
+        ? {
+            ...state.result,
+            detections: state.result.detections.map(updateDet),
+          }
+        : null;
+
+      const updatedBatchResults = state.batchResults.map((rec) => ({
+        ...rec,
+        detections: rec.detections ? rec.detections.map(updateDet) : [],
+      }));
+
       return {
         ...state,
-        result: {
-          ...state.result,
-          detections: updatedDetections,
-        },
+        result: updatedResult,
+        batchResults: updatedBatchResults,
       };
     }
 
@@ -429,6 +502,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         userLocation: state.userLocation,
         backendOnline: state.backendOnline,
         simulatedBaseRoute: state.simulatedBaseRoute,
+        mapFilters: state.mapFilters,
       };
 
     default:

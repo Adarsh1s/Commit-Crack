@@ -4,6 +4,7 @@ import { Maximize2, Minimize2, Crosshair, Database } from 'lucide-react';
 import { KpiStrip } from '../dashboard/KpiStrip';
 import { TargetList } from '../inspector/TargetList';
 import { TargetDrawer } from '../inspector/TargetDrawer';
+import { ClusterDrawer } from '../inspector/ClusterDrawer';
 import { ExportPanel } from '../export/ExportPanel';
 import { useAppContext } from '../../store/AppContext';
 
@@ -164,8 +165,9 @@ export function RightPanel({ width, isMaximized = false, onToggleMaximize, isDra
         <ExportPanel />
       </div>
 
-      {/* Slide-in inspector */}
+      {/* Slide-in inspector: TargetDrawer or ClusterDrawer */}
       {state.selectedDetectionId && <TargetDrawer />}
+      {state.selectedCluster && !state.selectedDetectionId && <ClusterDrawer />}
     </aside>
   );
 }

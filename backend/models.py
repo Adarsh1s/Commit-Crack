@@ -44,6 +44,8 @@ class Detection(BaseModel):
     mask_contour: list[tuple[float, float]]
     # base64-encoded thumbnail crop of the detection region
     thumbnail_base64: str
+    expert_status: Optional[str] = "UNVERIFIED"
+    expert_verified: Optional[bool] = False
 
 
 class KpiSummary(BaseModel):

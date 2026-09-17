@@ -130,6 +130,33 @@ export interface BatchDownloadUrls {
   zip: string;
 }
 
+export type DensityTier = 'HIGH' | 'MEDIUM' | 'LOW' | 'SPARSE';
+
+export interface ClusterBounds {
+  minLat: number;
+  maxLat: number;
+  minLon: number;
+  maxLon: number;
+}
+
+export interface ClusterInfo {
+  id: string;
+  center: GeoCoordinate;
+  bounds: ClusterBounds;
+  count: number;
+  densityTier: DensityTier;
+  detections: Detection[];
+  highestRisk: HazardRisk;
+  riskCounts: Record<HazardRisk, number>;
+  classCounts: Record<string, number>;
+  expertVerifiedCount: number;
+}
+
+export interface MapFilterState {
+  risk: 'ALL' | 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' | 'HIGH_RISK_ONLY';
+  targetClass: 'ALL' | TargetClass;
+}
+
 export interface AppState {
   uploadMode: UploadMode;
   sonarFile: File | null;
@@ -139,6 +166,8 @@ export interface AppState {
   status: AnalysisStatus;
   result: AnalysisResult | null;
   selectedDetectionId: string | null;
+  selectedCluster: ClusterInfo | null;
+  mapFilters: MapFilterState;
   error: string | null;
   computeTier: ComputeTier;
   userLocation: GeoCoordinate | null;
