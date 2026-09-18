@@ -3,6 +3,7 @@ import React from 'react';
 import { Maximize2, Minimize2, Crosshair, Database } from 'lucide-react';
 import { KpiStrip } from '../dashboard/KpiStrip';
 import { TargetList } from '../inspector/TargetList';
+import { FrameDrawer } from '../inspector/FrameDrawer';
 import { TargetDrawer } from '../inspector/TargetDrawer';
 import { ClusterDrawer } from '../inspector/ClusterDrawer';
 import { ExportPanel } from '../export/ExportPanel';
@@ -16,7 +17,7 @@ interface Props {
 }
 
 export function RightPanel({ width, isMaximized = false, onToggleMaximize, isDragging = false }: Props) {
-  const { state } = useAppContext();
+  const { state, dispatch } = useAppContext();
   const hasResults = !!state.result;
 
   return (
@@ -165,9 +166,16 @@ export function RightPanel({ width, isMaximized = false, onToggleMaximize, isDra
         <ExportPanel />
       </div>
 
-      {/* Slide-in inspector: TargetDrawer or ClusterDrawer */}
+      {/* Slide-in inspector drawers */}
       {state.selectedDetectionId && <TargetDrawer />}
-      {state.selectedCluster && !state.selectedDetectionId && <ClusterDrawer />}
+      {state.selectedFrame && !state.selectedDetectionId && (
+        <FrameDrawer
+          frame={state.selectedFrame}
+          onClose={() => dispatch({ type: 'SELECT_FRAME', payload: null })}
+          onSelectDetection={(detId) => dispatch({ type: 'SELECT_DETECTION', payload: detId })}
+        />
+      )}
+      {state.selectedCluster && !state.selectedDetectionId && !state.selectedFrame && <ClusterDrawer />}
     </aside>
   );
 }

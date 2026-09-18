@@ -9,21 +9,22 @@ import {
   Layers,
   RotateCcw,
   Flame,
+  FileImage,
 } from 'lucide-react';
 import L from 'leaflet';
 import { useAppContext } from '../../store/AppContext';
 import { RISK_COLORS } from '../../utils/colorScale';
-import { formatCoord, formatConfidence } from '../../utils/formatters';
+import { formatCoord } from '../../utils/formatters';
 import {
-  DENSITY_CONFIG,
-  clusterDetections,
-  getAllActiveDetections,
-  filterDetections,
+  buildSurveyFrames,
+  filterSurveyFrames,
+  getObservationStats,
   isValidCoordinate,
-  type ClusterInfo,
-  type DensityTier,
-} from '../../utils/spatialClustering';
-import type { Detection, HazardRisk, TargetClass } from '../../types/sonar';
+} from '../../utils/spatialObservations';
+import { DENSITY_CONFIG } from '../../utils/spatialClustering';
+import type { SurveyFrame, ClusterInfo, HazardRisk, TargetClass } from '../../types/sonar';
+import { LeafletHeatLayer } from './LeafletHeatLayer';
+import { MarkerClusterGroup } from './MarkerClusterGroup';
 
 const CLASS_LABELS: Record<string, string> = {
   crab_pot: 'Crab Pot',
@@ -153,167 +154,6 @@ function createWaypointIcon(label: string, isStart: boolean): L.DivIcon {
   });
 }
 
-/**
- * Acoustic Heatmap radial glow layer rendered under detections & clusters.
- * Blends into a continuous acoustic density heatmap on the chart.
- */
-function createHeatmapBlobIcon(densityTier: DensityTier, count: number): L.DivIcon {
-  const cfg = DENSITY_CONFIG[densityTier] ?? DENSITY_CONFIG.SPARSE;
-  const size = count >= 15 ? 130 : count >= 8 ? 100 : count >= 4 ? 80 : 65;
-
-  return L.divIcon({
-    className: 'aqua-heatmap-glow-layer',
-    html: `
-      <div style="
-        position: relative;
-        width: ${size}px;
-        height: ${size}px;
-        pointer-events: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      ">
-        <div style="
-          width: ${size}px;
-          height: ${size}px;
-          border-radius: 50%;
-          background: radial-gradient(circle, ${cfg.color}99 0%, ${cfg.color}45 45%, ${cfg.color}15 70%, transparent 100%);
-          filter: blur(5px);
-        "></div>
-      </div>
-    `,
-    iconSize: [size, size],
-    iconAnchor: [size / 2, size / 2],
-  });
-}
-
-/**
- * Cluster icon with spatial concentration color coding:
- * Red = High Concentration, Orange = Medium, Yellow = Low, Green = Sparse.
- */
-function createClusterIcon(cluster: ClusterInfo): L.DivIcon {
-  const cfg = DENSITY_CONFIG[cluster.densityTier] ?? DENSITY_CONFIG.SPARSE;
-  const count = cluster.count;
-  const size = count >= 50 ? 46 : count >= 15 ? 40 : count >= 6 ? 34 : 30;
-  const fontSize = count >= 100 ? 10 : 12;
-
-  return L.divIcon({
-    className: 'aqua-cluster-marker',
-    html: `
-      <div style="
-        position: relative;
-        width: ${size}px;
-        height: ${size}px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-      ">
-        <!-- Pulsing Halo representing Spatial Concentration -->
-        <div style="
-          position: absolute;
-          inset: -4px;
-          border-radius: 50%;
-          background: ${cfg.pulseColor};
-          border: 1.5px solid ${cfg.color};
-          animation: pulse 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
-        "></div>
-        <!-- Center Core -->
-        <div style="
-          position: relative;
-          width: ${size}px;
-          height: ${size}px;
-          border-radius: 50%;
-          background: ${cfg.color};
-          border: 2px solid #ffffff;
-          box-shadow: 0 3px 8px rgba(0,0,0,0.35);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #ffffff;
-          font-family: 'Inter', system-ui, sans-serif;
-          font-weight: 800;
-          font-size: ${fontSize}px;
-          letter-spacing: -0.02em;
-        ">
-          ${count}
-        </div>
-        ${cluster.expertVerifiedCount > 0 ? `
-          <div style="
-            position: absolute;
-            top: -2px;
-            right: -2px;
-            background: #10b981;
-            border: 1.5px solid #ffffff;
-            border-radius: 50%;
-            width: 13px;
-            height: 13px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 7px;
-            color: #ffffff;
-            font-weight: 900;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.4);
-          ">✓</div>
-        ` : ''}
-      </div>
-    `,
-    iconSize: [size, size],
-    iconAnchor: [size / 2, size / 2],
-  });
-}
-
-/**
- * Individual anomaly marker colored by Hazard Risk (Critical, High, Medium, Low).
- */
-function createDetectionIcon(color: string, isVerified: boolean = false): L.DivIcon {
-  return L.divIcon({
-    className: 'aqua-detection-marker',
-    html: `
-      <div style="
-        position: relative;
-        width: 20px;
-        height: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-      ">
-        <div style="
-          width: 14px;
-          height: 14px;
-          border-radius: 2px;
-          background: ${color};
-          border: 2px solid #ffffff;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-          transform: rotate(45deg);
-        "></div>
-        ${isVerified ? `
-          <div style="
-            position: absolute;
-            top: -3px;
-            right: -3px;
-            background: #10b981;
-            border: 1px solid #ffffff;
-            border-radius: 50%;
-            width: 10px;
-            height: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 6px;
-            color: #ffffff;
-            font-weight: 900;
-          ">✓</div>
-        ` : ''}
-      </div>
-    `,
-    iconSize: [20, 20],
-    iconAnchor: [10, 10],
-  });
-}
-
 function MapViewController({
   center,
 }: {
@@ -336,30 +176,30 @@ function MapViewController({
 }
 
 /**
- * Auto-fitter component that smoothly zooms and frames analyzed detections
- * when a sonar image completes processing in single mode.
+ * Auto-fitter component that smoothly zooms and frames analyzed survey frames
+ * when new survey observations arrive.
  */
 function MapAutoFitter({
-  detections,
+  frames,
   isSimulation,
 }: {
-  detections: Detection[];
+  frames: SurveyFrame[];
   isSimulation: boolean;
 }) {
   const map = useMap();
   const prevCountRef = useRef<number>(0);
 
   useEffect(() => {
-    if (!isSimulation && detections.length > 0 && detections.length !== prevCountRef.current) {
-      prevCountRef.current = detections.length;
-      const valid = detections.filter((d) => isValidCoordinate(d.geolocation));
+    if (!isSimulation && frames.length > 0 && frames.length !== prevCountRef.current) {
+      prevCountRef.current = frames.length;
+      const valid = frames.filter((f) => isValidCoordinate(f.geolocation));
       if (valid.length > 0) {
         if (valid.length === 1) {
           map.setView([valid[0].geolocation!.lat, valid[0].geolocation!.lon], 13, { animate: true });
         } else {
           let minLat = Infinity, maxLat = -Infinity, minLon = Infinity, maxLon = -Infinity;
-          valid.forEach((d) => {
-            const g = d.geolocation!;
+          valid.forEach((f) => {
+            const g = f.geolocation!;
             if (g.lat < minLat) minLat = g.lat;
             if (g.lat > maxLat) maxLat = g.lat;
             if (g.lon < minLon) minLon = g.lon;
@@ -375,192 +215,64 @@ function MapAutoFitter({
         }
       }
     }
-  }, [detections, isSimulation, map]);
+  }, [frames, isSimulation, map]);
 
   return null;
 }
 
 /**
- * Sub-component to manage map zoom listening and render dynamic heatmap/clusters/markers.
+ * Zoom-aware Map Observation Engine:
+ * - Zoom 0–11: Real Canvas Heatmap (@linkurious/leaflet-heat)
+ * - Zoom 12–14: Clustered SurveyFrame markers
+ * - Zoom 15+: Individual SurveyFrame markers (with spiderfying)
  */
-function MapClusterLayer({
-  filteredDetections,
+function MapObservationLayer({
+  frames,
   showHeatmap,
+  onSelectFrame,
   onSelectCluster,
-  onSelectDetection,
 }: {
-  filteredDetections: Detection[];
+  frames: SurveyFrame[];
   showHeatmap: boolean;
+  onSelectFrame: (frame: SurveyFrame) => void;
   onSelectCluster: (cluster: ClusterInfo) => void;
-  onSelectDetection: (id: string) => void;
 }) {
   const map = useMap();
   const [zoom, setZoom] = useState(() => map.getZoom());
 
   useMapEvents({
-    zoomend: () => {
-      setZoom(map.getZoom());
-    },
-    moveend: () => {
-      setZoom(map.getZoom());
-    },
+    zoomend: () => setZoom(map.getZoom()),
+    moveend: () => setZoom(map.getZoom()),
   });
 
-  const clusterItems = useMemo(() => {
-    return clusterDetections(filteredDetections, zoom);
-  }, [filteredDetections, zoom]);
+  const isLowZoomHeatmapOnly = zoom <= 11;
 
-  const handleClusterClick = (cluster: ClusterInfo) => {
-    onSelectCluster(cluster);
-    const latSpan = Math.abs(cluster.bounds.maxLat - cluster.bounds.minLat);
-    const lonSpan = Math.abs(cluster.bounds.maxLon - cluster.bounds.minLon);
-
-    if (latSpan < 0.0001 && lonSpan < 0.0001) {
-      // Coincident points: zoom in by 2 levels
-      map.setView([cluster.center.lat, cluster.center.lon], Math.min(map.getZoom() + 2, 18), {
-        animate: true,
-      });
-    } else {
-      map.fitBounds(
-        [
-          [cluster.bounds.minLat, cluster.bounds.minLon],
-          [cluster.bounds.maxLat, cluster.bounds.maxLon],
-        ],
-        { padding: [60, 60], maxZoom: 18, animate: true }
-      );
-    }
-  };
+  // Transform frames to heat points: exactly 1 heat point per SurveyFrame
+  const heatPoints = useMemo(() => {
+    return frames
+      .filter((f) => isValidCoordinate(f.geolocation))
+      .map((f) => ({
+        lat: f.geolocation!.lat,
+        lon: f.geolocation!.lon,
+        weight: f.heatWeight,
+      }));
+  }, [frames]);
 
   return (
     <>
-      {/* 1. ACOUSTIC DENSITY HEATMAP LAYER */}
-      {showHeatmap &&
-        clusterItems.map((item) => {
-          if (item.isCluster) {
-            const c = item.cluster;
-            return (
-              <Marker
-                key={`heat-${c.id}`}
-                position={[c.center.lat, c.center.lon]}
-                icon={createHeatmapBlobIcon(c.densityTier, c.count)}
-                interactive={false}
-              />
-            );
-          } else {
-            const det = item.detection;
-            const geo = det.geolocation!;
-            return (
-              <Marker
-                key={`heat-${det.id}`}
-                position={[geo.lat, geo.lon]}
-                icon={createHeatmapBlobIcon('SPARSE', 1)}
-                interactive={false}
-              />
-            );
-          }
-        })}
+      {/* 1. Zoom 0-11: Real Canvas Heatmap Layer */}
+      {showHeatmap && isLowZoomHeatmapOnly && (
+        <LeafletHeatLayer points={heatPoints} />
+      )}
 
-      {/* 2. TACTICAL CLUSTERS & ANOMALY MARKERS */}
-      {clusterItems.map((item) => {
-        if (item.isCluster) {
-          const c = item.cluster;
-          const density = DENSITY_CONFIG[c.densityTier] ?? DENSITY_CONFIG.SPARSE;
-          return (
-            <Marker
-              key={c.id}
-              position={[c.center.lat, c.center.lon]}
-              icon={createClusterIcon(c)}
-              eventHandlers={{
-                click: () => handleClusterClick(c),
-              }}
-            >
-              <Popup>
-                <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', color: '#0f172a', padding: 4, minWidth: 170 }}>
-                  <div style={{ fontWeight: 800, color: density.color, display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
-                    <span>{density.label}</span>
-                    <span style={{ fontSize: '0.65rem', background: '#f1f5f9', padding: '1px 6px', borderRadius: 4, color: '#475569' }}>
-                      {c.count} targets
-                    </span>
-                  </div>
-                  <div style={{ fontSize: '0.68rem', color: '#64748b', marginBottom: 2 }}>
-                    Density Tier: <strong style={{ color: density.color }}>{c.densityTier}</strong>
-                  </div>
-                  <div style={{ fontSize: '0.68rem', color: '#64748b', marginBottom: 6 }}>
-                    Max Danger: <strong style={{ color: RISK_COLORS[c.highestRisk] }}>{c.highestRisk}</strong>
-                    {c.expertVerifiedCount > 0 && ` · ${c.expertVerifiedCount} Verified`}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => handleClusterClick(c)}
-                    style={{
-                      width: '100%',
-                      background: '#0284c7',
-                      color: '#ffffff',
-                      border: 'none',
-                      borderRadius: 4,
-                      padding: '5px 8px',
-                      fontSize: '0.68rem',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    Zoom & Inspect Cluster ({c.count})
-                  </button>
-                </div>
-              </Popup>
-            </Marker>
-          );
-        } else {
-          const det = item.detection;
-          const geo = det.geolocation!;
-          return (
-            <Marker
-              key={det.id}
-              position={[geo.lat, geo.lon]}
-              icon={createDetectionIcon(RISK_COLORS[det.hazard_risk], !!det.expert_verified)}
-              eventHandlers={{
-                click: () => onSelectDetection(det.id),
-              }}
-            >
-              <Popup>
-                <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', color: '#0f172a', padding: 4, minWidth: 180 }}>
-                  <div style={{ color: RISK_COLORS[det.hazard_risk], fontWeight: 800, marginBottom: 4, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span>{CLASS_LABELS[det.target_class] ?? det.target_class.toUpperCase()} · {det.hazard_risk}</span>
-                    {det.expert_verified && (
-                      <span style={{ fontSize: '0.55rem', background: '#dcfce7', color: '#15803d', padding: '1px 5px', borderRadius: 4, border: '1px solid #86efac' }}>
-                        EXPERT VERIFIED
-                      </span>
-                    )}
-                  </div>
-                  <div style={{ color: '#0f172a', fontWeight: 600 }}>Confidence: {formatConfidence(det.confidence)}</div>
-                  <div style={{ color: '#64748b' }}>Size: {det.dimensions.length_m.toFixed(1)}m × {det.dimensions.width_m.toFixed(1)}m</div>
-                  <div style={{ marginTop: 4, color: '#94a3b8', fontSize: '0.7rem' }}>
-                    {formatCoord(geo.lat, true)} · {formatCoord(geo.lon, false)}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => onSelectDetection(det.id)}
-                    style={{
-                      marginTop: 6,
-                      width: '100%',
-                      background: '#0284c7',
-                      color: '#ffffff',
-                      border: 'none',
-                      borderRadius: 4,
-                      padding: '5px 8px',
-                      fontSize: '0.68rem',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    Open Target Details
-                  </button>
-                </div>
-              </Popup>
-            </Marker>
-          );
-        }
-      })}
+      {/* 2. Zoom 12+: Clustered (12-14) / Individual Tactical Frame Markers (15+) */}
+      {!isLowZoomHeatmapOnly && (
+        <MarkerClusterGroup
+          frames={frames}
+          onSelectFrame={onSelectFrame}
+          onSelectCluster={onSelectCluster}
+        />
+      )}
     </>
   );
 }
@@ -573,20 +285,22 @@ export function MissionMap() {
   const userLoc = state.userLocation;
   const subLoc = state.currentSubmarineLocation;
 
-  // Aggregate all active detections across single image and folder/batch records
-  const allActiveDetections = useMemo(() => getAllActiveDetections(state), [state]);
+  // Build image-level SurveyFrame observations (1 frame per analyzed image)
+  const allSurveyFrames = useMemo(() => buildSurveyFrames(state), [state]);
 
-  // Apply active map filters
-  const filteredDetections = useMemo(() => {
-    return filterDetections(allActiveDetections, state.mapFilters);
-  }, [allActiveDetections, state.mapFilters]);
+  // Apply map filter state
+  const filteredFrames = useMemo(() => {
+    return filterSurveyFrames(allSurveyFrames, state.mapFilters);
+  }, [allSurveyFrames, state.mapFilters]);
+
+  const stats = useMemo(() => getObservationStats(filteredFrames), [filteredFrames]);
 
   // Base route coordinates
   const baseRouteCoords = state.simulatedBaseRoute.map((p): [number, number] => [p.lat, p.lon]);
   // Progressively growing RED travelled path
   const travelledCoords = state.travelledRoute.map((p): [number, number] => [p.lat, p.lon]);
 
-  // Center logic
+  // Center calculation
   let mapCenter: [number, number] = [15.2993, 73.7240]; // Arabian Sea corridor center
   let panTarget: [number, number] | null = null;
 
@@ -599,21 +313,20 @@ export function MissionMap() {
   } else if (userLoc) {
     mapCenter = [userLoc.lat, userLoc.lon];
     panTarget = [userLoc.lat, userLoc.lon];
-  } else if (filteredDetections.length > 0) {
-    // If detections exist from an uploaded/analyzed image, center on them!
-    const validDet = filteredDetections.find((d) => d.geolocation && isValidCoordinate(d.geolocation));
-    if (validDet?.geolocation) {
-      mapCenter = [validDet.geolocation.lat, validDet.geolocation.lon];
-      panTarget = [validDet.geolocation.lat, validDet.geolocation.lon];
+  } else if (filteredFrames.length > 0) {
+    const validFrame = filteredFrames.find((f) => isValidCoordinate(f.geolocation));
+    if (validFrame?.geolocation) {
+      mapCenter = [validFrame.geolocation.lat, validFrame.geolocation.lon];
+      panTarget = [validFrame.geolocation.lat, validFrame.geolocation.lon];
     }
   }
 
-  const handleSelectCluster = (cluster: ClusterInfo) => {
-    dispatch({ type: 'SELECT_CLUSTER', payload: cluster });
+  const handleSelectFrame = (frame: SurveyFrame) => {
+    dispatch({ type: 'SELECT_FRAME', payload: { frameId: frame.id, frame } });
   };
 
-  const handleSelectDetection = (id: string) => {
-    dispatch({ type: 'SELECT_DETECTION', payload: id });
+  const handleSelectCluster = (cluster: ClusterInfo) => {
+    dispatch({ type: 'SELECT_CLUSTER', payload: cluster });
   };
 
   const isFiltered = state.mapFilters.risk !== 'ALL' || state.mapFilters.targetClass !== 'ALL';
@@ -789,7 +502,7 @@ export function MissionMap() {
             ))}
           </select>
 
-          {/* Reset Filters button if filtered */}
+          {/* Reset Filters button */}
           {isFiltered && (
             <button
               type="button"
@@ -819,7 +532,7 @@ export function MissionMap() {
             </button>
           )}
 
-          {/* Detections Counter Badge */}
+          {/* Observation & Anomaly Counter Badge */}
           <div
             style={{
               marginLeft: 'auto',
@@ -831,13 +544,13 @@ export function MissionMap() {
               gap: 4,
             }}
           >
-            <Layers size={11} color="#64748b" />
+            <FileImage size={11} color="#0284c7" />
             <span>
-              {filteredDetections.length}
-              {filteredDetections.length !== allActiveDetections.length
-                ? ` / ${allActiveDetections.length}`
+              {filteredFrames.length} Frames
+              {filteredFrames.length !== allSurveyFrames.length
+                ? ` / ${allSurveyFrames.length}`
                 : ''}{' '}
-              Targets
+              ({stats.totalAnomalies} Anomalies)
             </span>
           </div>
         </div>
@@ -845,7 +558,7 @@ export function MissionMap() {
 
       <MapContainer
         center={mapCenter}
-        zoom={isSimulation ? 6 : filteredDetections.length > 0 ? 12 : userLoc ? 12 : 6}
+        zoom={isSimulation ? 6 : filteredFrames.length > 0 ? 12 : userLoc ? 12 : 6}
         style={{ width: '100%', height: '100%', background: '#a5cbe6' }}
         zoomControl={false}
       >
@@ -857,10 +570,10 @@ export function MissionMap() {
 
         <MapViewController center={panTarget} />
 
-        {/* Smooth auto-framer when new detections arrive from analyzed image */}
-        <MapAutoFitter detections={filteredDetections} isSimulation={isSimulation} />
+        {/* Smooth auto-framer when new survey observations arrive */}
+        <MapAutoFitter frames={filteredFrames} isSimulation={isSimulation} />
 
-        {/* SIMULATION MODE: Base Arabian Sea Route (Dashed cyan/navy track) */}
+        {/* SIMULATION MODE: Base Arabian Sea Route */}
         {isSimulation && baseRouteCoords.length > 1 && (
           <Polyline
             positions={baseRouteCoords}
@@ -873,7 +586,7 @@ export function MissionMap() {
           />
         )}
 
-        {/* SIMULATION MODE: Progressively Highlighted RED Travelled Path */}
+        {/* SIMULATION MODE: RED Travelled Path */}
         {isSimulation && travelledCoords.length > 1 && (
           <Polyline
             key={`travelled-path-${travelledCoords.length}`}
@@ -888,7 +601,7 @@ export function MissionMap() {
           />
         )}
 
-        {/* SIMULATION MODE: Start (Mumbai) & Destination (Kochi) Waypoint Badges */}
+        {/* SIMULATION MODE: Start & Destination Waypoints */}
         {isSimulation && baseRouteCoords.length > 0 && (
           <>
             <Marker
@@ -941,12 +654,12 @@ export function MissionMap() {
           </Marker>
         )}
 
-        {/* Dynamic Zoom-Aware Acoustic Heatmap Layer, Clusters & Individual Anomaly Markers */}
-        <MapClusterLayer
-          filteredDetections={filteredDetections}
+        {/* Dynamic Zoom-Aware Map Observation Engine (0-11: Heatmap, 12+: Frame Clusters & Markers) */}
+        <MapObservationLayer
+          frames={filteredFrames}
           showHeatmap={showHeatmap}
+          onSelectFrame={handleSelectFrame}
           onSelectCluster={handleSelectCluster}
-          onSelectDetection={handleSelectDetection}
         />
       </MapContainer>
 
@@ -1007,7 +720,7 @@ export function MissionMap() {
         }}
       >
         {/* Dual Legend Card */}
-        {filteredDetections.length > 0 && (
+        {filteredFrames.length > 0 && (
           <div
             style={{
               background: 'rgba(255, 255, 255, 0.95)',
@@ -1026,7 +739,7 @@ export function MissionMap() {
                 <span style={{ fontSize: '0.55rem', color: '#64748b', fontWeight: 600 }}>DENSITY</span>
               </div>
               <div style={{ fontSize: '0.58rem', color: '#64748b', marginBottom: 6 }}>
-                Colors indicate geographic count, not hazard level:
+                Intensity represents surveyed image observation density & significance, not raw bounding boxes:
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 8px' }}>
                 {(['HIGH', 'MEDIUM', 'LOW', 'SPARSE'] as const).map((tier) => {
@@ -1061,10 +774,10 @@ export function MissionMap() {
             {/* HAZARD CLASSIFICATION SECTION */}
             <div>
               <div style={{ fontSize: '0.62rem', color: '#0f172a', fontWeight: 800, letterSpacing: '0.04em', marginBottom: 6 }}>
-                HAZARD CLASSIFICATION (MARKERS)
+                SURVEY FRAME SEVERITY (MARKERS)
               </div>
               {(['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'] as const).map((r) => {
-                const cnt = filteredDetections.filter((d) => d.hazard_risk === r).length;
+                const cnt = filteredFrames.filter((f) => f.highestRisk === r).length;
                 if (cnt === 0) return null;
                 return (
                   <div key={r} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
@@ -1079,7 +792,7 @@ export function MissionMap() {
                       }}
                     />
                     <span style={{ fontSize: '0.68rem', color: RISK_COLORS[r], fontWeight: 700 }}>{r}</span>
-                    <span style={{ fontSize: '0.68rem', color: '#64748b', marginLeft: 'auto', fontWeight: 600 }}>{cnt}</span>
+                    <span style={{ fontSize: '0.68rem', color: '#64748b', marginLeft: 'auto', fontWeight: 600 }}>{cnt} frames</span>
                   </div>
                 );
               })}
@@ -1088,7 +801,7 @@ export function MissionMap() {
         )}
 
         {/* Coordinate indicator */}
-        {(isSimulation ? subLoc : userLoc || (filteredDetections.length > 0 && filteredDetections[0].geolocation)) && (
+        {(isSimulation ? subLoc : userLoc || (filteredFrames.length > 0 && filteredFrames[0].geolocation)) && (
           <div
             style={{
               display: 'inline-flex',
@@ -1112,8 +825,8 @@ export function MissionMap() {
                 ? `${formatCoord(subLoc.lat, true)} · ${formatCoord(subLoc.lon, false)}`
                 : userLoc
                 ? `${formatCoord(userLoc.lat, true)} · ${formatCoord(userLoc.lon, false)}`
-                : filteredDetections[0]?.geolocation
-                ? `${formatCoord(filteredDetections[0].geolocation.lat, true)} · ${formatCoord(filteredDetections[0].geolocation.lon, false)}`
+                : filteredFrames[0]?.geolocation
+                ? `${formatCoord(filteredFrames[0].geolocation.lat, true)} · ${formatCoord(filteredFrames[0].geolocation.lon, false)}`
                 : ''}
             </span>
           </div>

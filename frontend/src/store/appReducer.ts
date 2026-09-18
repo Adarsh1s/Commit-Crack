@@ -24,6 +24,7 @@ export type AppAction =
   | { type: 'SET_STATUS'; payload: AppState['status'] }
   | { type: 'SET_RESULT'; payload: AnalysisResult }
   | { type: 'SELECT_DETECTION'; payload: string | null }
+  | { type: 'SELECT_FRAME'; payload: { frameId: string | null; frame?: any | null } | null }
   | { type: 'SELECT_CLUSTER'; payload: ClusterInfo | null }
   | { type: 'SET_MAP_FILTERS'; payload: Partial<MapFilterState> }
   | { type: 'CONFIRM_EXPERT_VERIFICATION'; payload: { detectionId: string } }
@@ -81,6 +82,8 @@ export const initialState: AppState = {
   status: 'idle',
   result: null,
   selectedDetectionId: null,
+  selectedFrameId: null,
+  selectedFrame: null,
   selectedCluster: null,
   mapFilters: {
     risk: 'ALL',
@@ -175,11 +178,22 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         selectedCluster: action.payload ? null : state.selectedCluster,
       };
 
+    case 'SELECT_FRAME':
+      return {
+        ...state,
+        selectedFrameId: action.payload ? action.payload.frameId : null,
+        selectedFrame: action.payload ? action.payload.frame ?? null : null,
+        selectedCluster: action.payload ? null : state.selectedCluster,
+        selectedDetectionId: null,
+      };
+
     case 'SELECT_CLUSTER':
       return {
         ...state,
         selectedCluster: action.payload,
         selectedDetectionId: action.payload ? null : state.selectedDetectionId,
+        selectedFrameId: action.payload ? null : state.selectedFrameId,
+        selectedFrame: action.payload ? null : state.selectedFrame,
       };
 
     case 'SET_MAP_FILTERS':

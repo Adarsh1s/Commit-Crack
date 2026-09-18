@@ -89,10 +89,10 @@ export function ClusterDrawer({ onZoomIntoCluster }: Props) {
               letterSpacing: '-0.01em',
             }}
           >
-            ANOMALY CLUSTER
+            SURVEY CLUSTER
           </div>
           <div style={{ fontSize: '0.62rem', color: '#64748b' }}>
-            {cluster.count} Aggregated Detections
+            {cluster.frameCount ?? cluster.count} Survey Frames · {cluster.totalAnomalyCount ?? cluster.detections.length} Anomalies
           </div>
         </div>
 

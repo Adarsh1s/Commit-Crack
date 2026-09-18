@@ -132,6 +132,27 @@ export interface BatchDownloadUrls {
 
 export type DensityTier = 'HIGH' | 'MEDIUM' | 'LOW' | 'SPARSE';
 
+export interface SurveyFrame {
+  id: string;                      // Stable unique ID (e.g. `frame_${filename}_${sequence}`)
+  filename: string;                // Source sonar image filename
+  sequence?: number;               // Batch sequence number
+  timestamp?: string;              // Capture timestamp if present
+  geolocation: GeoCoordinate | null; // Frame GPS coordinates
+  thumbnail_url?: string;          // Thumbnail preview / Base64 image
+  raw_image_url?: string;          // Raw sonar image URL
+  enhanced_image_url?: string;     // Enhanced image URL
+  status: 'processed' | 'failed' | 'idle';
+  anomalyCount: number;            // Number of active (non-rejected) detections
+  detections: Detection[];         // All active detections within this frame
+  highestRisk: HazardRisk;         // Highest severity: CRITICAL > HIGH > MEDIUM > LOW (or 'LOW' if none)
+  highestConfidence: number;       // Maximum detection confidence in frame (0..1)
+  riskSummary: Record<HazardRisk, number>; // Breakdown of active hazards
+  classSummary: Record<string, number>;    // Target class count distribution
+  expertVerified: boolean;         // True if any detection in frame is expert-verified
+  expertVerifiedCount: number;     // Count of verified anomalies
+  heatWeight: number;              // Calculated significance weight (0.0 to 1.0 clamped)
+}
+
 export interface ClusterBounds {
   minLat: number;
   maxLat: number;
@@ -143,9 +164,12 @@ export interface ClusterInfo {
   id: string;
   center: GeoCoordinate;
   bounds: ClusterBounds;
-  count: number;
+  count: number;                   // Number of source SurveyFrames in cluster
+  frameCount: number;              // Explicit alias for frames
+  totalAnomalyCount: number;       // Total detections across all frames in cluster
   densityTier: DensityTier;
-  detections: Detection[];
+  frames: SurveyFrame[];           // Source survey frames in this cluster
+  detections: Detection[];         // Aggregated detections across frames (backwards compatibility)
   highestRisk: HazardRisk;
   riskCounts: Record<HazardRisk, number>;
   classCounts: Record<string, number>;
@@ -166,6 +190,8 @@ export interface AppState {
   status: AnalysisStatus;
   result: AnalysisResult | null;
   selectedDetectionId: string | null;
+  selectedFrameId: string | null;
+  selectedFrame: SurveyFrame | null;
   selectedCluster: ClusterInfo | null;
   mapFilters: MapFilterState;
   error: string | null;
