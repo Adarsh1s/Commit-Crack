@@ -7,6 +7,7 @@ import { LeftPanel } from './LeftPanel';
 import { RightPanel } from './RightPanel';
 import { MissionMap } from '../map/MissionMap';
 import { SonarImageViewer } from '../map/SonarImageViewer';
+import { ScanLine } from 'lucide-react';
 import { useAppContext } from '../../store/AppContext';
 
 export const MIN_LEFT_WIDTH = 260;
@@ -241,21 +242,41 @@ export function AppShell() {
           ) : (
             <>
               <MissionMap />
-              {/* Map→Sonar toggle (only shown when results exist) */}
+              {/* Map→Sonar toggle (positioned in the exact same top-right spot as the Map button in SonarImageViewer) */}
               {state.result && (
                 <button
                   onClick={() => setCenterView('sonar')}
+                  title="Switch to sonar image view"
                   style={{
-                    position: 'absolute', top: 14, left: 14, zIndex: 500,
-                    display: 'flex', alignItems: 'center', gap: 6,
-                    padding: '6px 12px', borderRadius: 20,
-                    background: '#0f172a', border: 'none',
-                    color: '#ffffff', cursor: 'pointer',
-                    fontSize: '0.72rem', fontWeight: 700,
-                    boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+                    position: 'absolute',
+                    top: 6,
+                    right: 12,
+                    zIndex: 500,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 5,
+                    padding: '4px 10px',
+                    borderRadius: 6,
+                    background: '#1e293b',
+                    border: '1px solid #334155',
+                    color: '#94a3b8',
+                    cursor: 'pointer',
+                    fontSize: '0.68rem',
+                    fontWeight: 700,
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                    transition: 'all 120ms ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = '#334155';
+                    e.currentTarget.style.color = '#ffffff';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = '#1e293b';
+                    e.currentTarget.style.color = '#94a3b8';
                   }}
                 >
-                  📡 View Sonar Image
+                  <ScanLine size={12} />
+                  Sonar
                 </button>
               )}
             </>

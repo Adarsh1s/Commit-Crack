@@ -12,7 +12,7 @@ function shouldShowHighRiskAlert(hazard, confidence) {
 }
 
 function isVerificationEligible(hazard, confidence) {
-  return isHighRisk(hazard) && confidence > 0.35 && confidence < 0.75;
+  return isHighRisk(hazard) && confidence < 0.35;
 }
 
 // Reducer logic mirroring src/store/appReducer.ts
@@ -60,7 +60,7 @@ function appReducer(state, action) {
             ...state.result.kpis,
             total_detections: updatedDetections.length,
             critical_hazards: newCritical,
-            verified_3d_objects: newVerified3d,
+            verified_3d_targets: newVerified3d,
           },
         },
       };
@@ -152,48 +152,32 @@ test('2. HIGH + confidence == 75% does NOT trigger High-Risk Alert or Expert Ver
   assert.equal(isVerificationEligible('HIGH', 0.75), false);
 });
 
-test('3. HIGH + confidence between 35% and 75% triggers Expert Verification and NOT High-Risk Alert', () => {
-  assert.equal(isVerificationEligible('HIGH', 0.50), true);
-  assert.equal(isVerificationEligible('HIGH', 0.351), true);
-  assert.equal(isVerificationEligible('HIGH', 0.749), true);
-  assert.equal(shouldShowHighRiskAlert('HIGH', 0.50), false);
-});
-
-test('4. HIGH + confidence == 35% does NOT trigger Expert Verification', () => {
-  assert.equal(isVerificationEligible('HIGH', 0.35), false);
-  assert.equal(shouldShowHighRiskAlert('HIGH', 0.35), false);
-});
-
-test('5. HIGH + confidence < 35% does NOT trigger Expert Verification', () => {
-  assert.equal(isVerificationEligible('HIGH', 0.25), false);
-  assert.equal(isVerificationEligible('HIGH', 0.10), false);
+test('3. HIGH + confidence < 35% triggers Expert Verification', () => {
+  assert.equal(isVerificationEligible('HIGH', 0.34), true);
+  assert.equal(isVerificationEligible('HIGH', 0.25), true);
+  assert.equal(isVerificationEligible('HIGH', 0.10), true);
   assert.equal(shouldShowHighRiskAlert('HIGH', 0.25), false);
 });
 
-test('6. CRITICAL with the exact same 5 confidence cases behaves identically to HIGH', () => {
-  // CRITICAL + conf > 75%
-  assert.equal(shouldShowHighRiskAlert('CRITICAL', 0.85), true);
-  assert.equal(isVerificationEligible('CRITICAL', 0.85), false);
+test('4. HIGH + confidence >= 35% and <= 75% does NOT trigger Expert Verification', () => {
+  assert.equal(isVerificationEligible('HIGH', 0.35), false);
+  assert.equal(isVerificationEligible('HIGH', 0.50), false);
+  assert.equal(isVerificationEligible('HIGH', 0.70), false);
+});
 
-  // CRITICAL + conf == 75%
-  assert.equal(shouldShowHighRiskAlert('CRITICAL', 0.75), false);
-  assert.equal(isVerificationEligible('CRITICAL', 0.75), false);
-
-  // CRITICAL + 35% < conf < 75%
-  assert.equal(isVerificationEligible('CRITICAL', 0.60), true);
-  assert.equal(shouldShowHighRiskAlert('CRITICAL', 0.60), false);
-
-  // CRITICAL + conf == 35%
-  assert.equal(isVerificationEligible('CRITICAL', 0.35), false);
-  assert.equal(shouldShowHighRiskAlert('CRITICAL', 0.35), false);
-
-  // CRITICAL + conf < 35%
-  assert.equal(isVerificationEligible('CRITICAL', 0.20), false);
+test('5. CRITICAL with confidence < 35% triggers Expert Verification', () => {
+  assert.equal(isVerificationEligible('CRITICAL', 0.20), true);
+  assert.equal(isVerificationEligible('CRITICAL', 0.34), true);
   assert.equal(shouldShowHighRiskAlert('CRITICAL', 0.20), false);
 });
 
-test('7. LOW and MEDIUM with confidence between 35% and 75% MUST NOT show Expert Verification or Alert', () => {
-  for (const conf of [0.40, 0.50, 0.65, 0.74]) {
+test('6. CRITICAL with confidence > 75% triggers High-Risk Alert', () => {
+  assert.equal(shouldShowHighRiskAlert('CRITICAL', 0.85), true);
+  assert.equal(isVerificationEligible('CRITICAL', 0.85), false);
+});
+
+test('7. LOW and MEDIUM with confidence < 35% MUST NOT show Expert Verification', () => {
+  for (const conf of [0.10, 0.20, 0.30, 0.34]) {
     assert.equal(isVerificationEligible('LOW', conf), false);
     assert.equal(shouldShowHighRiskAlert('LOW', conf), false);
     assert.equal(isVerificationEligible('MEDIUM', conf), false);

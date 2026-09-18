@@ -1,5 +1,4 @@
-// src/components/inspector/TargetDrawer.tsx
-import { X, ShieldCheck, ShieldOff, Minus, MapPin, Ruler, CheckCircle2, Trash2 } from 'lucide-react';
+import { X, ShieldCheck, ShieldOff, Minus, MapPin, Ruler, CheckCircle2, Trash2, XCircle } from 'lucide-react';
 import { useAppContext } from '../../store/AppContext';
 import { RISK_COLORS, confidenceToColor } from '../../utils/colorScale';
 import { formatConfidence, formatCoord, formatDimension, formatArea } from '../../utils/formatters';
@@ -255,27 +254,38 @@ export function TargetDrawer() {
                       The AI has detected a potentially high-risk target (<strong>{CLASS_LABELS[detection.target_class] ?? detection.target_class}</strong>, {detection.hazard_risk}) with lower confidence (<strong>{Math.round(detection.confidence * 100)}%</strong>). Expert verification is available.
                     </p>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                       <button
                         onClick={() => dispatch({ type: 'CONFIRM_EXPERT_VERIFICATION', payload: { detectionId: detection.id } })}
                         style={{
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          gap: 6,
+                          gap: 8,
                           width: '100%',
-                          padding: '9px 12px',
-                          borderRadius: 6,
+                          padding: '12px 18px',
+                          borderRadius: 8,
                           background: '#0f172a',
                           color: '#ffffff',
-                          border: 'none',
+                          border: '1px solid #334155',
                           cursor: 'pointer',
-                          fontSize: '0.75rem',
+                          fontSize: '0.82rem',
                           fontWeight: 700,
+                          boxShadow: '0 2px 8px rgba(15, 23, 42, 0.15)',
                           transition: 'all 150ms ease',
                         }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = '#1e293b';
+                          e.currentTarget.style.transform = 'translateY(-1px)';
+                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(15, 23, 42, 0.2)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = '#0f172a';
+                          e.currentTarget.style.transform = 'translateY(0)';
+                          e.currentTarget.style.boxShadow = '0 2px 8px rgba(15, 23, 42, 0.15)';
+                        }}
                       >
-                        <CheckCircle2 size={14} color="#4ade80" />
+                        <CheckCircle2 size={16} color="#4ade80" />
                         <span>Confirm Target (Expert Verified)</span>
                       </button>
 
@@ -285,40 +295,46 @@ export function TargetDrawer() {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          gap: 6,
+                          gap: 8,
                           width: '100%',
-                          padding: '8px 12px',
-                          borderRadius: 6,
+                          padding: '10px 16px',
+                          borderRadius: 8,
                           background: '#fee2e2',
                           color: '#991b1b',
                           border: '1px solid #fca5a5',
                           cursor: 'pointer',
-                          fontSize: '0.75rem',
+                          fontSize: '0.78rem',
                           fontWeight: 700,
                           transition: 'all 150ms ease',
                         }}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = '#fecaca'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.background = '#fee2e2'; }}
                       >
-                        <Trash2 size={13} color="#dc2626" />
-                        <span>Nothing There (Remove Detection)</span>
+                        <XCircle size={15} color="#dc2626" />
+                        <span>Reject Anomaly (Nothing There)</span>
                       </button>
 
-                      <button
-                        onClick={() => dispatch({ type: 'SKIP_EXPERT_VERIFICATION', payload: { detectionId: detection.id } })}
-                        style={{
-                          width: '100%',
-                          padding: '6px 12px',
-                          borderRadius: 6,
-                          background: '#ffffff',
-                          color: '#64748b',
-                          border: '1px solid #e2e8f0',
-                          cursor: 'pointer',
-                          fontSize: '0.7rem',
-                          fontWeight: 600,
-                          transition: 'all 150ms ease',
-                        }}
-                      >
-                        Continue Without Verification / Skip
-                      </button>
+                      {detection.expert_status !== 'SKIPPED' && (
+                        <button
+                          onClick={() => dispatch({ type: 'SKIP_EXPERT_VERIFICATION', payload: { detectionId: detection.id } })}
+                          style={{
+                            width: '100%',
+                            padding: '8px 12px',
+                            borderRadius: 6,
+                            background: 'transparent',
+                            color: '#64748b',
+                            border: '1px solid #cbd5e1',
+                            cursor: 'pointer',
+                            fontSize: '0.72rem',
+                            fontWeight: 600,
+                            transition: 'all 150ms ease',
+                          }}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = '#f1f5f9'; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+                        >
+                          Skip Verification (Keep Unchanged)
+                        </button>
+                      )}
                     </div>
 
                     <div style={{ marginTop: 8, fontSize: '0.62rem', color: '#94a3b8', textAlign: 'center' }}>

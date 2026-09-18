@@ -22,7 +22,7 @@ def should_show_high_risk_alert(hazard: str, confidence: float) -> bool:
 
 
 def is_verification_eligible(hazard: str, confidence: float) -> bool:
-    return is_high_risk(hazard) and (0.35 < confidence < 0.75)
+    return is_high_risk(hazard) and confidence < 0.35
 
 
 class TestExpertVerificationRules(unittest.TestCase):
@@ -34,31 +34,18 @@ class TestExpertVerificationRules(unittest.TestCase):
         self.assertFalse(is_verification_eligible("HIGH", 0.80))
         self.assertFalse(is_verification_eligible("CRITICAL", 0.95))
 
-    def test_high_confidence_equal_75(self):
-        """HIGH/CRITICAL with confidence == 75% -> Excluded from both"""
-        self.assertFalse(should_show_high_risk_alert("HIGH", 0.75))
-        self.assertFalse(should_show_high_risk_alert("CRITICAL", 0.75))
-        self.assertFalse(is_verification_eligible("HIGH", 0.75))
-        self.assertFalse(is_verification_eligible("CRITICAL", 0.75))
-
     def test_high_confidence_between_35_and_75(self):
-        """HIGH/CRITICAL with 35% < confidence < 75% -> Verification = True, Alert = False"""
-        for conf in [0.36, 0.50, 0.65, 0.74]:
-            self.assertTrue(is_verification_eligible("HIGH", conf), f"Failed for HIGH at {conf}")
-            self.assertTrue(is_verification_eligible("CRITICAL", conf), f"Failed for CRITICAL at {conf}")
-            self.assertFalse(should_show_high_risk_alert("HIGH", conf))
-            self.assertFalse(should_show_high_risk_alert("CRITICAL", conf))
-
-    def test_confidence_equal_35(self):
-        """HIGH/CRITICAL with confidence == 35% -> Excluded from verification"""
-        self.assertFalse(is_verification_eligible("HIGH", 0.35))
-        self.assertFalse(is_verification_eligible("CRITICAL", 0.35))
-        self.assertFalse(should_show_high_risk_alert("HIGH", 0.35))
+        """HIGH/CRITICAL with 35% <= confidence <= 75% -> Verification = False"""
+        for conf in [0.35, 0.50, 0.65, 0.75]:
+            self.assertFalse(is_verification_eligible("HIGH", conf), f"Failed for HIGH at {conf}")
+            self.assertFalse(is_verification_eligible("CRITICAL", conf), f"Failed for CRITICAL at {conf}")
 
     def test_confidence_less_than_35(self):
-        """HIGH/CRITICAL with confidence < 35% -> No verification"""
-        self.assertFalse(is_verification_eligible("HIGH", 0.20))
-        self.assertFalse(is_verification_eligible("CRITICAL", 0.20))
+        """HIGH/CRITICAL with confidence < 35% -> Verification = True"""
+        self.assertTrue(is_verification_eligible("HIGH", 0.20))
+        self.assertTrue(is_verification_eligible("CRITICAL", 0.30))
+        self.assertFalse(is_verification_eligible("LOW", 0.20))
+        self.assertFalse(is_verification_eligible("MEDIUM", 0.20))
         self.assertFalse(should_show_high_risk_alert("HIGH", 0.20))
 
     def test_low_and_medium_never_show_verification(self):

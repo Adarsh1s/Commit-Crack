@@ -950,21 +950,25 @@ export function MissionMap() {
         />
       </MapContainer>
 
-      {/* Top right HUD: Telemetry / Hydrographic Status */}
+      {/* Top right HUD: Telemetry / Hydrographic Status (offset when Sonar toggle is active) */}
       <div
         style={{
           position: 'absolute',
-          top: 14,
-          right: 14,
+          top: 6,
+          right: state.result ? 92 : 12,
           display: 'flex',
           alignItems: 'center',
           gap: 10,
-          background: '#ffffff',
+          background: 'rgba(255, 255, 255, 0.95)',
+          backdropFilter: 'blur(8px)',
           border: '1px solid #e2e8f0',
-          borderRadius: 20,
-          padding: '7px 14px',
+          borderRadius: 6,
+          padding: '4px 10px',
+          height: 28,
+          boxSizing: 'border-box',
           zIndex: 450,
-          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.08)',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+          transition: 'right 150ms ease',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>

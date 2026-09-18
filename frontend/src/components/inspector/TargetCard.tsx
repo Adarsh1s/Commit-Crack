@@ -135,16 +135,16 @@ export function TargetCard({ detection: det, isSelected }: Props) {
         ) : isVerificationEligible(det.hazard_risk, det.confidence) ? (
           <span
             style={{
-              fontSize: '0.58rem',
+              fontSize: '0.62rem',
               fontWeight: 700,
-              padding: '1px 6px',
+              padding: '2px 7px',
               borderRadius: 4,
               background: det.expert_status === 'SKIPPED' ? '#f1f5f9' : '#fef3c7',
-              color: det.expert_status === 'SKIPPED' ? '#64748b' : '#92400e',
-              border: `1px solid ${det.expert_status === 'SKIPPED' ? '#e2e8f0' : '#fcd34d'}`,
+              color: det.expert_status === 'SKIPPED' ? '#64748b' : '#b45309',
+              border: `1px solid ${det.expert_status === 'SKIPPED' ? '#e2e8f0' : '#fde68a'}`,
             }}
           >
-            {det.expert_status === 'SKIPPED' ? 'SKIPPED' : 'VERIFY?'}
+            {det.expert_status === 'SKIPPED' ? 'SKIPPED' : 'EXPERT VERIFY'}
           </span>
         ) : null}
       </div>

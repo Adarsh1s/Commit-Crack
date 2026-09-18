@@ -22,18 +22,15 @@ export function shouldShowHighRiskAlert(
 }
 
 /**
- * Requirement 3 & 9:
- * If the detection is HIGH or CRITICAL AND AI confidence is MORE THAN 35% but LESS THAN 75% (0.35 < confidence < 0.75):
- * - Show an OPTIONAL "Expert Verification" option for that specific detection.
- * - confidence == 0.35 is explicitly NOT included.
- * - confidence == 0.75 is explicitly NOT included.
- * - confidence <= 0.35 -> no Expert Verification.
+ * Expert Verification Condition:
+ * If the detection has risk level HIGH or CRITICAL AND AI confidence is BELOW 35% (confidence < 0.35):
+ * - Show the "Expert Verification" option for that specific detection.
  */
 export function isVerificationEligible(
   hazard: HazardRisk,
   confidence: number
 ): boolean {
-  return isHighRisk(hazard) && confidence > 0.35 && confidence < 0.75;
+  return isHighRisk(hazard) && confidence < 0.35;
 }
 
 /**

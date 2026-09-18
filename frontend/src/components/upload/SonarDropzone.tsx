@@ -440,53 +440,7 @@ export function SonarDropzone() {
                 </button>
               </div>
 
-              {/* Image Processing Gap selector */}
-              <div
-                style={{
-                  background: '#ffffff',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: 8,
-                  padding: '8px 10px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 6,
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '0.66rem', fontWeight: 700, color: '#0f172a' }}>
-                    Image Processing Gap
-                  </span>
-                  <span style={{ fontSize: '0.66rem', fontWeight: 800, color: '#0284c7' }}>
-                    {(state.params.test_interval_seconds ?? 2.0).toFixed(1)}s Delay
-                  </span>
-                </div>
-                <div style={{ display: 'flex', gap: 4 }}>
-                  {[1.0, 2.0, 5.0, 10.0].map((val) => {
-                    const active = Math.abs((state.params.test_interval_seconds ?? 2.0) - val) < 0.01;
-                    return (
-                      <button
-                        key={val}
-                        type="button"
-                        onClick={() => dispatch({ type: 'SET_PARAMS', payload: { test_interval_seconds: val } })}
-                        style={{
-                          flex: 1,
-                          padding: '3px 0',
-                          borderRadius: 4,
-                          border: `1px solid ${active ? '#0284c7' : '#e2e8f0'}`,
-                          background: active ? '#0284c7' : '#f8fafc',
-                          color: active ? '#ffffff' : '#475569',
-                          fontSize: '0.62rem',
-                          fontWeight: 700,
-                          cursor: 'pointer',
-                          transition: 'all 120ms ease',
-                        }}
-                      >
-                        {val}s
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+
 
               {/* Arabian Sea Route notice */}
               <div

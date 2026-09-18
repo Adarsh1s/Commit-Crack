@@ -174,38 +174,45 @@ export function HighRiskAlertBanner({ detection: det, onOpenInspector, compact =
             Verification skipped · Target remains fully active
           </div>
         ) : onOpenInspector ? (
-          <div style={{ display: 'flex', gap: 6, marginTop: 4 }}>
+          <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
             <button
               onClick={onOpenInspector}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: 4,
-                padding: '4px 8px',
+                gap: 6,
+                padding: '7px 14px',
                 borderRadius: 6,
                 background: '#0f172a',
                 color: '#ffffff',
                 border: 'none',
                 cursor: 'pointer',
-                fontSize: '0.68rem',
+                fontSize: '0.74rem',
                 fontWeight: 700,
+                boxShadow: '0 1px 4px rgba(0,0,0,0.12)',
+                transition: 'all 120ms ease',
               }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = '#1e293b'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = '#0f172a'; }}
             >
-              <span>Review Verification</span>
-              <ArrowRight size={11} />
+              <span>Verify Target</span>
+              <ArrowRight size={13} />
             </button>
             <button
               onClick={() => dispatch({ type: 'SKIP_EXPERT_VERIFICATION', payload: { detectionId: det.id } })}
               style={{
-                padding: '4px 8px',
+                padding: '7px 12px',
                 borderRadius: 6,
                 background: '#f1f5f9',
                 color: '#64748b',
                 border: '1px solid #e2e8f0',
                 cursor: 'pointer',
-                fontSize: '0.68rem',
+                fontSize: '0.72rem',
                 fontWeight: 600,
+                transition: 'all 120ms ease',
               }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = '#e2e8f0'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = '#f1f5f9'; }}
             >
               Skip
             </button>
