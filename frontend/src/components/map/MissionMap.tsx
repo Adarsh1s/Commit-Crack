@@ -2,11 +2,8 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap, useMapEvents } from 'react-leaflet';
 import {
-  Navigation,
   Radio,
   Filter,
-  ShieldAlert,
-  Layers,
   RotateCcw,
   Flame,
   FileImage,
@@ -22,7 +19,7 @@ import {
   isValidCoordinate,
 } from '../../utils/spatialObservations';
 import { DENSITY_CONFIG } from '../../utils/spatialClustering';
-import type { SurveyFrame, ClusterInfo, HazardRisk, TargetClass } from '../../types/sonar';
+import type { SurveyFrame, ClusterInfo, HazardRisk, TargetClass, GeoCoordinate } from '../../types/sonar';
 import { LeafletHeatLayer } from './LeafletHeatLayer';
 import { MarkerClusterGroup } from './MarkerClusterGroup';
 
@@ -114,43 +111,23 @@ function createSubmarineIcon(heading: number = 180): L.DivIcon {
   });
 }
 
-function createWaypointIcon(label: string, isStart: boolean): L.DivIcon {
+function createWaypointIcon(isStart: boolean): L.DivIcon {
   const bg = isStart ? '#0284c7' : '#15803d';
   return L.divIcon({
     className: '',
     html: `
       <div style="
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        width: 10px;
+        height: 10px;
+        background: ${bg};
+        border: 2px solid #ffffff;
+        border-radius: 50%;
+        box-shadow: 0 0 8px ${bg}, 0 2px 4px rgba(0,0,0,0.4);
         pointer-events: none;
-      ">
-        <div style="
-          background: ${bg};
-          color: #ffffff;
-          font-family: 'Inter', sans-serif;
-          font-size: 9px;
-          font-weight: 800;
-          padding: 2px 6px;
-          border-radius: 4px;
-          white-space: nowrap;
-          border: 1px solid rgba(255,255,255,0.6);
-          box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-        ">
-          ${label}
-        </div>
-        <div style="
-          width: 6px;
-          height: 6px;
-          background: ${bg};
-          border: 1.5px solid #ffffff;
-          border-radius: 50%;
-          margin-top: 2px;
-        "></div>
-      </div>
+      "></div>
     `,
-    iconSize: [80, 30],
-    iconAnchor: [40, 26],
+    iconSize: [10, 10],
+    iconAnchor: [5, 5],
   });
 }
 
@@ -221,10 +198,102 @@ function MapAutoFitter({
 }
 
 /**
+ * Continuous 60FPS smooth submarine propulsion marker.
+ * Smoothly interpolates vessel position and rotational heading without stutter.
+ */
+function SmoothSubmarineMarker({
+  targetLoc,
+  routeCoords,
+  isProcessing,
+  routeInfo,
+}: {
+  targetLoc: GeoCoordinate | null;
+  routeCoords: [number, number][];
+  isProcessing: boolean;
+  routeInfo?: any;
+}) {
+  const [currentPos, setCurrentPos] = useState<[number, number]>(() => {
+    if (targetLoc) return [targetLoc.lat, targetLoc.lon];
+    if (routeCoords.length > 0) return routeCoords[0];
+    return [18.8, 72.6];
+  });
+  const [currentHeading, setCurrentHeading] = useState<number>(() => targetLoc?.heading ?? 180);
+
+  const posRef = useRef<[number, number]>(currentPos);
+  const targetRef = useRef<[number, number]>(currentPos);
+  const headingRef = useRef<number>(currentHeading);
+
+  useEffect(() => {
+    if (targetLoc) {
+      targetRef.current = [targetLoc.lat, targetLoc.lon];
+      if (typeof targetLoc.heading === 'number') {
+        headingRef.current = targetLoc.heading;
+      }
+    }
+  }, [targetLoc]);
+
+  useEffect(() => {
+    let animId: number;
+
+    const animate = () => {
+      const [curLat, curLon] = posRef.current;
+      const [tgtLat, tgtLon] = targetRef.current;
+
+      const dLat = tgtLat - curLat;
+      const dLon = tgtLon - curLon;
+      const dist = Math.sqrt(dLat * dLat + dLon * dLon);
+
+      if (dist > 0.00002) {
+        const ease = isProcessing ? 0.06 : 0.12;
+        const nextLat = curLat + dLat * ease;
+        const nextLon = curLon + dLon * ease;
+        posRef.current = [nextLat, nextLon];
+        setCurrentPos([nextLat, nextLon]);
+
+        const calcHead = (Math.atan2(dLon, dLat) * 180) / Math.PI;
+        const targetHead = (calcHead + 360) % 360;
+        let diff = (targetHead - headingRef.current + 540) % 360 - 180;
+        const nextHead = headingRef.current + diff * 0.1;
+        headingRef.current = nextHead;
+        setCurrentHeading(nextHead);
+      }
+
+      animId = requestAnimationFrame(animate);
+    };
+
+    animId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animId);
+  }, [isProcessing]);
+
+  return (
+    <Marker
+      position={currentPos}
+      icon={createSubmarineIcon(currentHeading)}
+    >
+      <Popup>
+        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', color: '#0f172a', background: '#ffffff', padding: 10, borderRadius: 8, border: '1px solid #e2e8f0' }}>
+          <div style={{ color: '#0284c7', fontWeight: 800, marginBottom: 4, letterSpacing: '0.04em', display: 'flex', alignItems: 'center', gap: 4 }}>
+            <Radio size={12} />
+            <span>SUBMARINE PATROL NAVIGATION</span>
+          </div>
+          <div style={{ color: '#64748b' }}>{formatCoord(currentPos[0], true)}</div>
+          <div style={{ color: '#64748b' }}>{formatCoord(currentPos[1], false)}</div>
+          <div style={{ fontSize: '0.68rem', color: '#0f172a', marginTop: 4, fontWeight: 600 }}>
+            Corridor: {routeInfo?.name || 'Naval Patrol Deep Sea Transit'}
+          </div>
+          <div style={{ fontSize: '0.65rem', color: '#0284c7', marginTop: 2, fontWeight: 700 }}>
+            Continuous Cruise · {Math.round(currentHeading)}°
+          </div>
+        </div>
+      </Popup>
+    </Marker>
+  );
+}
+
+/**
  * Zoom-aware Map Observation Engine:
- * - Zoom 0–11: Real Canvas Heatmap (@linkurious/leaflet-heat)
- * - Zoom 12–14: Clustered SurveyFrame markers
- * - Zoom 15+: Individual SurveyFrame markers (with spiderfying)
+ * - Zoom 0–11: Real Canvas Heatmap with merged glowing hotspot clusters
+ * - Zoom 12+: Unclusters into individual tactical small circular dots with color based on severity (1 dot = 1 image)
  */
 function MapObservationLayer({
   frames,
@@ -237,16 +306,6 @@ function MapObservationLayer({
   onSelectFrame: (frame: SurveyFrame) => void;
   onSelectCluster: (cluster: ClusterInfo) => void;
 }) {
-  const map = useMap();
-  const [zoom, setZoom] = useState(() => map.getZoom());
-
-  useMapEvents({
-    zoomend: () => setZoom(map.getZoom()),
-    moveend: () => setZoom(map.getZoom()),
-  });
-
-  const isLowZoomHeatmapOnly = zoom <= 11;
-
   // Transform frames to heat points: exactly 1 heat point per SurveyFrame
   const heatPoints = useMemo(() => {
     return frames
@@ -260,48 +319,45 @@ function MapObservationLayer({
 
   return (
     <>
-      {/* 1. Zoom 0-11: Real Canvas Heatmap Layer */}
-      {showHeatmap && isLowZoomHeatmapOnly && (
-        <LeafletHeatLayer points={heatPoints} />
+      {/* 1. Canvas Heatmap Layer: Radiant glowing thermal hotspot clouds */}
+      {showHeatmap && (
+        <LeafletHeatLayer points={heatPoints} maxZoom={12} radius={45} blur={25} minOpacity={0.45} />
       )}
 
-      {/* 2. Zoom 12+: Clustered (12-14) / Individual Tactical Frame Markers (15+) */}
-      {!isLowZoomHeatmapOnly && (
-        <MarkerClusterGroup
-          frames={frames}
-          onSelectFrame={onSelectFrame}
-          onSelectCluster={onSelectCluster}
-        />
-      )}
+      {/* 2. Tactical Markers & Clusters:
+             - Zoomed out: All frames in each localized hotspot merge into ONE glowing cluster marker.
+             - Zoomed in (zoom >= 12): Automatically splits into individual small circular glowing dots (one dot per image). */}
+      <MarkerClusterGroup
+        frames={frames}
+        onSelectFrame={onSelectFrame}
+        onSelectCluster={onSelectCluster}
+      />
     </>
   );
 }
 
 export function MissionMap() {
   const { state, dispatch } = useAppContext();
-  const [showHeatmap, setShowHeatmap] = useState(true);
+  const [showHeatmap, setShowHeatmap] = useState<boolean>(true);
 
-  const isSimulation = state.isSimulationMode || state.uploadMode === 'folder';
-  const userLoc = state.userLocation;
-  const subLoc = state.currentSubmarineLocation;
+  const isSimulation = state.isSimulationMode || state.uploadMode === 'folder' || !!state.batchProgress;
 
-  // Build image-level SurveyFrame observations (1 frame per analyzed image)
+  // Derive all survey observations and statistics
   const allSurveyFrames = useMemo(() => buildSurveyFrames(state), [state]);
+  const filteredFrames = useMemo(
+    () => filterSurveyFrames(allSurveyFrames, state.mapFilters),
+    [allSurveyFrames, state.mapFilters]
+  );
+  const stats = useMemo(() => getObservationStats(allSurveyFrames), [allSurveyFrames]);
 
-  // Apply map filter state
-  const filteredFrames = useMemo(() => {
-    return filterSurveyFrames(allSurveyFrames, state.mapFilters);
-  }, [allSurveyFrames, state.mapFilters]);
+  const baseRouteCoords = useMemo<[number, number][]>(() => {
+    return state.simulatedBaseRoute.map((p): [number, number] => [p.lat, p.lon]);
+  }, [state.simulatedBaseRoute]);
 
-  const stats = useMemo(() => getObservationStats(filteredFrames), [filteredFrames]);
+  const subLoc = state.currentSubmarineLocation;
+  const userLoc = state.userLocation;
 
-  // Base route coordinates
-  const baseRouteCoords = state.simulatedBaseRoute.map((p): [number, number] => [p.lat, p.lon]);
-  // Progressively growing RED travelled path
-  const travelledCoords = state.travelledRoute.map((p): [number, number] => [p.lat, p.lon]);
-
-  // Center calculation
-  let mapCenter: [number, number] = [15.2993, 73.7240]; // Arabian Sea corridor center
+  let mapCenter: [number, number] = [15.5, 73.0];
   let panTarget: [number, number] | null = null;
 
   if (isSimulation) {
@@ -361,31 +417,38 @@ export function MissionMap() {
         />
       </div>
 
-      {/* Top Left: Interactive Spatial, Risk & Heatmap Filter Toolbar */}
+      {/* Top Bar: Adaptive Spatial, Risk & Heatmap Toolbar (Fits gracefully even in low space) */}
       <div
         style={{
           position: 'absolute',
-          top: 14,
-          left: 14,
+          top: 10,
+          left: 10,
+          right: state.result ? 78 : 10,
           zIndex: 450,
+          pointerEvents: 'none',
           display: 'flex',
-          flexDirection: 'column',
-          gap: 6,
-          maxWidth: 'calc(100% - 380px)',
+          alignItems: 'center',
         }}
       >
         <div
           style={{
-            background: 'rgba(255, 255, 255, 0.95)',
-            backdropFilter: 'blur(8px)',
+            pointerEvents: 'auto',
+            background: 'rgba(255, 255, 255, 0.96)',
+            backdropFilter: 'blur(10px)',
             border: '1px solid #e2e8f0',
-            borderRadius: 14,
-            padding: '6px 10px',
-            boxShadow: '0 4px 14px rgba(0, 0, 0, 0.08)',
+            borderRadius: 8,
+            padding: '3px 8px',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
             display: 'flex',
             alignItems: 'center',
             gap: 6,
-            flexWrap: 'wrap',
+            flexWrap: 'nowrap',
+            overflowX: 'auto',
+            scrollbarWidth: 'none',
+            whiteSpace: 'nowrap',
+            height: 32,
+            boxSizing: 'border-box',
+            maxWidth: '100%',
           }}
         >
           {/* Heatmap Toggle Pill */}
@@ -397,81 +460,78 @@ export function MissionMap() {
               display: 'flex',
               alignItems: 'center',
               gap: 4,
-              border: showHeatmap ? '1px solid #f97316' : '1px solid #e2e8f0',
+              border: showHeatmap ? '1px solid #f97316' : '1px solid #cbd5e1',
               background: showHeatmap ? '#fff7ed' : '#ffffff',
               color: showHeatmap ? '#ea580c' : '#64748b',
               fontWeight: 800,
               fontSize: '0.65rem',
-              padding: '3px 8px',
+              padding: '2px 7px',
               borderRadius: 6,
               cursor: 'pointer',
+              flexShrink: 0,
+              whiteSpace: 'nowrap',
               boxShadow: showHeatmap ? '0 1px 4px rgba(234, 88, 12, 0.15)' : 'none',
               transition: 'all 150ms ease',
+              height: 24,
             }}
           >
             <Flame size={12} color={showHeatmap ? '#ea580c' : '#94a3b8'} />
             <span>Heatmap: {showHeatmap ? 'ON' : 'OFF'}</span>
           </button>
 
-          <div style={{ width: 1, height: 16, background: '#cbd5e1', margin: '0 2px' }} />
+          <div style={{ width: 1, height: 16, background: '#cbd5e1', margin: '0 1px', flexShrink: 0 }} />
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#0f172a', fontWeight: 800, fontSize: '0.68rem', marginRight: 2 }}>
+          {/* Compact Responsive Risk Selector */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
             <Filter size={11} color="#0284c7" />
-            <span>RISK:</span>
-          </div>
-
-          {/* Quick Risk Pills */}
-          {RISK_FILTER_OPTIONS.map((item) => {
-            const active = state.mapFilters.risk === item.id;
-            const isHighRiskOnly = item.id === 'HIGH_RISK_ONLY';
-            return (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() =>
-                  dispatch({
-                    type: 'SET_MAP_FILTERS',
-                    payload: { risk: item.id },
-                  })
-                }
-                style={{
-                  border: isHighRiskOnly
-                    ? active
-                      ? '1px solid #dc2626'
-                      : '1px solid #fca5a5'
-                    : active
-                    ? '1px solid #0284c7'
-                    : '1px solid #e2e8f0',
-                  background: isHighRiskOnly
-                    ? active
-                      ? '#fee2e2'
-                      : '#ffffff'
-                    : active
+            <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#0f172a' }}>RISK:</span>
+            <select
+              value={state.mapFilters.risk}
+              onChange={(e) =>
+                dispatch({
+                  type: 'SET_MAP_FILTERS',
+                  payload: { risk: e.target.value as any },
+                })
+              }
+              style={{
+                background:
+                  state.mapFilters.risk === 'CRITICAL' || state.mapFilters.risk === 'HIGH_RISK_ONLY'
+                    ? '#fee2e2'
+                    : state.mapFilters.risk !== 'ALL'
                     ? '#e0f2fe'
                     : '#ffffff',
-                  color: isHighRiskOnly
+                border:
+                  state.mapFilters.risk === 'CRITICAL' || state.mapFilters.risk === 'HIGH_RISK_ONLY'
+                    ? '1px solid #ef4444'
+                    : state.mapFilters.risk !== 'ALL'
+                    ? '1px solid #0284c7'
+                    : '1px solid #cbd5e1',
+                color:
+                  state.mapFilters.risk === 'CRITICAL' || state.mapFilters.risk === 'HIGH_RISK_ONLY'
                     ? '#b91c1c'
-                    : active
+                    : state.mapFilters.risk !== 'ALL'
                     ? '#0369a1'
-                    : '#475569',
-                  fontWeight: active ? 800 : 600,
-                  fontSize: '0.65rem',
-                  padding: '3px 7px',
-                  borderRadius: 6,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 3,
-                  transition: 'all 150ms ease',
-                }}
-              >
-                {item.icon && <ShieldAlert size={10} color="#b91c1c" />}
-                {item.label}
-              </button>
-            );
-          })}
+                    : '#0f172a',
+                borderRadius: 6,
+                padding: '2px 6px',
+                fontSize: '0.65rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                outline: 'none',
+                height: 24,
+                flexShrink: 0,
+              }}
+            >
+              <option value="ALL">All Risks</option>
+              <option value="HIGH_RISK_ONLY">⚠️ High Risk Only</option>
+              <option value="CRITICAL">🔴 Critical</option>
+              <option value="HIGH">🟠 High</option>
+              <option value="MEDIUM">🟡 Medium</option>
+              <option value="LOW">🟢 Low</option>
+            </select>
+          </div>
 
-          <div style={{ width: 1, height: 16, background: '#cbd5e1', margin: '0 2px' }} />
+          <div style={{ width: 1, height: 16, background: '#cbd5e1', margin: '0 1px', flexShrink: 0 }} />
 
           {/* Target Class Dropdown */}
           <select
@@ -484,14 +544,17 @@ export function MissionMap() {
             }
             style={{
               background: '#ffffff',
-              border: '1px solid #e2e8f0',
+              border: '1px solid #cbd5e1',
               borderRadius: 6,
-              padding: '3px 6px',
+              padding: '2px 6px',
               fontSize: '0.65rem',
               color: '#0f172a',
               fontWeight: 600,
               cursor: 'pointer',
               outline: 'none',
+              flexShrink: 0,
+              whiteSpace: 'nowrap',
+              height: 24,
             }}
           >
             <option value="ALL">All Classes</option>
@@ -520,11 +583,14 @@ export function MissionMap() {
                 background: '#f1f5f9',
                 border: '1px solid #cbd5e1',
                 borderRadius: 6,
-                padding: '3px 6px',
+                padding: '2px 6px',
                 fontSize: '0.62rem',
                 color: '#64748b',
                 fontWeight: 700,
                 cursor: 'pointer',
+                flexShrink: 0,
+                whiteSpace: 'nowrap',
+                height: 24,
               }}
             >
               <RotateCcw size={10} />
@@ -532,16 +598,19 @@ export function MissionMap() {
             </button>
           )}
 
+          <div style={{ width: 1, height: 16, background: '#cbd5e1', margin: '0 1px', flexShrink: 0 }} />
+
           {/* Observation & Anomaly Counter Badge */}
           <div
             style={{
-              marginLeft: 'auto',
-              fontSize: '0.62rem',
+              fontSize: '0.65rem',
               color: '#64748b',
               fontWeight: 700,
               display: 'flex',
               alignItems: 'center',
               gap: 4,
+              flexShrink: 0,
+              whiteSpace: 'nowrap',
             }}
           >
             <FileImage size={11} color="#0284c7" />
@@ -561,10 +630,11 @@ export function MissionMap() {
         zoom={isSimulation ? 6 : filteredFrames.length > 0 ? 12 : userLoc ? 12 : 6}
         style={{ width: '100%', height: '100%', background: '#a5cbe6' }}
         zoomControl={false}
+        attributionControl={false}
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          attribution=""
           maxZoom={19}
         />
 
@@ -573,7 +643,7 @@ export function MissionMap() {
         {/* Smooth auto-framer when new survey observations arrive */}
         <MapAutoFitter frames={filteredFrames} isSimulation={isSimulation} />
 
-        {/* SIMULATION MODE: Base Arabian Sea Route */}
+        {/* SIMULATION MODE: Base Route (Dotted corridor line) */}
         {isSimulation && baseRouteCoords.length > 1 && (
           <Polyline
             positions={baseRouteCoords}
@@ -583,22 +653,15 @@ export function MissionMap() {
               dashArray: '6, 8',
               opacity: 0.6,
             }}
-          />
-        )}
-
-        {/* SIMULATION MODE: RED Travelled Path */}
-        {isSimulation && travelledCoords.length > 1 && (
-          <Polyline
-            key={`travelled-path-${travelledCoords.length}`}
-            positions={travelledCoords}
-            pathOptions={{
-              color: '#ef4444',
-              weight: 4.5,
-              opacity: 0.95,
-              lineCap: 'round',
-              lineJoin: 'round',
-            }}
-          />
+          >
+            <Popup>
+              <div style={{ color: '#64748b' }}>
+                {isSimulation
+                  ? (state.simulationRouteInfo?.name || 'NAVAL PATROL DEEP WATER CORRIDOR').toUpperCase()
+                  : 'INDIAN OCEAN MARITIME ZONE'}
+              </div>
+            </Popup>
+          </Polyline>
         )}
 
         {/* SIMULATION MODE: Start & Destination Waypoints */}
@@ -606,36 +669,23 @@ export function MissionMap() {
           <>
             <Marker
               position={baseRouteCoords[0]}
-              icon={createWaypointIcon('MUMBAI ANCHORAGE', true)}
+              icon={createWaypointIcon(true)}
             />
             <Marker
               position={baseRouteCoords[baseRouteCoords.length - 1]}
-              icon={createWaypointIcon('KOCHI NAVAL PORT', false)}
+              icon={createWaypointIcon(false)}
             />
           </>
         )}
 
-        {/* SIMULATION MODE: Live Submarine Marker */}
+        {/* SIMULATION MODE: Smooth Continuous Submarine Propulsion Marker */}
         {isSimulation && (
-          <Marker
-            key={`sub-${subLoc ? `${subLoc.lat.toFixed(4)}-${subLoc.lon.toFixed(4)}` : 'mumbai'}`}
-            position={subLoc ? [subLoc.lat, subLoc.lon] : (baseRouteCoords.length > 0 ? baseRouteCoords[0] : [18.8, 72.6])}
-            icon={createSubmarineIcon(subLoc?.heading ?? 180)}
-          >
-            <Popup>
-              <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', color: '#0f172a', background: '#ffffff', padding: 10, borderRadius: 8, border: '1px solid #e2e8f0' }}>
-                <div style={{ color: '#0284c7', fontWeight: 800, marginBottom: 4, letterSpacing: '0.04em', display: 'flex', alignItems: 'center', gap: 4 }}>
-                  <Radio size={12} />
-                  <span>SIMULATED SUBMARINE POSITION</span>
-                </div>
-                <div style={{ color: '#64748b' }}>{formatCoord(subLoc ? subLoc.lat : 18.8, true)}</div>
-                <div style={{ color: '#64748b' }}>{formatCoord(subLoc ? subLoc.lon : 72.6, false)}</div>
-                <div style={{ fontSize: '0.68rem', color: '#0f172a', marginTop: 4, fontWeight: 600 }}>
-                  Corridor: Mumbai → Kochi Deep Water Sea Transit
-                </div>
-              </div>
-            </Popup>
-          </Marker>
+          <SmoothSubmarineMarker
+            targetLoc={subLoc}
+            routeCoords={baseRouteCoords}
+            isProcessing={state.status === 'processing'}
+            routeInfo={state.simulationRouteInfo}
+          />
         )}
 
         {/* REAL / LIVE GPS MODE: User / Vessel Location Marker */}
@@ -663,175 +713,36 @@ export function MissionMap() {
         />
       </MapContainer>
 
-      {/* Top right HUD: Telemetry / Hydrographic Status (offset when Sonar toggle is active) */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 6,
-          right: state.result ? 92 : 12,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 10,
-          background: 'rgba(255, 255, 255, 0.95)',
-          backdropFilter: 'blur(8px)',
-          border: '1px solid #e2e8f0',
-          borderRadius: 6,
-          padding: '4px 10px',
-          height: 28,
-          boxSizing: 'border-box',
-          zIndex: 450,
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-          transition: 'right 150ms ease',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Navigation
-            size={13}
-            color="#0f172a"
-            style={{
-              transform: `rotate(${isSimulation ? (subLoc?.heading ?? 180) : 45}deg)`,
-              transition: 'transform 300ms ease',
-            }}
-          />
-          <span style={{ fontSize: '0.72rem', color: '#0f172a', fontWeight: 800 }}>
-            {isSimulation ? `${Math.round(subLoc?.heading ?? 180)}° SEA CORRIDOR` : '045° TRUE'}
-          </span>
+      {/* Bottom left: Compact Spatial Concentration Legend */}
+      {filteredFrames.length > 0 && (
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 12,
+            left: 12,
+            zIndex: 450,
+            background: 'rgba(255, 255, 255, 0.96)',
+            backdropFilter: 'blur(8px)',
+            border: '1px solid #e2e8f0',
+            borderRadius: 8,
+            padding: '5px 10px',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            fontSize: '0.68rem',
+            fontWeight: 700,
+            color: '#334155',
+            pointerEvents: 'none',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <span>🔴 High (≥15)</span>
+          <span>🟠 Med (8-14)</span>
+          <span>🟡 Low (4-7)</span>
+          <span>🟢 Sparse (2-3)</span>
         </div>
-        <div style={{ width: 1, height: 14, background: '#e2e8f0' }} />
-        <span style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 600 }}>
-          {isSimulation
-            ? state.batchProgress
-              ? `Processing ${state.batchProgress.sequence} / ${state.batchProgress.total} · ${(state.params.test_interval_seconds ?? 2.0).toFixed(1)}s Gap`
-              : `Arabian Sea Submarine Transit (${state.batchFiles.length} Frames · ${(state.params.test_interval_seconds ?? 2.0).toFixed(1)}s Gap)`
-            : 'Hydrographic Ocean Chart'}
-        </span>
-      </div>
-
-      {/* Bottom left HUD: Spatial Concentration Legend vs Hazard Classification & Coordinates */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 16,
-          left: 16,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 8,
-          zIndex: 450,
-        }}
-      >
-        {/* Dual Legend Card */}
-        {filteredFrames.length > 0 && (
-          <div
-            style={{
-              background: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(8px)',
-              border: '1px solid #e2e8f0',
-              borderRadius: 12,
-              padding: '10px 14px',
-              boxShadow: '0 4px 14px rgba(0, 0, 0, 0.08)',
-              minWidth: 220,
-            }}
-          >
-            {/* SPATIAL CONCENTRATION SECTION */}
-            <div style={{ marginBottom: 10 }}>
-              <div style={{ fontSize: '0.62rem', color: '#0f172a', fontWeight: 800, letterSpacing: '0.04em', marginBottom: 4, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span>SPATIAL CONCENTRATION (HEATMAP)</span>
-                <span style={{ fontSize: '0.55rem', color: '#64748b', fontWeight: 600 }}>DENSITY</span>
-              </div>
-              <div style={{ fontSize: '0.58rem', color: '#64748b', marginBottom: 6 }}>
-                Intensity represents surveyed image observation density & significance, not raw bounding boxes:
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 8px' }}>
-                {(['HIGH', 'MEDIUM', 'LOW', 'SPARSE'] as const).map((tier) => {
-                  const cfg = DENSITY_CONFIG[tier];
-                  return (
-                    <div key={tier} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                      <div
-                        style={{
-                          width: 10,
-                          height: 10,
-                          borderRadius: '50%',
-                          background: cfg.color,
-                          border: '1px solid #ffffff',
-                          boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-                          flexShrink: 0,
-                        }}
-                      />
-                      <span style={{ fontSize: '0.62rem', color: '#334155', fontWeight: 700 }}>
-                        {tier === 'HIGH' && '🔴 High (≥15)'}
-                        {tier === 'MEDIUM' && '🟠 Med (8-14)'}
-                        {tier === 'LOW' && '🟡 Low (4-7)'}
-                        {tier === 'SPARSE' && '🟢 Sparse (2-3)'}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div style={{ width: '100%', height: 1, background: '#e2e8f0', margin: '6px 0 8px' }} />
-
-            {/* HAZARD CLASSIFICATION SECTION */}
-            <div>
-              <div style={{ fontSize: '0.62rem', color: '#0f172a', fontWeight: 800, letterSpacing: '0.04em', marginBottom: 6 }}>
-                SURVEY FRAME SEVERITY (MARKERS)
-              </div>
-              {(['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'] as const).map((r) => {
-                const cnt = filteredFrames.filter((f) => f.highestRisk === r).length;
-                if (cnt === 0) return null;
-                return (
-                  <div key={r} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
-                    <div
-                      style={{
-                        width: 8,
-                        height: 8,
-                        borderRadius: 2,
-                        background: RISK_COLORS[r],
-                        transform: 'rotate(45deg)',
-                        flexShrink: 0,
-                      }}
-                    />
-                    <span style={{ fontSize: '0.68rem', color: RISK_COLORS[r], fontWeight: 700 }}>{r}</span>
-                    <span style={{ fontSize: '0.68rem', color: '#64748b', marginLeft: 'auto', fontWeight: 600 }}>{cnt} frames</span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* Coordinate indicator */}
-        {(isSimulation ? subLoc : userLoc || (filteredFrames.length > 0 && filteredFrames[0].geolocation)) && (
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              background: '#ffffff',
-              border: '1px solid #e2e8f0',
-              borderRadius: 20,
-              padding: '7px 14px',
-              fontSize: '0.72rem',
-              color: '#0f172a',
-              fontWeight: 600,
-              boxShadow: '0 2px 10px rgba(0, 0, 0, 0.08)',
-            }}
-          >
-            <span style={{ color: isSimulation ? '#0284c7' : '#0f172a', fontWeight: 800 }}>
-              {isSimulation ? 'SIMULATED SUBMARINE GPS' : 'GPS FIX'}
-            </span>
-            <span style={{ color: '#64748b' }}>
-              {isSimulation && subLoc
-                ? `${formatCoord(subLoc.lat, true)} · ${formatCoord(subLoc.lon, false)}`
-                : userLoc
-                ? `${formatCoord(userLoc.lat, true)} · ${formatCoord(userLoc.lon, false)}`
-                : filteredFrames[0]?.geolocation
-                ? `${formatCoord(filteredFrames[0].geolocation.lat, true)} · ${formatCoord(filteredFrames[0].geolocation.lon, false)}`
-                : ''}
-            </span>
-          </div>
-        )}
-      </div>
+      )}
     </div>
   );
 }

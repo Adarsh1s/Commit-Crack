@@ -33,9 +33,18 @@ async function extractFilesFromDataTransfer(dataTransfer: DataTransfer): Promise
         });
       } else if (entry.isDirectory) {
         const dirReader = entry.createReader();
-        const entries: any[] = await new Promise((resolve) => {
-          dirReader.readEntries((results: any[]) => resolve(results || []), () => resolve([]));
-        });
+        const readAllEntries = async (): Promise<any[]> => {
+          const all: any[] = [];
+          while (true) {
+            const batch: any[] = await new Promise((resolve) => {
+              dirReader.readEntries((results: any[]) => resolve(results || []), () => resolve([]));
+            });
+            if (!batch || batch.length === 0) break;
+            all.push(...batch);
+          }
+          return all;
+        };
+        const entries = await readAllEntries();
         for (const child of entries) {
           await readEntry(child);
         }
@@ -63,6 +72,13 @@ export function SonarDropzone() {
   const [loadingSample, setLoadingSample] = useState(false);
   const singleInputRef = useRef<HTMLInputElement>(null);
   const folderInputRef = useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    if (folderInputRef.current) {
+      folderInputRef.current.setAttribute('webkitdirectory', '');
+      folderInputRef.current.setAttribute('directory', '');
+    }
+  }, []);
 
   const setMode = (mode: UploadMode) => {
     dispatch({ type: 'SET_UPLOAD_MODE', payload: mode });
@@ -442,7 +458,7 @@ export function SonarDropzone() {
 
 
 
-              {/* Arabian Sea Route notice */}
+              {/* Dynamic Naval Patrol Route Notice */}
               <div
                 style={{
                   background: '#f0fdf4',
@@ -457,53 +473,77 @@ export function SonarDropzone() {
                   fontWeight: 600,
                 }}
               >
-                <span>⚓ Arabian Sea Submarine Route: Mumbai → Kochi (Synchronized across {state.batchFiles.length} frames)</span>
+                <span>
+                  ⚓ {state.simulationRouteInfo?.name || 'Naval Patrol Route'} ({state.batchFiles.length} frames incoming sequentially)
+                </span>
               </div>
             </div>
           ) : (
-            <div
-              onClick={() => folderInputRef.current?.click()}
-              onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-              onDragLeave={() => setDragOver(false)}
-              onDrop={onDrop}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => e.key === 'Enter' && folderInputRef.current?.click()}
-              aria-label="Drop folder of sonar images or click to browse folder"
-              style={{
-                borderRadius: 14,
-                border: `1.5px dashed ${dragOver ? '#0f172a' : '#cbd5e1'}`,
-                background: dragOver ? '#f1f5f9' : '#ffffff',
-                padding: '22px 14px',
-                textAlign: 'center',
-                cursor: 'pointer',
-                transition: 'all 180ms ease',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
-              }}
-            >
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, pointerEvents: 'none' }}>
-                <div style={{
-                  width: 42, height: 42, borderRadius: '50%',
-                  background: '#f8fafc',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  border: '1px solid #e2e8f0',
-                  color: '#0f172a',
-                }}>
-                  <Folder size={18} />
-                </div>
-                <div>
-                  <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#0f172a', marginBottom: 2 }}>
-                    {dragOver ? 'Release to ingest folder' : 'Select or Drop Sonar Folder'}
+            <>
+              <div
+                onClick={() => folderInputRef.current?.click()}
+                onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                onDragLeave={() => setDragOver(false)}
+                onDrop={onDrop}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => e.key === 'Enter' && folderInputRef.current?.click()}
+                aria-label="Drop folder of sonar images or click to browse folder"
+                style={{
+                  borderRadius: 14,
+                  border: `1.5px dashed ${dragOver ? '#0f172a' : '#cbd5e1'}`,
+                  background: dragOver ? '#f1f5f9' : '#ffffff',
+                  padding: '22px 14px',
+                  textAlign: 'center',
+                  cursor: 'pointer',
+                  transition: 'all 180ms ease',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
+                }}
+              >
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, pointerEvents: 'none' }}>
+                  <div style={{
+                    width: 42, height: 42, borderRadius: '50%',
+                    background: '#f8fafc',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    border: '1px solid #e2e8f0',
+                    color: '#0f172a',
+                  }}>
+                    <Folder size={18} />
                   </div>
-                  <div style={{ fontSize: '0.72rem', color: '#64748b' }}>
-                    click to <span style={{ color: '#0f172a', fontWeight: 600, textDecoration: 'underline' }}>browse directory</span>
+                  <div>
+                    <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#0f172a', marginBottom: 2 }}>
+                      {dragOver ? 'Release to ingest folder' : 'Select or Drop Sonar Folder'}
+                    </div>
+                    <div style={{ fontSize: '0.72rem', color: '#64748b' }}>
+                      click to <span style={{ color: '#0f172a', fontWeight: 600, textDecoration: 'underline' }}>browse directory</span>
+                    </div>
                   </div>
-                </div>
-                <div style={{ fontSize: '0.62rem', color: '#94a3b8' }}>
-                  Auto-detects all valid sonar survey frames
+                  <div style={{ fontSize: '0.62rem', color: '#94a3b8' }}>
+                    Auto-detects all valid sonar survey frames
+                  </div>
                 </div>
               </div>
-            </div>
+
+              <div style={{ marginTop: 8 }}>
+                <div
+                  style={{
+                    padding: '8px 10px',
+                    borderRadius: 8,
+                    border: '1px solid #bae6fd',
+                    background: '#f0f9ff',
+                    color: '#0369a1',
+                    fontSize: '0.7rem',
+                    fontWeight: 600,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                  }}
+                >
+                  <Sparkles size={13} color="#0284c7" />
+                  <span>Default: Click &ldquo;Start Mission&rdquo; to run 84-frame demo survey instantly</span>
+                </div>
+              </div>
+            </>
           )}
 
           {/* Folder input with directory attributes */}

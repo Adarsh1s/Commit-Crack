@@ -27,7 +27,20 @@ export function useAnalysis() {
         if (res.ok) {
           const data = await res.json();
           if (data && Array.isArray(data.waypoints)) {
-            dispatch({ type: 'SET_SIMULATION_BASE_ROUTE', payload: data.waypoints });
+            dispatch({
+              type: 'SET_SIMULATION_BASE_ROUTE',
+              payload: {
+                waypoints: data.waypoints,
+                routeInfo: {
+                  id: data.route_id,
+                  name: data.route_name,
+                  start: data.origin,
+                  end: data.destination,
+                  description: data.description,
+                  region: data.region,
+                },
+              },
+            });
           }
         }
       } catch {
@@ -36,6 +49,141 @@ export function useAnalysis() {
     }
     loadRoute();
   }, [dispatch, state.backendOnline]);
+
+  // Listen to live mission stream (allows commands run via CLI test_run.py to be displayed live in website!)
+  useEffect(() => {
+    let eventSource: EventSource | null = null;
+    let retryTimeout: ReturnType<typeof setTimeout> | null = null;
+
+    function connectLiveStream() {
+      try {
+        eventSource = new EventSource(`${BACKEND_URL}/api/v1/mission/live`);
+
+        eventSource.onmessage = (e) => {
+          if (!e.data) return;
+          try {
+            const event = JSON.parse(e.data);
+            if (event.type === 'batch_started') {
+              activeBatchIdRef.current = event.batch_id;
+              dispatch({
+                type: 'START_BATCH_RUN',
+                payload: { batchId: event.batch_id, total: event.total_images },
+              });
+              if (event.route && Array.isArray(event.route.waypoints)) {
+                dispatch({
+                  type: 'SET_SIMULATION_BASE_ROUTE',
+                  payload: {
+                    waypoints: event.route.waypoints,
+                    routeInfo: {
+                      id: event.route.id,
+                      name: event.route.name,
+                      start: event.route.start,
+                      end: event.route.end,
+                      description: event.route.description,
+                      region: event.route.region,
+                    },
+                  },
+                });
+              }
+            } else if (event.type === 'image_started') {
+              dispatch({
+                type: 'BATCH_EVENT_IMAGE_STARTED',
+                payload: {
+                  sequence: event.sequence,
+                  total: event.total,
+                  filename: event.filename,
+                  gps: event.gps,
+                },
+              });
+            } else if (event.type === 'image_processed') {
+              const record: BatchImageRecord = {
+                sequence: event.sequence,
+                filename: event.filename,
+                timestamp: event.timestamp,
+                detection_count: event.detection_count,
+                gps: event.gps,
+                status: 'processed',
+                processing_time_ms: event.processing_time_ms,
+                detections: event.detections,
+              };
+              dispatch({
+                type: 'BATCH_EVENT_IMAGE_PROCESSED',
+                payload: {
+                  sequence: event.sequence,
+                  total: event.total,
+                  filename: event.filename,
+                  gps: event.gps,
+                  result: event.result,
+                  record,
+                },
+              });
+            } else if (event.type === 'image_failed') {
+              const record: BatchImageRecord = {
+                sequence: event.sequence,
+                filename: event.filename,
+                timestamp: event.timestamp,
+                detection_count: 0,
+                gps: event.gps,
+                status: 'failed',
+                error: event.error,
+                processing_time_ms: 0,
+              };
+              dispatch({
+                type: 'BATCH_EVENT_IMAGE_FAILED',
+                payload: {
+                  sequence: event.sequence,
+                  total: event.total,
+                  filename: event.filename,
+                  error: event.error,
+                  record,
+                },
+              });
+            } else if (event.type === 'batch_completed') {
+              dispatch({
+                type: 'BATCH_EVENT_COMPLETED',
+                payload: {
+                  downloadUrls: event.download_urls || {},
+                  total: event.total_images || 0,
+                  processed: event.processed_images || 0,
+                  failed: event.failed_images || 0,
+                },
+              });
+            } else if (event.type === 'batch_cancelled') {
+              dispatch({
+                type: 'BATCH_EVENT_CANCELLED',
+                payload: {
+                  downloadUrls: event.download_urls || {},
+                  total: event.total_images || 0,
+                  processed: event.processed_images || 0,
+                  failed: event.failed_images || 0,
+                },
+              });
+            }
+          } catch {
+            // Ignore parse errors
+          }
+        };
+
+        eventSource.onerror = () => {
+          if (eventSource) {
+            eventSource.close();
+            eventSource = null;
+          }
+          retryTimeout = setTimeout(connectLiveStream, 3000);
+        };
+      } catch {
+        retryTimeout = setTimeout(connectLiveStream, 3000);
+      }
+    }
+
+    connectLiveStream();
+
+    return () => {
+      if (eventSource) eventSource.close();
+      if (retryTimeout) clearTimeout(retryTimeout);
+    };
+  }, [dispatch]);
+
 
   const runSingleAnalysis = useCallback(async () => {
     if (!state.sonarFile) return;
@@ -98,25 +246,25 @@ export function useAnalysis() {
     }
   }, [state, dispatch]);
 
-  const runBatchAnalysis = useCallback(async () => {
-    if (!state.batchFiles || state.batchFiles.length === 0) return;
-
+  const runBatchAnalysis = useCallback(async (options?: { useDemoFolder?: boolean }) => {
     isCancelledRef.current = false;
     const abortController = new AbortController();
     abortControllerRef.current = abortController;
 
     const form = new FormData();
-    state.batchFiles.forEach((file) => {
-      form.append('files', file, file.name);
-    });
+    const useDemo = options?.useDemoFolder || (!state.batchFiles || state.batchFiles.length === 0);
+    if (useDemo) {
+      form.append('use_demo_folder', 'true');
+    } else {
+      state.batchFiles.forEach((file) => {
+        form.append('files', file, file.name);
+      });
+    }
 
     form.append('slant_range_correction', String(state.params.slant_range_correction));
     form.append('clahe_equalization', String(state.params.clahe_equalization));
     form.append('nadir_excision', String(state.params.nadir_excision));
     form.append('confidence_threshold', String(state.params.confidence_threshold));
-    if (state.params.test_interval_seconds != null) {
-      form.append('interval_seconds', String(state.params.test_interval_seconds));
-    }
 
     try {
       dispatch({ type: 'SET_STATUS', payload: 'uploading' });
@@ -175,6 +323,22 @@ export function useAnalysis() {
                   dispatch({
                     type: 'START_BATCH_RUN',
                     payload: { batchId: event.batch_id, total: event.total_images },
+                  });
+                }
+                if (event.route && Array.isArray(event.route.waypoints)) {
+                  dispatch({
+                    type: 'SET_SIMULATION_BASE_ROUTE',
+                    payload: {
+                      waypoints: event.route.waypoints,
+                      routeInfo: {
+                        id: event.route.id,
+                        name: event.route.name,
+                        start: event.route.start,
+                        end: event.route.end,
+                        description: event.route.description,
+                        region: event.route.region,
+                      },
+                    },
                   });
                 }
               } else if (event.type === 'image_started') {

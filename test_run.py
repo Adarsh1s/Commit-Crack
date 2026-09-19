@@ -42,11 +42,14 @@ from typing import Dict, Any, List, Optional, Tuple, Callable, Generator
 import uuid
 import zipfile
 
-# Reconfigure stdout/stderr for Windows console unicode support
+import threading
+import urllib.request
+
+# Reconfigure stdout/stderr for Windows console unicode support and line buffering
 if hasattr(sys.stdout, "reconfigure"):
-    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace", line_buffering=True)
 if hasattr(sys.stderr, "reconfigure"):
-    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace", line_buffering=True)
 
 # Add backend directory to sys.path so pipeline imports resolve
 ROOT_DIR = Path(__file__).resolve().parent
@@ -70,15 +73,41 @@ from pipeline.geolocation import (
 from pipeline.simulation import (
     interpolate_route,
     get_mumbai_kochi_route,
+    get_available_routes,
+    select_route,
+    generate_patrol_simulation,
     ARABIAN_SEA_MUMBAI_KOCHI_WAYPOINTS,
+    PATROL_ROUTES,
 )
 from inference import _draw_annotations, get_inference_engine, _crop_thumbnail, _img_to_data_url
 
 # ==============================================================================
-# CONFIGURABLE BATCH TEST SETTINGS (EDITABLE DIRECTLY FROM PYTHON FILE)
+# MISSION SIMULATION CONFIGURATION (EDITABLE DIRECTLY IN THIS FILE)
 # ==============================================================================
-TEST_INTERVAL_SECONDS: float = 2.0  # Configurable delay in seconds between sequential frames
+# Total time (in seconds) for the submarine to complete the entire patrol route.
+# If set (e.g. 30.0, 60.0, 15.0), the delay between each frame is automatically
+# calculated as (TOTAL_MISSION_DURATION_SECONDS / total_images).
+# Set to None or 0 to use FRAME_INTERVAL_SECONDS instead.
+TOTAL_MISSION_DURATION_SECONDS: Optional[float] = 30.0
+
+# Fallback: Fixed delay in seconds between sequential sonar frames
+FRAME_INTERVAL_SECONDS: float = 1.5
+
+# Legacy compatibility alias
+TEST_INTERVAL_SECONDS: float = FRAME_INTERVAL_SECONDS
+
+# Naval Patrol Route to navigate:
+# Options: "random", "mumbai_kochi", "vizag_chennai", "kutch_mumbai", "lakshadweep"
+PATROL_ROUTE: str = "random"
+
+# Hotspot Clustering Simulation:
+# Generates realistic naval sonar surveys where multiple sonar images and anomalies
+# cluster in 2-3 contact zones (minefields, wrecks, pipelines) with quiet transit
+# waters in between.
+SIMULATE_HOTSPOTS: bool = True
+HOTSPOT_COUNT: int = 3
 # ==============================================================================
+
 
 SUPPORTED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".tif", ".webp", ".pbm"}
 
@@ -471,8 +500,12 @@ def execute_batch_generator(
     images_list: List[Tuple[str, Any]],  # List of (filename, Path_or_bytes)
     batch_id: Optional[str] = None,
     output_root: str = "outputs",
-    interval_seconds: float = TEST_INTERVAL_SECONDS,
+    duration_seconds: Optional[float] = None,
+    interval_seconds: Optional[float] = None,
     sim_route: bool = True,
+    route_name: Optional[str] = None,
+    simulate_hotspots: bool = SIMULATE_HOTSPOTS,
+    hotspot_count: int = HOTSPOT_COUNT,
     cancellation_check: Optional[Callable[[str], bool]] = None,
     confidence_threshold: float = 0.20,
     padding: int = 12,
@@ -508,24 +541,93 @@ def execute_batch_generator(
     csv_dir.mkdir(parents=True, exist_ok=True)
     json_dir.mkdir(parents=True, exist_ok=True)
 
-    # Compute Arabian Sea simulation route coordinates for all frames
-    sim_coordinates: List[Dict[str, float]] = []
+    # Dynamic Mission Timing Calculation:
+    # Priority 1: duration_seconds argument (CLI / API override)
+    # Priority 2: TOTAL_MISSION_DURATION_SECONDS (editable top-of-file setting)
+    # Priority 3: interval_seconds / FRAME_INTERVAL_SECONDS
+    effective_duration = duration_seconds if duration_seconds is not None else TOTAL_MISSION_DURATION_SECONDS
+    if total_images <= 1:
+        step_interval = 0.0
+    elif effective_duration is not None and effective_duration > 0 and total_images > 0:
+        step_interval = round(effective_duration / total_images, 3)
+    elif interval_seconds is not None and interval_seconds > 0:
+        step_interval = interval_seconds
+    else:
+        step_interval = FRAME_INTERVAL_SECONDS
+
+    # Compute Naval Patrol route and realistic hotspot clusters
+    sim_coordinates: List[Dict[str, Any]] = []
+    sim_data: Optional[Dict[str, Any]] = None
+    active_route: Optional[Dict[str, Any]] = None
+
     if sim_route and total_images > 0:
-        sim_coordinates = interpolate_route(total_images)
+        chosen_route_key = route_name or PATROL_ROUTE
+        if simulate_hotspots:
+            sim_data = generate_patrol_simulation(
+                total_frames=total_images,
+                route_key=chosen_route_key,
+                num_hotspots=hotspot_count,
+            )
+            sim_coordinates = sim_data["frames"]
+            active_route = sim_data["route"]
+        else:
+            active_route = select_route(chosen_route_key)
+            sim_coordinates = interpolate_route(total_images, active_route["id"])
+
+    # If simulating hotspots, optimize image pairing so anomaly/contact images
+    # land on hotspot coordinates, while background/clear images land on transit coordinates
+    processed_images_list = list(images_list)
+    if sim_route and simulate_hotspots and sim_data and len(processed_images_list) > 3:
+        anomaly_pool = []
+        background_pool = []
+        for item in processed_images_list:
+            fname = item[0].lower()
+            if fname.startswith("bg_") or "clear" in fname or "empty" in fname:
+                background_pool.append(item)
+            else:
+                anomaly_pool.append(item)
+
+        if anomaly_pool and background_pool:
+            reordered = []
+            a_idx = 0
+            b_idx = 0
+            for frame_info in sim_coordinates:
+                if frame_info.get("anomaly_bias") == "HIGH":
+                    if a_idx < len(anomaly_pool):
+                        reordered.append(anomaly_pool[a_idx])
+                        a_idx += 1
+                    elif b_idx < len(background_pool):
+                        reordered.append(background_pool[b_idx])
+                        b_idx += 1
+                else:
+                    if b_idx < len(background_pool):
+                        reordered.append(background_pool[b_idx])
+                        b_idx += 1
+                    elif a_idx < len(anomaly_pool):
+                        reordered.append(anomaly_pool[a_idx])
+                        a_idx += 1
+            if len(reordered) == len(processed_images_list):
+                processed_images_list = reordered
 
     # Yield initial start event immediately
     yield {
         "type": "batch_started",
         "batch_id": batch_id,
         "total_images": total_images,
-        "processing_interval_seconds": interval_seconds,
+        "processing_interval_seconds": step_interval,
+        "total_duration_seconds": effective_duration,
         "started_at": started_at,
         "gps_mode": "SIMULATION" if sim_route else "LIVE/SIDECAR",
         "route": {
-            "start": "Mumbai Offshore Anchorage",
-            "end": "Kochi Roadstead Channel",
-            "waypoints": get_mumbai_kochi_route(),
-        } if sim_route else None,
+            "id": active_route.get("id"),
+            "name": active_route.get("name"),
+            "region": active_route.get("region"),
+            "start": active_route.get("start"),
+            "end": active_route.get("end"),
+            "description": active_route.get("description"),
+            "waypoints": active_route.get("waypoints"),
+        } if active_route else None,
+        "hotspots": sim_data.get("hotspots", []) if sim_data else [],
     }
 
     engine = get_inference_engine()
@@ -542,7 +644,7 @@ def execute_batch_generator(
 
     t_batch_start = time.perf_counter()
 
-    for seq_idx, (img_name, img_data) in enumerate(images_list, 1):
+    for seq_idx, (img_name, img_data) in enumerate(processed_images_list, 1):
         # 1. Check for cancellation before processing frame
         if cancellation_check and cancellation_check(batch_id):
             was_cancelled = True
@@ -649,6 +751,9 @@ def execute_batch_generator(
                     "longitude": current_gps["lon"] if current_gps else (telemetry.get("longitude") if telemetry else None),
                     "heading": current_gps.get("heading") if current_gps else (telemetry.get("heading") if telemetry else None),
                     "progress_pct": current_gps.get("progress_pct") if current_gps else None,
+                    "is_hotspot": current_gps.get("is_hotspot", False) if current_gps else False,
+                    "hotspot_id": current_gps.get("hotspot_id") if current_gps else None,
+                    "hotspot_title": current_gps.get("hotspot_title") if current_gps else None,
                 },
                 "degradation_tier": tier,
                 "detections": json_detections,
@@ -838,14 +943,14 @@ def execute_batch_generator(
             }
 
         # Pause for configured interval between frames (unless last frame or cancelled)
-        if seq_idx < total_images and interval_seconds > 0:
-            sleep_step = 0.1
+        if seq_idx < total_images and step_interval > 0:
+            sleep_step = 0.05
             slept = 0.0
-            while slept < interval_seconds:
+            while slept < step_interval:
                 if cancellation_check and cancellation_check(batch_id):
                     was_cancelled = True
                     break
-                time.sleep(min(sleep_step, interval_seconds - slept))
+                time.sleep(min(sleep_step, step_interval - slept))
                 slept += sleep_step
             if was_cancelled:
                 break
@@ -896,15 +1001,14 @@ def execute_batch_generator(
         "total_images": total_images,
         "processed_images": processed_count,
         "failed_images": failed_count,
-        "processing_interval_seconds": interval_seconds,
+        "processing_interval_seconds": step_interval,
+        "total_duration_seconds": effective_duration,
         "started_at": started_at,
         "completed_at": completed_at,
         "gps_mode": "SIMULATION" if sim_route else "LIVE/SIDECAR",
         "status": final_status,
-        "route": {
-            "start": "Mumbai",
-            "end": "Kochi",
-        } if sim_route else None,
+        "route": active_route if sim_route and active_route else None,
+        "hotspots": sim_data.get("hotspots", []) if sim_data else [],
         "summary": {
             "total_detections": total_detections_count,
             "total_time_seconds": total_batch_time,
@@ -967,6 +1071,42 @@ def execute_batch_generator(
     return final_event
 
 
+def _post_event_worker(target_url: str, payload_bytes: bytes):
+    try:
+        req = urllib.request.Request(
+            target_url,
+            data=payload_bytes,
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=1.0):
+            pass
+    except Exception:
+        pass
+
+
+def _broadcast_event_to_backend(event: Dict[str, Any], backend_url: str = "http://127.0.0.1:8000"):
+    """
+    Broadcasts simulation events to the local FastAPI backend in real-time so
+    connected web browsers immediately display the mission progress, moving submarine,
+    hotspot clusters, and heatmap. Dispatches in a daemon thread so execution is non-blocking.
+    """
+    try:
+        clean_event = dict(event)
+        # Strip heavy base64 strings so network broadcast is lightweight (<2KB) and instant
+        if "result" in clean_event and isinstance(clean_event["result"], dict):
+            res_copy = dict(clean_event["result"])
+            res_copy.pop("raw_image_url", None)
+            res_copy.pop("enhanced_image_url", None)
+            clean_event["result"] = res_copy
+        payload = json.dumps(clean_event).encode("utf-8")
+        url = f"{backend_url}/api/v1/mission/broadcast"
+        t = threading.Thread(target=_post_event_worker, args=(url, payload), daemon=True)
+        t.start()
+    except Exception:
+        pass
+
+
 def run_batch_test(
     input_dir: str = "Test_Data",
     output_dir: str = "outputs",
@@ -977,7 +1117,11 @@ def run_batch_test(
     swath_width: float = 100.0,
     heading: float = 0.0,
     sim_route: bool = True,
-    interval_seconds: float = TEST_INTERVAL_SECONDS,
+    duration_seconds: Optional[float] = TOTAL_MISSION_DURATION_SECONDS,
+    interval_seconds: Optional[float] = None,
+    route_name: Optional[str] = PATROL_ROUTE,
+    simulate_hotspots: bool = SIMULATE_HOTSPOTS,
+    hotspot_count: int = HOTSPOT_COUNT,
     save_both: bool = False,
     single_file: Optional[str] = None,
 ):
@@ -1010,21 +1154,36 @@ def run_batch_test(
 
     images_payload = [(f.name, f) for f in image_files]
 
-    print("=" * 78)
-    print("🌊 Aqua Sentinel — Authoritative Sonar Batch Runner & Arabian Sea Simulator")
-    print("=" * 78)
+    # Calculate effective step timing
+    num_imgs = len(image_files)
+    effective_dur = duration_seconds if duration_seconds is not None else TOTAL_MISSION_DURATION_SECONDS
+    if effective_dur and effective_dur > 0 and num_imgs > 0:
+        eff_interval = effective_dur / num_imgs
+        timing_str = f"{effective_dur:.1f}s total ({eff_interval:.2f}s / frame)"
+    else:
+        eff_interval = interval_seconds if interval_seconds is not None else FRAME_INTERVAL_SECONDS
+        timing_str = f"{eff_interval:.2f}s fixed interval / frame"
+
+    print("=" * 80)
+    print("🌊 Aqua Sentinel — Authoritative Sonar Batch Runner & Naval Patrol Simulator")
+    print("=" * 80)
     print(f"📁 Input Target:       {input_path}")
-    print(f"🖼️ Total Images:       {len(image_files)}")
-    print(f"⏱️ Interval:           {interval_seconds:.1f}s")
-    print(f"⚓ Arabian Sea Route:  {'ON (Mumbai -> Kochi)' if sim_route else 'OFF'}")
+    print(f"🖼️ Total Images:       {num_imgs}")
+    print(f"⏱️ Submarine Travel:   {timing_str}")
+    print(f"⚓ Patrol Route:       {route_name.upper() if route_name else 'RANDOM CORRIDOR'}")
+    print(f"🔥 Hotspot Simulation: {'ENABLED (' + str(hotspot_count) + ' contact zones)' if simulate_hotspots else 'DISABLED'}")
     print(f"🎯 Conf Threshold:     {confidence_threshold:.2f}")
-    print("=" * 78)
+    print("=" * 80)
 
     generator = execute_batch_generator(
         images_list=images_payload,
         output_root=output_dir,
+        duration_seconds=duration_seconds,
         interval_seconds=interval_seconds,
         sim_route=sim_route,
+        route_name=route_name,
+        simulate_hotspots=simulate_hotspots,
+        hotspot_count=hotspot_count,
         confidence_threshold=confidence_threshold,
         padding=padding,
         altitude=altitude,
@@ -1033,9 +1192,20 @@ def run_batch_test(
     )
 
     for event in generator:
+        # Broadcast event in real-time to running web backend
+        _broadcast_event_to_backend(event)
+
         ev_type = event.get("type")
         if ev_type == "batch_started":
-            print(f"🚀 Batch started: {event['batch_id']} ({event['total_images']} frames)")
+            rt = event.get("route") or {}
+            hs_list = event.get("hotspots") or []
+            print(f"🚀 Mission started: {event['batch_id']}")
+            if rt:
+                print(f"   Corridor: {rt.get('name')} [{rt.get('start')} -> {rt.get('end')}]")
+            if hs_list:
+                hs_desc = ", ".join([f"{h['code']} ({h['progress_pct']}%)" for h in hs_list])
+                print(f"   Contact Hotspots: {hs_desc}")
+            print(f"   Step Interval: {event.get('processing_interval_seconds', 1.0):.2f}s")
         elif ev_type == "image_processed":
             seq = event["sequence"]
             tot = event["total"]
@@ -1043,28 +1213,34 @@ def run_batch_test(
             t_ms = event["processing_time_ms"]
             dets = event["detection_count"]
             gps = event["gps"] or {}
+            hs_tag = f"[{gps.get('hotspot_id')}] " if gps.get("is_hotspot") else ""
             gps_str = f"[{gps.get('latitude', 0.0):.4f}N, {gps.get('longitude', 0.0):.4f}E]" if gps else "[No GPS]"
-            print(f"[{seq:02d}/{tot:02d}] {gps_str} {name[:24]:<24} -> {dets} targets ({t_ms:4.0f}ms)")
+            print(f"[{seq:02d}/{tot:02d}] {gps_str} {hs_tag}{name[:22]:<22} -> {dets} targets ({t_ms:4.0f}ms)")
         elif ev_type == "image_failed":
             print(f"[{event['sequence']:02d}/{event['total']:02d}] ❌ Failed: {event['filename']} ({event['error']})")
         elif ev_type in ("batch_completed", "batch_cancelled"):
-            print("\n" + "=" * 78)
-            print(f"🏁 Batch {event['status'].upper()}: {event['batch_id']}")
+            print("\n" + "=" * 80)
+            print(f"🏁 Mission {event['status'].upper()}: {event['batch_id']}")
             print(f"📦 Outputs: {event['output_directory']}")
             print(f"🗜️ Archive: {event['zip_path']}")
-            print("=" * 78)
+            print("=" * 80)
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Aqua Sentinel Authoritative Batch Runner & GPS Simulator")
+    parser = argparse.ArgumentParser(description="Aqua Sentinel Authoritative Batch Runner & Submarine Patrol Simulator")
     parser.add_argument("--input", "-i", default="Test_Data", help="Input directory or image file")
     parser.add_argument("--single", "-s", default=None, help="Evaluate a single image file")
     parser.add_argument("--output", "-o", default="outputs", help="Output directory root")
     parser.add_argument("--conf", "-c", type=float, default=0.20, help="Confidence threshold")
     parser.add_argument("--pad", "-p", type=int, default=12, help="Padding in pixels")
-    parser.add_argument("--interval", type=float, default=TEST_INTERVAL_SECONDS, help="Delay in seconds between frames")
-    parser.add_argument("--sim-route", action="store_true", default=True, help="Enable simulated Arabian Sea route")
+    parser.add_argument("--duration", "-d", type=float, default=None, help="Total submarine mission duration in seconds (e.g. 30.0)")
+    parser.add_argument("--interval", type=float, default=None, help="Delay in seconds between individual frames")
+    parser.add_argument("--route", "-r", type=str, default=PATROL_ROUTE, help="Patrol route: random, mumbai_kochi, vizag_chennai, kutch_mumbai, lakshadweep")
+    parser.add_argument("--sim-route", action="store_true", default=True, help="Enable simulated naval route")
     parser.add_argument("--no-sim-route", action="store_false", dest="sim_route", help="Disable simulated route")
+    parser.add_argument("--hotspots", action="store_true", default=True, help="Enable realistic anomaly hotspot clustering")
+    parser.add_argument("--no-hotspots", action="store_false", dest="hotspots", help="Disable anomaly hotspot clustering")
+    parser.add_argument("--hotspot-count", type=int, default=HOTSPOT_COUNT, help="Number of anomaly hotspots to seed along the corridor")
     parser.add_argument("--altitude", type=float, default=8.0, help="Altitude in meters")
     parser.add_argument("--swath", type=float, default=100.0, help="Swath width in meters")
     parser.add_argument("--heading", type=float, default=0.0, help="Platform heading")
@@ -1077,11 +1253,16 @@ if __name__ == "__main__":
         output_dir=args.output,
         confidence_threshold=args.conf,
         padding=args.pad,
+        duration_seconds=args.duration,
+        interval_seconds=args.interval,
+        route_name=args.route,
+        simulate_hotspots=args.hotspots,
+        hotspot_count=args.hotspot_count,
         altitude=args.altitude,
         swath_width=args.swath,
         heading=args.heading,
         sim_route=args.sim_route,
-        interval_seconds=args.interval,
         save_both=args.save_both,
         single_file=args.single,
     )
+

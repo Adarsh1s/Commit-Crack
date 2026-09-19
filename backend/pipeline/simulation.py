@@ -1,18 +1,28 @@
 """
 backend/pipeline/simulation.py
-Authoritative Arabian Sea Submarine Route & GPS Telemetry Simulator
-===================================================================
-Provides verified deep-water maritime route waypoints along the Indian Western
-Continental Shelf (offshore Arabian Sea) from Mumbai Naval Anchorage to Kochi Roadstead.
-Used as the authoritative simulation telemetry source for test_run.py and backend/frontend.
+Authoritative Indian Maritime Submarine Patrol & Anomaly Hotspot Simulator
+==========================================================================
+Provides verified deep-water naval patrol corridors across Indian waters:
+1. Arabian Sea Western Continental Shelf (Mumbai -> Kochi)
+2. Bay of Bengal Eastern Fleet Patrol (Visakhapatnam -> Chennai)
+3. Gulf of Kutch to Mumbai Northern Sea Lane (Dwarka/Okha -> Mumbai)
+4. Lakshadweep Sea & Southern Chokepoint Transit (Kochi -> Minicoy Island)
+
+Features:
+- Dynamic route selection (random or specified).
+- Authoritative GPS waypoints and bearing calculations.
+- Realistic Hotspot Zone generation: clusters multiple sonar scans around
+  high-density anomaly zones (mine barrages, debris, shipwrecks) with quiet
+  transit stretches in between, accurately reflecting real naval sonar surveys.
 """
 
 from __future__ import annotations
 import math
-from typing import List, Dict, Tuple, Optional
+import random
+from typing import List, Dict, Tuple, Optional, Any
 
 
-# Verified Deep Arabian Sea Offshore Maritime Corridor (Off the coastline in open sea)
+# ─── ROUTE 1: ARABIAN SEA WESTERN SHELF CORRIDOR ─────────────────────────────
 ARABIAN_SEA_MUMBAI_KOCHI_WAYPOINTS: List[Tuple[float, float, str]] = [
     (18.8000, 72.6000, "Mumbai Deep Offshore Anchorage"),
     (18.2500, 72.7500, "Off Murud / Janjira Deep Sea"),
@@ -36,12 +46,118 @@ ARABIAN_SEA_MUMBAI_KOCHI_WAYPOINTS: List[Tuple[float, float, str]] = [
     (9.9600, 76.2000, "Kochi Roadstead / Naval Channel"),
 ]
 
+# ─── ROUTE 2: BAY OF BENGAL EASTERN FLEET PATROL ─────────────────────────────
+BAY_OF_BENGAL_VIZAG_CHENNAI_WAYPOINTS: List[Tuple[float, float, str]] = [
+    (17.6800, 83.3500, "Visakhapatnam Eastern Naval Roads"),
+    (17.3000, 83.1000, "Off Pudimadaka Deep Water Basin"),
+    (16.8500, 82.6000, "Off Kakinada Deep Trench"),
+    (16.3000, 82.1500, "Off Godavari Delta Deep Continental Slope"),
+    (15.7500, 81.3000, "Off Machilipatnam Deep Sea Corridor"),
+    (15.2000, 80.6000, "Off Nizampatnam Marine Shelf"),
+    (14.6500, 80.3500, "Off Pennar River Deep Offshore"),
+    (14.1000, 80.4000, "Off Nellore Naval Patrol Channel"),
+    (13.7000, 80.5000, "Off Sriharikota Offshore Barrier"),
+    (13.3500, 80.4500, "Off Pulicat Shoal Deep Transit"),
+    (13.1000, 80.3500, "Chennai Deep Naval Anchorage"),
+]
+
+# ─── ROUTE 3: GULF OF KUTCH TO MUMBAI NORTHERN PATROL ────────────────────────
+GULF_OF_KUTCH_MUMBAI_WAYPOINTS: List[Tuple[float, float, str]] = [
+    (22.4500, 69.0500, "Okha / Gulf of Kutch Maritime Border Approach"),
+    (22.2000, 68.9000, "Off Dwarka Deep Coastal Slope"),
+    (21.6000, 69.5000, "Off Porbandar Deep Water Patrol Line"),
+    (20.8500, 70.3000, "Off Veraval / Somnath Marine Trench"),
+    (20.6500, 70.9500, "Off Diu Deep Naval Channel"),
+    (20.3000, 71.8000, "Gulf of Khambhat Southern Outer Anchorage"),
+    (19.9000, 72.3000, "Off Daman / Tarapur Deep Sea Trench"),
+    (19.3000, 72.5000, "Off Mumbai High Offshore Patrol Zone"),
+    (18.8500, 72.6500, "Mumbai Western Fleet Roadstead"),
+]
+
+# ─── ROUTE 4: LAKSHADWEEP SEA & SOUTHERN CHOKEPOINT TRANSIT ───────────────────
+LAKSHADWEEP_MINICOY_WAYPOINTS: List[Tuple[float, float, str]] = [
+    (9.9600, 76.2000, "Kochi Naval Base Southern Gate"),
+    (9.7000, 75.3000, "Off Alleppey Deep Continental Drop-off"),
+    (9.3000, 74.2000, "Lakshadweep Sea Eastern Transit Channel"),
+    (8.9500, 73.5000, "Off Kalpeni Deep Subsea Ridge"),
+    (8.6000, 73.1000, "Nine Degree Channel Northern Boundary"),
+    (8.2800, 73.0500, "Minicoy Island Deep Lagoon & Eight Degree Channel"),
+]
+
+# ─── MASTER PATROL ROUTE CATALOG ─────────────────────────────────────────────
+PATROL_ROUTES: Dict[str, Dict[str, Any]] = {
+    "mumbai_kochi": {
+        "id": "mumbai_kochi",
+        "name": "Arabian Sea Western Shelf Deep Water Corridor",
+        "region": "Arabian Sea / Western Fleet",
+        "start": "Mumbai Offshore Anchorage",
+        "end": "Kochi Naval Channel",
+        "waypoints": ARABIAN_SEA_MUMBAI_KOCHI_WAYPOINTS,
+        "description": "Deep-water transit along the Indian Western Continental Shelf.",
+    },
+    "vizag_chennai": {
+        "id": "vizag_chennai",
+        "name": "Bay of Bengal Eastern Fleet Corridor",
+        "region": "Bay of Bengal / Eastern Fleet",
+        "start": "Visakhapatnam Deep Roads",
+        "end": "Chennai Naval Anchorage",
+        "waypoints": BAY_OF_BENGAL_VIZAG_CHENNAI_WAYPOINTS,
+        "description": "Strategic maritime patrol corridor along the Andhra-Tamil Nadu coast.",
+    },
+    "kutch_mumbai": {
+        "id": "kutch_mumbai",
+        "name": "Gulf of Kutch to Mumbai Northern Sea Lane",
+        "region": "Northern Arabian Sea / Gujarat Frontier",
+        "start": "Okha / Gulf of Kutch Approach",
+        "end": "Mumbai Western Fleet Roadstead",
+        "waypoints": GULF_OF_KUTCH_MUMBAI_WAYPOINTS,
+        "description": "Border patrol line from Gulf of Kutch down past Diu to Mumbai.",
+    },
+    "lakshadweep": {
+        "id": "lakshadweep",
+        "name": "Lakshadweep Sea & Eight Degree Channel Patrol",
+        "region": "Southern Indian Ocean Chokepoint",
+        "start": "Kochi Naval Base Southern Gate",
+        "end": "Minicoy Island Eight Degree Channel",
+        "waypoints": LAKSHADWEEP_MINICOY_WAYPOINTS,
+        "description": "Critical maritime chokepoint transit monitoring the Eight Degree Channel.",
+    },
+}
+
+
+def get_available_routes() -> List[Dict[str, Any]]:
+    """Returns a summary of all registered naval patrol routes."""
+    return [
+        {
+            "id": r["id"],
+            "name": r["name"],
+            "region": r["region"],
+            "start": r["start"],
+            "end": r["end"],
+            "description": r["description"],
+            "waypoint_count": len(r["waypoints"]),
+        }
+        for r in PATROL_ROUTES.values()
+    ]
+
+
+def select_route(route_id: Optional[str] = None) -> Dict[str, Any]:
+    """
+    Selects a patrol route:
+    - If route_id is None, "random", or not recognized, picks one at random.
+    - Otherwise returns the requested route dictionary.
+    """
+    clean_id = (route_id or "").strip().lower()
+    if clean_id in PATROL_ROUTES:
+        return PATROL_ROUTES[clean_id]
+    
+    # Random selection across all available corridors
+    chosen_key = random.choice(list(PATROL_ROUTES.keys()))
+    return PATROL_ROUTES[chosen_key]
+
 
 def get_mumbai_kochi_route() -> List[Dict[str, float]]:
-    """
-    Returns the complete list of canonical Arabian Sea waypoint coordinates.
-    Format: [{"lat": float, "lon": float}, ...]
-    """
+    """Legacy backward-compatible accessor for Mumbai -> Kochi route waypoints."""
     return [{"lat": lat, "lon": lon} for lat, lon, _ in ARABIAN_SEA_MUMBAI_KOCHI_WAYPOINTS]
 
 
@@ -61,42 +177,53 @@ def calculate_distance_km(lat1: float, lon1: float, lat2: float, lon2: float) ->
     R = 6371.0
     dlat = math.radians(lat2 - lat1)
     dlon = math.radians(lon2 - lon1)
-    a = math.sin(dlat / 2.0) ** 2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon / 2.0) ** 2
+    a = (
+        math.sin(dlat / 2.0) ** 2
+        + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon / 2.0) ** 2
+    )
     c = 2.0 * math.atan2(math.sqrt(a), math.sqrt(1.0 - a))
     return R * c
 
 
-def interpolate_route(total_steps: int) -> List[Dict[str, float]]:
+def interpolate_route(
+    total_steps: int,
+    route_key: Optional[str] = None
+) -> List[Dict[str, float]]:
     """
-    Interpolates total_steps evenly distributed GPS positions along the Arabian Sea Mumbai -> Kochi corridor.
+    Interpolates total_steps evenly distributed GPS positions along the selected route corridor.
     Guarantees:
-    - Step 1 (index 0) is precisely the Mumbai starting waypoint (18.8000, 72.6000)
-    - Step total_steps (index total_steps - 1) is precisely the Kochi final waypoint (9.9600, 76.2000)
+    - Step 1 (index 0) is precisely the origin waypoint.
+    - Step total_steps (index total_steps - 1) is precisely the destination waypoint.
     """
     if total_steps <= 0:
         return []
-    
-    waypoints = [(lat, lon) for lat, lon, _ in ARABIAN_SEA_MUMBAI_KOCHI_WAYPOINTS]
+
+    route_info = select_route(route_key) if route_key else PATROL_ROUTES["mumbai_kochi"]
+    raw_waypoints = route_info["waypoints"]
+    waypoints = [(lat, lon) for lat, lon, _ in raw_waypoints]
+
     if total_steps == 1:
         lat, lon = waypoints[0]
+        next_lat, next_lon = waypoints[min(1, len(waypoints) - 1)]
+        hdg = calculate_bearing(lat, lon, next_lat, next_lon)
         return [{
             "lat": lat,
             "lon": lon,
             "latitude": lat,
             "longitude": lon,
-            "heading": 180.0,
+            "heading": round(hdg, 1),
             "progress_pct": 0.0,
         }]
-    
-    # Calculate cumulative distance along waypoints
+
+    # Cumulative distance along route waypoints
     cum_distances = [0.0]
     for i in range(1, len(waypoints)):
-        d = calculate_distance_km(waypoints[i-1][0], waypoints[i-1][1], waypoints[i][0], waypoints[i][1])
+        d = calculate_distance_km(waypoints[i - 1][0], waypoints[i - 1][1], waypoints[i][0], waypoints[i][1])
         cum_distances.append(cum_distances[-1] + d)
-    
+
     total_distance = cum_distances[-1]
-    
     interpolated = []
+
     for step in range(total_steps):
         if step == 0:
             lat, lon = waypoints[0]
@@ -110,12 +237,12 @@ def interpolate_route(total_steps: int) -> List[Dict[str, float]]:
             progress_pct = 100.0
         else:
             target_dist = (step / (total_steps - 1)) * total_distance
-            
-            # Find segment
+
+            # Find bounding segment
             seg_idx = 0
             while seg_idx < len(cum_distances) - 1 and cum_distances[seg_idx + 1] < target_dist:
                 seg_idx += 1
-                
+
             if seg_idx >= len(waypoints) - 1:
                 lat, lon = waypoints[-1]
                 prev_lat, prev_lon = waypoints[-2]
@@ -124,14 +251,14 @@ def interpolate_route(total_steps: int) -> List[Dict[str, float]]:
                 seg_len = cum_distances[seg_idx + 1] - cum_distances[seg_idx]
                 ratio = (target_dist - cum_distances[seg_idx]) / max(0.0001, seg_len)
                 ratio = max(0.0, min(1.0, ratio))
-                
+
                 p1 = waypoints[seg_idx]
                 p2 = waypoints[seg_idx + 1]
-                
+
                 lat = p1[0] + (p2[0] - p1[0]) * ratio
                 lon = p1[1] + (p2[1] - p1[1]) * ratio
                 hdg = calculate_bearing(p1[0], p1[1], p2[0], p2[1])
-                
+
             progress_pct = round((step / (total_steps - 1)) * 100.0, 1)
 
         interpolated.append({
@@ -142,5 +269,175 @@ def interpolate_route(total_steps: int) -> List[Dict[str, float]]:
             "heading": round(hdg, 1),
             "progress_pct": progress_pct,
         })
-        
+
     return interpolated
+
+
+# ─── REALISTIC ANOMALY HOTSPOT CLUSTERING GENERATOR ──────────────────────────
+
+def generate_patrol_simulation(
+    total_frames: int,
+    route_key: Optional[str] = "random",
+    num_hotspots: int = 2,
+) -> Dict[str, Any]:
+    """
+    Generates an authoritative naval patrol trajectory with realistic spatial clustering:
+    - Picks an authentic patrol corridor (random by default).
+    - Seeds 2-3 localized 'Anomaly Hotspots' along the corridor (e.g. minefield barrages,
+      shipwreck debris fields, or pipeline rupture zones).
+    - Clusters multiple sonar frames in close geographic proximity (within 100m to 600m)
+      around each hotspot center.
+    - Leaves clear transit corridors with sparse or zero anomalies between hotspots.
+    
+    This ensures that on the map:
+    - Zoomed OUT: Heatmap glows intensely in hot zones; clusters merge into high-density badges.
+    - Zoomed IN: Hotspots cleanly separate into individual scan swaths and discrete target markers.
+    """
+    route_info = select_route(route_key)
+    raw_waypoints = route_info["waypoints"]
+    formatted_waypoints = [{"lat": lat, "lon": lon} for lat, lon, _ in raw_waypoints]
+
+    if total_frames <= 0:
+        return {
+            "route": route_info,
+            "waypoints": formatted_waypoints,
+            "hotspots": [],
+            "frames": [],
+        }
+
+    # If small batch (<= 4 frames), perform standard interpolation without extensive clustering
+    if total_frames <= 4:
+        standard_points = interpolate_route(total_frames, route_info["id"])
+        frames_telemetry = []
+        for idx, pt in enumerate(standard_points):
+            frames_telemetry.append({
+                "sequence": idx + 1,
+                "lat": pt["lat"],
+                "lon": pt["lon"],
+                "latitude": pt["lat"],
+                "longitude": pt["lon"],
+                "heading": pt["heading"],
+                "progress_pct": pt["progress_pct"],
+                "is_hotspot": False,
+                "hotspot_id": None,
+                "anomaly_bias": "MEDIUM",
+            })
+        return {
+            "route": {
+                "id": route_info["id"],
+                "name": route_info["name"],
+                "region": route_info["region"],
+                "start": route_info["start"],
+                "end": route_info["end"],
+                "waypoints": formatted_waypoints,
+            },
+            "hotspots": [],
+            "frames": frames_telemetry,
+        }
+
+    # Step 1: Interpolate base trajectory steps (e.g. 100 fine-grained navigation points)
+    base_track = interpolate_route(100, route_info["id"])
+
+    # Step 2: Determine hotspot center locations along the track
+    # E.g. Hotspot 1 at ~20-35% progress, Hotspot 2 at ~65-80% progress
+    hotspot_names = [
+        ("HOTSPOT-ALPHA", "Subsea Minefield Barrage / Contact Cluster"),
+        ("HOTSPOT-BRAVO", "Deep Shipwreck & Ordnance Debris Zone"),
+        ("HOTSPOT-CHARLIE", "Pipeline Anchor Snag & Structural Fracture Zone"),
+    ]
+    
+    actual_num_hotspots = min(len(hotspot_names), max(1, num_hotspots))
+    hotspots = []
+    
+    # Progress ranges for placing hotspots
+    progress_slots = []
+    if actual_num_hotspots == 1:
+        progress_slots = [(40, 60)]
+    elif actual_num_hotspots == 2:
+        progress_slots = [(20, 38), (62, 82)]
+    else:
+        progress_slots = [(18, 30), (45, 60), (75, 88)]
+
+    for h_idx, (min_p, max_p) in enumerate(progress_slots):
+        target_pct = random.uniform(min_p, max_p)
+        step_idx = int((target_pct / 100.0) * (len(base_track) - 1))
+        center_pt = base_track[step_idx]
+        h_code, h_desc = hotspot_names[h_idx]
+        hotspots.append({
+            "id": f"hs_{h_idx + 1}",
+            "code": h_code,
+            "title": h_desc,
+            "lat": center_pt["lat"],
+            "lon": center_pt["lon"],
+            "heading": center_pt["heading"],
+            "progress_pct": round(target_pct, 1),
+            "frames_allocated": 0,
+        })
+
+    # Step 3: Allocate all frames across the 2-3 hotspots (no continuous breadcrumb dots)
+    frames_per_hotspot = total_frames // actual_num_hotspots
+    remainder = total_frames % actual_num_hotspots
+    hotspot_allocations = [
+        frames_per_hotspot + (1 if i < remainder else 0)
+        for i in range(actual_num_hotspots)
+    ]
+
+    for h_idx, hs in enumerate(hotspots):
+        hs["frames_allocated"] = hotspot_allocations[h_idx]
+
+    # Step 4: Generate scattered coordinates for each image in its designated hotspot
+    # Each image gets a unique localized coordinate within the hotspot survey sector
+    frames_telemetry = []
+    global_seq = 0
+
+    for h_idx, hs in enumerate(hotspots):
+        allocated = hotspot_allocations[h_idx]
+        for sub_i in range(allocated):
+            global_seq += 1
+
+            # Golden-angle spiral scatter ensures every image gets a distinct non-overlapping dot
+            # within a realistic 800m to 3.5km survey zone
+            angle = (sub_i * 2.39996) + random.uniform(-0.15, 0.15)
+            # Square root distribution ensures natural density without clumping
+            r_norm = math.sqrt((sub_i + 0.5) / max(1, allocated))
+            dist_deg = 0.005 + (r_norm * 0.025)
+
+            lat_jitter = dist_deg * math.cos(angle)
+            lon_jitter = dist_deg * math.sin(angle) * 1.12
+
+            f_lat = round(hs["lat"] + lat_jitter, 6)
+            f_lon = round(hs["lon"] + lon_jitter, 6)
+            hdg = round((hs["heading"] + random.uniform(-20.0, 20.0) + 360.0) % 360.0, 1)
+
+            # Frame progress advances along route from hotspot to hotspot
+            pct_start = hs["progress_pct"] - 3.0
+            pct_end = hs["progress_pct"] + 3.0
+            frame_progress = round(pct_start + (sub_i / max(1, allocated - 1)) * (pct_end - pct_start), 1)
+
+            frames_telemetry.append({
+                "sequence": global_seq,
+                "lat": f_lat,
+                "lon": f_lon,
+                "latitude": f_lat,
+                "longitude": f_lon,
+                "heading": hdg,
+                "progress_pct": frame_progress,
+                "is_hotspot": True,
+                "hotspot_id": hs["code"],
+                "hotspot_title": hs["title"],
+                "anomaly_bias": "HIGH" if sub_i % 2 == 0 else "MEDIUM",
+            })
+
+    return {
+        "route": {
+            "id": route_info["id"],
+            "name": route_info["name"],
+            "region": route_info["region"],
+            "start": route_info["start"],
+            "end": route_info["end"],
+            "description": route_info["description"],
+            "waypoints": formatted_waypoints,
+        },
+        "hotspots": hotspots,
+        "frames": frames_telemetry,
+    }

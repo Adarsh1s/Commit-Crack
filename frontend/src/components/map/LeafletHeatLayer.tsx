@@ -26,16 +26,17 @@ interface LeafletHeatLayerProps {
  */
 export function LeafletHeatLayer({
   points,
-  radius = 28,
-  blur = 20,
+  radius = 38,
+  blur = 28,
   maxZoom = 14,
-  minOpacity = 0.35,
+  minOpacity = 0.40,
   gradient = {
-    0.2: '#22c55e', // Low: Green
-    0.4: '#eab308', // Med: Yellow
-    0.65: '#f97316', // High: Orange
-    0.85: '#ef4444', // Critical: Red
-    1.0: '#991b1b', // Max: Crimson
+    0.15: '#06b6d4', // Outer: Cyan
+    0.35: '#10b981', // Mild: Green
+    0.55: '#eab308', // Intermediate: Amber / Yellow
+    0.75: '#f97316', // High density: Fiery Orange
+    0.92: '#ef4444', // Core center: Vibrant Red
+    1.00: '#dc2626', // Peak hotspot: Deep Red
   },
 }: LeafletHeatLayerProps) {
   const map = useMap();

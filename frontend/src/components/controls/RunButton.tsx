@@ -9,7 +9,7 @@ export function RunButton() {
   const { runAnalysis, cancelBatch, status, batchProgress } = useAnalysis();
 
   const isFolder = state.uploadMode === 'folder';
-  const hasInput = isFolder ? state.batchFiles.length > 0 : !!state.sonarFile;
+  const hasInput = isFolder ? true : !!state.sonarFile;
   const isRunning = status === 'uploading' || status === 'processing';
   const canRun = hasInput && !isRunning;
   const isDone = status === 'complete';
@@ -81,7 +81,7 @@ export function RunButton() {
               <Loader2 size={15} style={{ animation: 'spin 1s linear infinite' }} />
               <span>
                 {isFolder
-                  ? `Processing ${currentSeq} / ${totalFrames} (Gap: ${(state.params.test_interval_seconds ?? 2.0).toFixed(1)}s)...`
+                  ? `Processing ${currentSeq} / ${totalFrames}...`
                   : status === 'uploading'
                   ? 'Uploading Sonar...'
                   : 'Processing Pipeline...'}
@@ -92,7 +92,7 @@ export function RunButton() {
               {isFolder ? <Layers size={15} /> : <ScanLine size={15} />}
               <span>
                 {isFolder
-                  ? `Start Mission Batch (${state.batchFiles.length} Images · ${(state.params.test_interval_seconds ?? 2.0).toFixed(1)}s Gap)`
+                  ? 'Start Mission'
                   : 'Analyze Sonar'}
               </span>
             </>
@@ -123,8 +123,8 @@ export function RunButton() {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.65rem', color: '#64748b' }}>
-            <span>Image Gap: <strong style={{ color: '#0f172a' }}>{(state.params.test_interval_seconds ?? 2.0).toFixed(1)} seconds</strong></span>
-            <span>Transit: <strong style={{ color: '#15803d' }}>Mumbai → Kochi</strong></span>
+            <span>Corridor: <strong style={{ color: '#0f172a' }}>{state.simulationRouteInfo?.name || 'Naval Patrol Route'}</strong></span>
+            <span>Survey: <strong style={{ color: '#15803d' }}>Continuous Acoustic Scan</strong></span>
           </div>
 
           {/* Progress bar track */}

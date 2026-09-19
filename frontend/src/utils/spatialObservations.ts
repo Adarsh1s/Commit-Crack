@@ -146,8 +146,8 @@ function aggregateFrameDetections(
 export function buildSurveyFrames(state: AppState): SurveyFrame[] {
   const frames: SurveyFrame[] = [];
 
-  // 1. Folder / Batch Survey Mode
-  if (state.uploadMode === 'folder' && state.batchResults && state.batchResults.length > 0) {
+  // 1. Folder / Batch Survey Mode (active whenever batch records exist)
+  if (state.batchResults && state.batchResults.length > 0) {
     for (let idx = 0; idx < state.batchResults.length; idx++) {
       const rec = state.batchResults[idx];
       const filename = rec.filename || `survey_frame_${idx + 1}.jpg`;

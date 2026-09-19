@@ -35,7 +35,10 @@ export type AppAction =
   | { type: 'SET_LOCATION'; payload: GeoCoordinate }
   | { type: 'SET_LOCATION_ERROR'; payload: string }
   | { type: 'SET_BACKEND_ONLINE'; payload: boolean }
-  | { type: 'SET_SIMULATION_BASE_ROUTE'; payload: GeoCoordinate[] }
+  | {
+      type: 'SET_SIMULATION_BASE_ROUTE';
+      payload: GeoCoordinate[] | { waypoints: GeoCoordinate[]; routeInfo?: import('../types/sonar').SimulationRouteInfo };
+    }
   | { type: 'START_BATCH_RUN'; payload: { batchId: string; total: number } }
   | {
       type: 'BATCH_EVENT_IMAGE_STARTED';
@@ -95,12 +98,18 @@ export const initialState: AppState = {
   locationError: null,
   backendOnline: false,
 
-  // Batch & Arabian Sea Simulation
+  // Batch & Naval Patrol Simulation
   isSimulationMode: false,
   batchId: null,
   batchProgress: null,
   batchResults: [],
   simulatedBaseRoute: [],
+  simulationRouteInfo: {
+    id: 'mumbai_kochi',
+    name: 'Arabian Sea Western Shelf Deep Water Corridor',
+    start: 'MUMBAI ANCHORAGE',
+    end: 'KOCHI NAVAL PORT',
+  },
   travelledRoute: [],
   currentSubmarineLocation: null,
   batchDownloadUrls: null,
@@ -332,24 +341,31 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     case 'SET_BACKEND_ONLINE':
       return { ...state, backendOnline: action.payload };
 
-    case 'SET_SIMULATION_BASE_ROUTE':
+    case 'SET_SIMULATION_BASE_ROUTE': {
+      const waypoints = Array.isArray(action.payload) ? action.payload : action.payload.waypoints;
+      const routeInfo = Array.isArray(action.payload)
+        ? state.simulationRouteInfo
+        : (action.payload.routeInfo || state.simulationRouteInfo);
       return {
         ...state,
-        simulatedBaseRoute: action.payload,
+        simulatedBaseRoute: waypoints,
+        simulationRouteInfo: routeInfo,
         currentSubmarineLocation:
-          state.uploadMode === 'folder' && !state.currentSubmarineLocation && action.payload.length > 0
-            ? action.payload[0]
+          state.uploadMode === 'folder' && !state.currentSubmarineLocation && waypoints.length > 0
+            ? waypoints[0]
             : state.currentSubmarineLocation,
         travelledRoute:
-          state.uploadMode === 'folder' && state.travelledRoute.length === 0 && action.payload.length > 0
-            ? [action.payload[0]]
+          state.uploadMode === 'folder' && state.travelledRoute.length === 0 && waypoints.length > 0
+            ? [waypoints[0]]
             : state.travelledRoute,
       };
+    }
 
     case 'START_BATCH_RUN': {
       const startCoord = state.simulatedBaseRoute[0] || { lat: 18.8, lon: 72.6 };
       return {
         ...state,
+        uploadMode: 'folder',
         status: 'processing',
         isSimulationMode: true,
         batchId: action.payload.batchId,
@@ -370,7 +386,6 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     }
 
     case 'BATCH_EVENT_IMAGE_STARTED': {
-      if (state.status !== 'processing') return state;
       const nextTravelled = [...state.travelledRoute];
       let nextSubmarineLoc = state.currentSubmarineLocation;
 
@@ -391,6 +406,9 @@ export function appReducer(state: AppState, action: AppAction): AppState {
 
       return {
         ...state,
+        uploadMode: 'folder',
+        status: 'processing',
+        isSimulationMode: true,
         currentSubmarineLocation: nextSubmarineLoc,
         travelledRoute: nextTravelled,
         batchProgress: state.batchProgress
@@ -399,12 +417,18 @@ export function appReducer(state: AppState, action: AppAction): AppState {
               sequence: action.payload.sequence,
               currentFilename: action.payload.filename,
             }
-          : null,
+          : {
+              sequence: action.payload.sequence,
+              total: action.payload.total || 1,
+              currentFilename: action.payload.filename,
+              processedCount: 0,
+              failedCount: 0,
+              status: 'running',
+            },
       };
     }
 
     case 'BATCH_EVENT_IMAGE_PROCESSED': {
-      if (state.status !== 'processing') return state;
       const { sequence, total, filename, gps, result, record } = action.payload as any;
       const nextTravelled = [...state.travelledRoute];
       let nextSubmarineLoc = state.currentSubmarineLocation;
@@ -425,7 +449,10 @@ export function appReducer(state: AppState, action: AppAction): AppState {
 
       return {
         ...state,
-        result, // Update live preview in inspector & viewer
+        uploadMode: 'folder',
+        status: 'processing',
+        isSimulationMode: true,
+        result: result || state.result, // Update live preview in inspector & viewer
         currentSubmarineLocation: nextSubmarineLoc,
         travelledRoute: nextTravelled,
         batchResults: [...state.batchResults, record],
@@ -433,25 +460,33 @@ export function appReducer(state: AppState, action: AppAction): AppState {
           ? {
               ...state.batchProgress,
               sequence,
-              total,
+              total: total || state.batchProgress.total,
               currentFilename: filename,
               processedCount: state.batchProgress.processedCount + 1,
             }
-          : null,
+          : {
+              sequence,
+              total: total || 1,
+              currentFilename: filename,
+              processedCount: 1,
+              failedCount: 0,
+              status: 'running',
+            },
       };
     }
 
     case 'BATCH_EVENT_IMAGE_FAILED': {
-      if (state.status !== 'processing') return state;
-      const { sequence, total, filename, record } = action.payload;
+      const { sequence, total, filename, error, record } = action.payload as any;
       return {
         ...state,
+        uploadMode: 'folder',
+        status: 'processing',
         batchResults: [...state.batchResults, record],
         batchProgress: state.batchProgress
           ? {
               ...state.batchProgress,
               sequence,
-              total,
+              total: total || state.batchProgress.total,
               currentFilename: filename,
               failedCount: state.batchProgress.failedCount + 1,
             }

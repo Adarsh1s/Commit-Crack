@@ -1,9 +1,10 @@
 // src/components/layout/TopBar.tsx
 import React, { useEffect, useState } from 'react';
-import { Activity, Clock, Zap, Cpu, Battery } from 'lucide-react';
+import { Activity, Clock, Zap, Cpu, Battery, Terminal } from 'lucide-react';
 import { useAppContext } from '../../store/AppContext';
 import { TIER_LABELS } from '../../utils/computeTier';
 import type { ComputeTier } from '../../types/sonar';
+import { CliCommandsModal } from './CliCommandsModal';
 
 const TIER_ICONS: Record<ComputeTier, React.FC<{ size: number; color: string }>> = {
   A: ({ size, color }) => <Zap size={size} color={color} />,
@@ -14,6 +15,7 @@ const TIER_ICONS: Record<ComputeTier, React.FC<{ size: number; color: string }>>
 export function TopBar() {
   const { state } = useAppContext();
   const [utcTime, setUtcTime] = useState('');
+  const [showCliModal, setShowCliModal] = useState(false);
 
   useEffect(() => {
     const update = () => {
@@ -193,6 +195,33 @@ export function TopBar() {
           {utcTime}
         </span>
       </div>
+
+      {/* CLI Terminal Commands Button */}
+      <button
+        onClick={() => setShowCliModal(true)}
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 6,
+          padding: '5px 12px',
+          borderRadius: 16,
+          background: '#0f172a',
+          border: '1px solid #1e293b',
+          cursor: 'pointer',
+          color: '#38bdf8',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+          transition: 'all 150ms ease',
+        }}
+        title="View terminal commands to run missions from terminal"
+      >
+        <Terminal size={13} color="#38bdf8" />
+        <span style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.02em', color: '#f8fafc' }}>
+          CLI Commands
+        </span>
+      </button>
+
+      {/* CLI Commands Modal */}
+      <CliCommandsModal isOpen={showCliModal} onClose={() => setShowCliModal(false)} />
     </header>
   );
 }

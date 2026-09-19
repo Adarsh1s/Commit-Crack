@@ -200,13 +200,24 @@ export interface AppState {
   locationError: string | null;
   backendOnline: boolean;
   
-  // Batch & Arabian Sea Simulation State
+  // Batch & Naval Patrol Simulation State
   isSimulationMode: boolean;
   batchId: string | null;
   batchProgress: BatchProgressState | null;
   batchResults: BatchImageRecord[];
   simulatedBaseRoute: GeoCoordinate[];
+  simulationRouteInfo: SimulationRouteInfo | null;
   travelledRoute: GeoCoordinate[];
   currentSubmarineLocation: GeoCoordinate | null;
   batchDownloadUrls: BatchDownloadUrls | null;
 }
+
+export interface SimulationRouteInfo {
+  id?: string;
+  name: string;
+  start: string;
+  end: string;
+  description?: string;
+  region?: string;
+}
+

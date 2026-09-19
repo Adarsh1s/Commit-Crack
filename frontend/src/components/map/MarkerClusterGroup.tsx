@@ -21,118 +21,81 @@ const CLASS_LABELS: Record<string, string> = {
 };
 
 /**
- * Creates tactical DivIcon for an individual SurveyFrame marker.
+ * Creates tactical DivIcon for an individual SurveyFrame marker:
+ * Sleek circular sonar ping dot with color based on severity (Red, Orange, Yellow, Cyan).
+ * No rectangular shapes, no numbers.
  */
 export function createFrameMarkerIcon(frame: SurveyFrame): L.DivIcon {
   const riskColor = RISK_COLORS[frame.highestRisk] ?? '#0284c7';
-  const hasVerified = frame.expertVerified;
-  const count = frame.anomalyCount;
+  const isHighOrCritical = frame.highestRisk === 'CRITICAL' || frame.highestRisk === 'HIGH';
 
   return L.divIcon({
-    className: 'aqua-frame-marker',
+    className: 'aqua-sonar-dot',
     html: `
       <div style="
         position: relative;
-        width: 32px;
-        height: 32px;
+        width: 18px;
+        height: 18px;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
       ">
-        <!-- Pulse ring for critical/high hazards -->
+        <!-- Radar ping wave for high/critical risks -->
         ${
-          frame.highestRisk === 'CRITICAL' || frame.highestRisk === 'HIGH'
+          isHighOrCritical
             ? `<div style="
                 position: absolute;
-                inset: -2px;
-                border-radius: 8px;
-                background: ${riskColor}33;
-                border: 1px solid ${riskColor};
-                animation: pulse 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+                inset: -4px;
+                border-radius: 50%;
+                border: 1.5px solid ${riskColor};
+                background: ${riskColor}22;
+                animation: pulse 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
               "></div>`
             : ''
         }
-        <!-- Core Diamond Marker -->
+        <!-- Core Glowing Circular Sonar Dot -->
         <div style="
-          width: 20px;
-          height: 20px;
-          border-radius: 4px;
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
           background: ${riskColor};
-          border: 2px solid #ffffff;
-          box-shadow: 0 3px 10px rgba(0,0,0,0.4);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #ffffff;
-          font-family: 'Inter', system-ui, sans-serif;
-          font-weight: 800;
-          font-size: 10px;
-          letter-spacing: -0.02em;
-        ">
-          ${count > 0 ? count : '•'}
-        </div>
-        ${
-          hasVerified
-            ? `<div style="
-                position: absolute;
-                top: -3px;
-                right: -3px;
-                background: #10b981;
-                border: 1.5px solid #ffffff;
-                border-radius: 50%;
-                width: 12px;
-                height: 12px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 7px;
-                color: #ffffff;
-                font-weight: 900;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.4);
-              ">✓</div>`
-            : ''
-        }
+          border: 1.5px solid #ffffff;
+          box-shadow: 0 0 10px ${riskColor}, 0 2px 4px rgba(0,0,0,0.5);
+        "></div>
       </div>
     `,
-    iconSize: [32, 32],
-    iconAnchor: [16, 16],
+    iconSize: [18, 18],
+    iconAnchor: [9, 9],
   });
 }
 
 /**
- * Creates custom cluster badge showing SurveyFrame count with risk-aware coloring.
+ * Creates custom cluster node with glowing halo and risk-aware color (no numbers).
  */
 function createCustomClusterIcon(cluster: L.MarkerCluster): L.DivIcon {
   const childMarkers = cluster.getAllChildMarkers();
-  const frameCount = childMarkers.length;
 
-  let totalAnomalies = 0;
   let hasCritical = false;
   let hasHigh = false;
-  let hasVerified = false;
 
   childMarkers.forEach((m: any) => {
     const f: SurveyFrame = m.frameData;
     if (f) {
-      totalAnomalies += f.anomalyCount;
       if (f.highestRisk === 'CRITICAL') hasCritical = true;
       if (f.highestRisk === 'HIGH') hasHigh = true;
-      if (f.expertVerified) hasVerified = true;
     }
   });
 
   const clusterColor = hasCritical ? '#ef4444' : hasHigh ? '#f97316' : '#0284c7';
-  const size = frameCount >= 50 ? 46 : frameCount >= 15 ? 40 : frameCount >= 5 ? 34 : 30;
-  const fontSize = frameCount >= 100 ? 10 : 12;
 
   return L.divIcon({
-    className: 'aqua-survey-cluster',
+    className: 'aqua-cluster-node',
     html: `
       <div style="
         position: relative;
-        width: ${size}px;
-        height: ${size}px;
+        width: 22px;
+        height: 22px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -140,56 +103,24 @@ function createCustomClusterIcon(cluster: L.MarkerCluster): L.DivIcon {
       ">
         <div style="
           position: absolute;
-          inset: -4px;
+          inset: -5px;
           border-radius: 50%;
-          background: ${clusterColor}33;
+          background: ${clusterColor}26;
           border: 1.5px solid ${clusterColor};
-          animation: pulse 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+          animation: pulse 2s cubic-bezier(0, 0, 0.2, 1) infinite;
         "></div>
         <div style="
-          position: relative;
-          width: ${size}px;
-          height: ${size}px;
+          width: 12px;
+          height: 12px;
           border-radius: 50%;
           background: ${clusterColor};
           border: 2px solid #ffffff;
-          box-shadow: 0 3px 8px rgba(0,0,0,0.35);
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          color: #ffffff;
-          font-family: 'Inter', system-ui, sans-serif;
-          font-weight: 800;
-          line-height: 1;
-        ">
-          <span style="font-size: ${fontSize}px;">${frameCount}</span>
-        </div>
-        ${
-          hasVerified
-            ? `<div style="
-                position: absolute;
-                top: -2px;
-                right: -2px;
-                background: #10b981;
-                border: 1.5px solid #ffffff;
-                border-radius: 50%;
-                width: 13px;
-                height: 13px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 7px;
-                color: #ffffff;
-                font-weight: 900;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.4);
-              ">✓</div>`
-            : ''
-        }
+          box-shadow: 0 0 12px ${clusterColor};
+        "></div>
       </div>
     `,
-    iconSize: [size, size],
-    iconAnchor: [size / 2, size / 2],
+    iconSize: [22, 22],
+    iconAnchor: [11, 11],
   });
 }
 
@@ -319,7 +250,8 @@ export function MarkerClusterGroup({
       showCoverageOnHover: false,
       spiderfyOnMaxZoom: true,
       zoomToBoundsOnClick: true,
-      maxClusterRadius: 65,
+      maxClusterRadius: 40,
+      disableClusteringAtZoom: 12,
       spiderfyDistanceMultiplier: 1.5,
       animateAddingMarkers: true,
       iconCreateFunction: createCustomClusterIcon,
