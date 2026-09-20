@@ -39,3 +39,7 @@ pnpm-debug.log*
 
 # Outputs
 outputs/
+
+FINAL_TRAINING_DATASET/
+
+runs/

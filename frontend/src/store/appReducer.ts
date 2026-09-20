@@ -80,7 +80,7 @@ export const initialState: AppState = {
     clahe_equalization: true,
     nadir_excision: false,
     confidence_threshold: 0.25,
-    test_interval_seconds: 2.0,
+    test_interval_seconds: 0.2,
   },
   status: 'idle',
   result: null,

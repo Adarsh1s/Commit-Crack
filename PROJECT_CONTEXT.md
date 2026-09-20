@@ -32,7 +32,7 @@ SIH_2026_Final/
 ├── training.ipynb           # Jupyter notebook for YOLO model training & evaluation
 │
 ├── MODELS/                  # Neural network weight storage
-│   └── yolov8n.pt           # Ultralytics YOLOv8 small model weights (22.5 MB)
+│   └── yolov8n.pt           # Fine-tuned YOLOv8s (Small) weights (11.14M parameters, 22.5 MB)
 │
 ├── ml/                      # ML taxonomy metadata & configuration
 │   ├── class_map.json       # 5 Canonical hydrographic target taxonomy mapping & dimensions

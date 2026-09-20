@@ -1,6 +1,8 @@
 {
-  "model_id": "aqua-sentinel-yolov8n-v1",
-  "base_architecture": "YOLOv8n",
+  "model_id": "aqua-sentinel-yolov8s-v1",
+  "base_architecture": "YOLOv8s",
+  "num_parameters": 11137535,
+  "parameter_count_str": "11.14M",
   "framework": "ultralytics",
   "input_size": [640, 640],
   "num_classes": 5,
@@ -14,8 +16,8 @@
     "inference_cpu_ms": 52
   },
   "weights": {
-    "base_weights": "yolov8n.pt",
-    "custom_weights_path": "../ml/weights/best.pt",
-    "auto_download_base": true
+    "weights_file": "MODELS/yolov8n.pt",
+    "weights_format": "PyTorch (.pt)",
+    "weights_size_mb": 22.5
   }
 }

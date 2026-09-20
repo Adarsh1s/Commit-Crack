@@ -265,6 +265,7 @@ export function useAnalysis() {
     form.append('clahe_equalization', String(state.params.clahe_equalization));
     form.append('nadir_excision', String(state.params.nadir_excision));
     form.append('confidence_threshold', String(state.params.confidence_threshold));
+    form.append('interval_seconds', String(state.params.test_interval_seconds ?? 0.2));
 
     try {
       dispatch({ type: 'SET_STATUS', payload: 'uploading' });

@@ -87,11 +87,10 @@ from inference import _draw_annotations, get_inference_engine, _crop_thumbnail, 
 # Total time (in seconds) for the submarine to complete the entire patrol route.
 # If set (e.g. 30.0, 60.0, 15.0), the delay between each frame is automatically
 # calculated as (TOTAL_MISSION_DURATION_SECONDS / total_images).
-# Set to None or 0 to use FRAME_INTERVAL_SECONDS instead.
-TOTAL_MISSION_DURATION_SECONDS: Optional[float] = 30.0
+TOTAL_MISSION_DURATION_SECONDS: Optional[float] = None
 
-# Fallback: Fixed delay in seconds between sequential sonar frames
-FRAME_INTERVAL_SECONDS: float = 1.5
+# Fallback: Fixed delay in seconds between sequential sonar frames (0.2s)
+FRAME_INTERVAL_SECONDS: float = 0.2
 
 # Legacy compatibility alias
 TEST_INTERVAL_SECONDS: float = FRAME_INTERVAL_SECONDS
@@ -548,10 +547,12 @@ def execute_batch_generator(
     effective_duration = duration_seconds if duration_seconds is not None else TOTAL_MISSION_DURATION_SECONDS
     if total_images <= 1:
         step_interval = 0.0
-    elif effective_duration is not None and effective_duration > 0 and total_images > 0:
-        step_interval = round(effective_duration / total_images, 3)
     elif interval_seconds is not None and interval_seconds > 0:
         step_interval = interval_seconds
+    elif duration_seconds is not None and duration_seconds > 0:
+        step_interval = round(duration_seconds / total_images, 3)
+    elif TOTAL_MISSION_DURATION_SECONDS is not None and TOTAL_MISSION_DURATION_SECONDS > 0 and total_images > 0:
+        step_interval = round(TOTAL_MISSION_DURATION_SECONDS / total_images, 3)
     else:
         step_interval = FRAME_INTERVAL_SECONDS
 
