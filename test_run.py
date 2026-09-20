@@ -563,52 +563,29 @@ def execute_batch_generator(
 
     if sim_route and total_images > 0:
         chosen_route_key = route_name or PATROL_ROUTE
-        if simulate_hotspots:
-            sim_data = generate_patrol_simulation(
-                total_frames=total_images,
-                route_key=chosen_route_key,
-                num_hotspots=hotspot_count,
-            )
-            sim_coordinates = sim_data["frames"]
-            active_route = sim_data["route"]
-        else:
-            active_route = select_route(chosen_route_key)
-            sim_coordinates = interpolate_route(total_images, active_route["id"])
+        sim_data = generate_patrol_simulation(
+            total_frames=total_images,
+            route_key=chosen_route_key,
+            num_hotspots=hotspot_count if simulate_hotspots else 0,
+        )
+        sim_coordinates = sim_data["frames"]
+        active_route = sim_data["route"]
 
-    # If simulating hotspots, optimize image pairing so anomaly/contact images
-    # land on hotspot coordinates, while background/clear images land on transit coordinates
+    # Process images strictly in deterministic sequential upload order (no artificial reordering)
     processed_images_list = list(images_list)
-    if sim_route and simulate_hotspots and sim_data and len(processed_images_list) > 3:
-        anomaly_pool = []
-        background_pool = []
-        for item in processed_images_list:
-            fname = item[0].lower()
-            if fname.startswith("bg_") or "clear" in fname or "empty" in fname:
-                background_pool.append(item)
-            else:
-                anomaly_pool.append(item)
 
-        if anomaly_pool and background_pool:
-            reordered = []
-            a_idx = 0
-            b_idx = 0
-            for frame_info in sim_coordinates:
-                if frame_info.get("anomaly_bias") == "HIGH":
-                    if a_idx < len(anomaly_pool):
-                        reordered.append(anomaly_pool[a_idx])
-                        a_idx += 1
-                    elif b_idx < len(background_pool):
-                        reordered.append(background_pool[b_idx])
-                        b_idx += 1
-                else:
-                    if b_idx < len(background_pool):
-                        reordered.append(background_pool[b_idx])
-                        b_idx += 1
-                    elif a_idx < len(anomaly_pool):
-                        reordered.append(anomaly_pool[a_idx])
-                        a_idx += 1
-            if len(reordered) == len(processed_images_list):
-                processed_images_list = reordered
+    # Format route waypoints as JSON-friendly dictionaries for frontend Leaflet polyline
+    route_waypoints_json = []
+    if active_route and "waypoints" in active_route:
+        for wp in active_route["waypoints"]:
+            if isinstance(wp, dict) and "lat" in wp and "lon" in wp:
+                route_waypoints_json.append(wp)
+            elif isinstance(wp, (list, tuple)) and len(wp) >= 2:
+                route_waypoints_json.append({
+                    "lat": float(wp[0]),
+                    "lon": float(wp[1]),
+                    "name": str(wp[2]) if len(wp) > 2 else "",
+                })
 
     # Yield initial start event immediately
     yield {
@@ -626,7 +603,7 @@ def execute_batch_generator(
             "start": active_route.get("start"),
             "end": active_route.get("end"),
             "description": active_route.get("description"),
-            "waypoints": active_route.get("waypoints"),
+            "waypoints": route_waypoints_json,
         } if active_route else None,
         "hotspots": sim_data.get("hotspots", []) if sim_data else [],
     }

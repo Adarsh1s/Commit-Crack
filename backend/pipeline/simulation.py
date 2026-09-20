@@ -281,47 +281,22 @@ def generate_patrol_simulation(
     num_hotspots: int = 2,
 ) -> Dict[str, Any]:
     """
-    Generates an authoritative naval patrol trajectory with realistic spatial clustering:
-    - Picks an authentic patrol corridor (random by default).
-    - Seeds 2-3 localized 'Anomaly Hotspots' along the corridor (e.g. minefield barrages,
-      shipwreck debris fields, or pipeline rupture zones).
-    - Clusters multiple sonar frames in close geographic proximity (within 100m to 600m)
-      around each hotspot center.
-    - Leaves clear transit corridors with sparse or zero anomalies between hotspots.
-    
-    This ensures that on the map:
-    - Zoomed OUT: Heatmap glows intensely in hot zones; clusters merge into high-density badges.
-    - Zoomed IN: Hotspots cleanly separate into individual scan swaths and discrete target markers.
+    Generates an authoritative naval patrol trajectory along the hardcoded route corridor.
+    Guarantees:
+    - Image 1 (index 0) is strictly at Route START (0.0% progress).
+    - Last Image (index total_frames - 1) is strictly at Route END (100.0% progress).
+    - Single image (total_frames = 1) is safely positioned at Route START without division by zero.
+    - All intermediate images are evenly interpolated along the complete cumulative waypoint corridor.
+    - Anomaly hotspot metadata is annotated along the corridor for situational awareness.
     """
     route_info = select_route(route_key)
     raw_waypoints = route_info["waypoints"]
-    formatted_waypoints = [{"lat": lat, "lon": lon} for lat, lon, _ in raw_waypoints]
+    formatted_waypoints = [
+        {"lat": lat, "lon": lon, "name": name}
+        for lat, lon, name in raw_waypoints
+    ]
 
     if total_frames <= 0:
-        return {
-            "route": route_info,
-            "waypoints": formatted_waypoints,
-            "hotspots": [],
-            "frames": [],
-        }
-
-    # If small batch (<= 4 frames), perform standard interpolation without extensive clustering
-    if total_frames <= 4:
-        standard_points = interpolate_route(total_frames, route_info["id"])
-        frames_telemetry = []
-        for idx, pt in enumerate(standard_points):
-            frames_telemetry.append({
-                "sequence": idx + 1,
-                "lat": pt["lat"],
-                "lon": pt["lon"],
-                "latitude": pt["lat"],
-                "longitude": pt["lon"],
-                "heading": pt["heading"],
-                "progress_pct": pt["progress_pct"],
-                "is_hotspot": False,
-                "hotspot_id": None,
-                "anomaly_bias": "MEDIUM",
-            })
         return {
             "route": {
                 "id": route_info["id"],
@@ -329,40 +304,31 @@ def generate_patrol_simulation(
                 "region": route_info["region"],
                 "start": route_info["start"],
                 "end": route_info["end"],
+                "description": route_info["description"],
                 "waypoints": formatted_waypoints,
             },
             "hotspots": [],
-            "frames": frames_telemetry,
+            "frames": [],
         }
 
-    # Step 1: Interpolate base trajectory steps (e.g. 100 fine-grained navigation points)
-    base_track = interpolate_route(100, route_info["id"])
+    # Step 1: Interpolate exact, deterministic route positions for every frame
+    route_points = interpolate_route(total_frames, route_info["id"])
 
-    # Step 2: Determine hotspot center locations along the track
-    # E.g. Hotspot 1 at ~20-35% progress, Hotspot 2 at ~65-80% progress
-    hotspot_names = [
-        ("HOTSPOT-ALPHA", "Subsea Minefield Barrage / Contact Cluster"),
-        ("HOTSPOT-BRAVO", "Deep Shipwreck & Ordnance Debris Zone"),
-        ("HOTSPOT-CHARLIE", "Pipeline Anchor Snag & Structural Fracture Zone"),
+    # Step 2: Establish hotspot zones along the route for reference metadata
+    hotspot_catalog = [
+        ("HOTSPOT-ALPHA", "Subsea Minefield Barrage / Contact Cluster", 28.0),
+        ("HOTSPOT-BRAVO", "Deep Shipwreck & Ordnance Debris Zone", 58.0),
+        ("HOTSPOT-CHARLIE", "Pipeline Anchor Snag & Structural Fracture Zone", 82.0),
     ]
-    
-    actual_num_hotspots = min(len(hotspot_names), max(1, num_hotspots))
+    actual_num_hotspots = min(len(hotspot_catalog), max(1, num_hotspots))
     hotspots = []
     
-    # Progress ranges for placing hotspots
-    progress_slots = []
-    if actual_num_hotspots == 1:
-        progress_slots = [(40, 60)]
-    elif actual_num_hotspots == 2:
-        progress_slots = [(20, 38), (62, 82)]
-    else:
-        progress_slots = [(18, 30), (45, 60), (75, 88)]
-
-    for h_idx, (min_p, max_p) in enumerate(progress_slots):
-        target_pct = random.uniform(min_p, max_p)
-        step_idx = int((target_pct / 100.0) * (len(base_track) - 1))
-        center_pt = base_track[step_idx]
-        h_code, h_desc = hotspot_names[h_idx]
+    # 100-step base reference to resolve exact coordinates for hotspot center points
+    ref_track = interpolate_route(100, route_info["id"])
+    for h_idx in range(actual_num_hotspots):
+        h_code, h_desc, target_pct = hotspot_catalog[h_idx]
+        ref_idx = int((target_pct / 100.0) * (len(ref_track) - 1))
+        center_pt = ref_track[ref_idx]
         hotspots.append({
             "id": f"hs_{h_idx + 1}",
             "code": h_code,
@@ -374,59 +340,33 @@ def generate_patrol_simulation(
             "frames_allocated": 0,
         })
 
-    # Step 3: Allocate all frames across the 2-3 hotspots (no continuous breadcrumb dots)
-    frames_per_hotspot = total_frames // actual_num_hotspots
-    remainder = total_frames % actual_num_hotspots
-    hotspot_allocations = [
-        frames_per_hotspot + (1 if i < remainder else 0)
-        for i in range(actual_num_hotspots)
-    ]
-
-    for h_idx, hs in enumerate(hotspots):
-        hs["frames_allocated"] = hotspot_allocations[h_idx]
-
-    # Step 4: Generate scattered coordinates for each image in its designated hotspot
-    # Each image gets a unique localized coordinate within the hotspot survey sector
+    # Step 3: Build frames telemetry. Every frame is strictly anchored on its route position.
     frames_telemetry = []
-    global_seq = 0
+    for idx, pt in enumerate(route_points):
+        seq = idx + 1
+        pct = pt["progress_pct"]
 
-    for h_idx, hs in enumerate(hotspots):
-        allocated = hotspot_allocations[h_idx]
-        for sub_i in range(allocated):
-            global_seq += 1
+        # Check if this frame passes within an anomaly hotspot zone (+/- 8% of a hotspot)
+        matching_hs = None
+        for hs in hotspots:
+            if abs(pct - hs["progress_pct"]) <= 8.0:
+                matching_hs = hs
+                hs["frames_allocated"] = hs.get("frames_allocated", 0) + 1
+                break
 
-            # Golden-angle spiral scatter ensures every image gets a distinct non-overlapping dot
-            # within a realistic 800m to 3.5km survey zone
-            angle = (sub_i * 2.39996) + random.uniform(-0.15, 0.15)
-            # Square root distribution ensures natural density without clumping
-            r_norm = math.sqrt((sub_i + 0.5) / max(1, allocated))
-            dist_deg = 0.005 + (r_norm * 0.025)
-
-            lat_jitter = dist_deg * math.cos(angle)
-            lon_jitter = dist_deg * math.sin(angle) * 1.12
-
-            f_lat = round(hs["lat"] + lat_jitter, 6)
-            f_lon = round(hs["lon"] + lon_jitter, 6)
-            hdg = round((hs["heading"] + random.uniform(-20.0, 20.0) + 360.0) % 360.0, 1)
-
-            # Frame progress advances along route from hotspot to hotspot
-            pct_start = hs["progress_pct"] - 3.0
-            pct_end = hs["progress_pct"] + 3.0
-            frame_progress = round(pct_start + (sub_i / max(1, allocated - 1)) * (pct_end - pct_start), 1)
-
-            frames_telemetry.append({
-                "sequence": global_seq,
-                "lat": f_lat,
-                "lon": f_lon,
-                "latitude": f_lat,
-                "longitude": f_lon,
-                "heading": hdg,
-                "progress_pct": frame_progress,
-                "is_hotspot": True,
-                "hotspot_id": hs["code"],
-                "hotspot_title": hs["title"],
-                "anomaly_bias": "HIGH" if sub_i % 2 == 0 else "MEDIUM",
-            })
+        frames_telemetry.append({
+            "sequence": seq,
+            "lat": pt["lat"],
+            "lon": pt["lon"],
+            "latitude": pt["lat"],
+            "longitude": pt["lon"],
+            "heading": pt["heading"],
+            "progress_pct": pct,
+            "is_hotspot": matching_hs is not None,
+            "hotspot_id": matching_hs["code"] if matching_hs else None,
+            "hotspot_title": matching_hs["title"] if matching_hs else None,
+            "anomaly_bias": "HIGH" if matching_hs else "MEDIUM",
+        })
 
     return {
         "route": {

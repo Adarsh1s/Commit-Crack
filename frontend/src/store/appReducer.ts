@@ -70,6 +70,29 @@ export type AppAction =
   | { type: 'CANCEL_BATCH' }
   | { type: 'RESET' };
 
+export const DEFAULT_MUMBAI_KOCHI_WAYPOINTS: GeoCoordinate[] = [
+  { lat: 18.8000, lon: 72.6000 },
+  { lat: 18.2500, lon: 72.7500 },
+  { lat: 17.6500, lon: 72.9000 },
+  { lat: 16.9500, lon: 73.0500 },
+  { lat: 16.4500, lon: 73.2000 },
+  { lat: 16.0000, lon: 73.3000 },
+  { lat: 15.3500, lon: 73.5500 },
+  { lat: 14.7500, lon: 73.9000 },
+  { lat: 14.3000, lon: 74.1000 },
+  { lat: 13.9500, lon: 74.3000 },
+  { lat: 13.5000, lon: 74.4500 },
+  { lat: 13.3000, lon: 74.5000 },
+  { lat: 12.8000, lon: 74.6000 },
+  { lat: 12.4500, lon: 74.7500 },
+  { lat: 11.8000, lon: 75.1000 },
+  { lat: 11.2000, lon: 75.5000 },
+  { lat: 10.7500, lon: 75.7000 },
+  { lat: 10.2500, lon: 75.9000 },
+  { lat: 10.0000, lon: 76.0000 },
+  { lat: 9.9600, lon: 76.2000 },
+];
+
 export const initialState: AppState = {
   uploadMode: 'single',
   sonarFile: null,
@@ -103,15 +126,15 @@ export const initialState: AppState = {
   batchId: null,
   batchProgress: null,
   batchResults: [],
-  simulatedBaseRoute: [],
+  simulatedBaseRoute: DEFAULT_MUMBAI_KOCHI_WAYPOINTS,
   simulationRouteInfo: {
     id: 'mumbai_kochi',
     name: 'Arabian Sea Western Shelf Deep Water Corridor',
     start: 'MUMBAI ANCHORAGE',
     end: 'KOCHI NAVAL PORT',
   },
-  travelledRoute: [],
-  currentSubmarineLocation: null,
+  travelledRoute: [DEFAULT_MUMBAI_KOCHI_WAYPOINTS[0]],
+  currentSubmarineLocation: DEFAULT_MUMBAI_KOCHI_WAYPOINTS[0],
   batchDownloadUrls: null,
 };
 
@@ -342,21 +365,36 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, backendOnline: action.payload };
 
     case 'SET_SIMULATION_BASE_ROUTE': {
-      const waypoints = Array.isArray(action.payload) ? action.payload : action.payload.waypoints;
+      const rawWaypoints = Array.isArray(action.payload) ? action.payload : action.payload.waypoints;
+      const normalizedWaypoints: GeoCoordinate[] = (rawWaypoints || [])
+        .map((p: any): GeoCoordinate | null => {
+          if (!p) return null;
+          const lat = typeof p.lat === 'number' ? p.lat : Array.isArray(p) && typeof p[0] === 'number' ? p[0] : null;
+          const lon = typeof p.lon === 'number' ? p.lon : Array.isArray(p) && typeof p[1] === 'number' ? p[1] : null;
+          if (lat !== null && lon !== null && Number.isFinite(lat) && Number.isFinite(lon)) {
+            return { lat, lon };
+          }
+          return null;
+        })
+        .filter((c): c is GeoCoordinate => c !== null);
+
       const routeInfo = Array.isArray(action.payload)
         ? state.simulationRouteInfo
         : (action.payload.routeInfo || state.simulationRouteInfo);
+
+      const effectiveWaypoints = normalizedWaypoints.length > 0 ? normalizedWaypoints : state.simulatedBaseRoute;
+
       return {
         ...state,
-        simulatedBaseRoute: waypoints,
+        simulatedBaseRoute: effectiveWaypoints,
         simulationRouteInfo: routeInfo,
         currentSubmarineLocation:
-          state.uploadMode === 'folder' && !state.currentSubmarineLocation && waypoints.length > 0
-            ? waypoints[0]
+          state.uploadMode === 'folder' && effectiveWaypoints.length > 0
+            ? (state.currentSubmarineLocation || effectiveWaypoints[0])
             : state.currentSubmarineLocation,
         travelledRoute:
-          state.uploadMode === 'folder' && state.travelledRoute.length === 0 && waypoints.length > 0
-            ? [waypoints[0]]
+          state.uploadMode === 'folder' && state.travelledRoute.length === 0 && effectiveWaypoints.length > 0
+            ? [effectiveWaypoints[0]]
             : state.travelledRoute,
       };
     }

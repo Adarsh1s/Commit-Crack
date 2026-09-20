@@ -247,18 +247,24 @@ async def start_batch(
     """
     images_payload: List[Tuple[str, Any]] = []
 
+    # Helper for natural sorting (e.g. image_1, image_2, ... image_10)
+    import re
+    def natural_sort_key(name: str):
+        return [int(text) if text.isdigit() else text.lower() for text in re.split(r'(\d+)', name)]
+
     # 1. Check if loading local demo survey (fast, zero upload overhead)
     if use_demo_folder or not files:
         root = Path(__file__).parent.parent
         data_dir = root / "Test_Data" if (root / "Test_Data").exists() else (root / "ml" / "samples")
         if data_dir.exists():
-            for p in sorted(data_dir.iterdir()):
-                if p.is_file() and p.suffix.lower() in {".jpg", ".png", ".jpeg", ".bmp"}:
-                    images_payload.append((p.name, p))
+            valid_paths = [p for p in data_dir.iterdir() if p.is_file() and p.suffix.lower() in {".jpg", ".png", ".jpeg", ".bmp"}]
+            for p in sorted(valid_paths, key=lambda p: natural_sort_key(p.name)):
+                images_payload.append((p.name, p))
 
     # 2. Or parse uploaded client files
     if not images_payload and files:
-        for f in files:
+        sorted_files = sorted(files, key=lambda f: natural_sort_key(f.filename or ""))
+        for f in sorted_files:
             b = await f.read()
             if b:
                 images_payload.append((f.filename, b))

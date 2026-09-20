@@ -351,7 +351,17 @@ export function MissionMap() {
   const stats = useMemo(() => getObservationStats(allSurveyFrames), [allSurveyFrames]);
 
   const baseRouteCoords = useMemo<[number, number][]>(() => {
-    return state.simulatedBaseRoute.map((p): [number, number] => [p.lat, p.lon]);
+    return (state.simulatedBaseRoute || [])
+      .map((p: any): [number, number] | null => {
+        if (!p) return null;
+        const lat = typeof p.lat === 'number' ? p.lat : Array.isArray(p) && typeof p[0] === 'number' ? p[0] : null;
+        const lon = typeof p.lon === 'number' ? p.lon : Array.isArray(p) && typeof p[1] === 'number' ? p[1] : null;
+        if (lat !== null && lon !== null && Number.isFinite(lat) && Number.isFinite(lon)) {
+          return [lat, lon];
+        }
+        return null;
+      })
+      .filter((c): c is [number, number] => c !== null);
   }, [state.simulatedBaseRoute]);
 
   const subLoc = state.currentSubmarineLocation;
