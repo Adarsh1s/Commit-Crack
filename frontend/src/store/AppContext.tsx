@@ -3,6 +3,7 @@ import React, { createContext, useContext, useReducer, useCallback, useEffect } 
 import { appReducer, initialState } from './appReducer';
 import type { AppState, ComputeTier, GeoCoordinate } from '../types/sonar';
 import type { AppAction } from './appReducer';
+import { BACKEND_URL } from '../utils/apiConfig';
 
 interface AppContextValue {
   state: AppState;
@@ -29,7 +30,7 @@ export function AppProvider({ children, initialTier, initialLocation }: AppProvi
   // Poll backend health every 10 seconds
   const checkHealth = useCallback(async () => {
     try {
-      const res = await fetch('http://localhost:8000/health', { signal: AbortSignal.timeout(3000) });
+      const res = await fetch(`${BACKEND_URL}/health`, { signal: AbortSignal.timeout(3000) });
       dispatch({ type: 'SET_BACKEND_ONLINE', payload: res.ok });
     } catch {
       dispatch({ type: 'SET_BACKEND_ONLINE', payload: false });

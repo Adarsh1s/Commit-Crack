@@ -4,8 +4,7 @@ import { Download, FileJson, FileText, Archive, CheckCircle2, Layers, Camera, Cr
 import { useAppContext } from '../../store/AppContext';
 import { buildSurveyFrames } from '../../utils/spatialObservations';
 import type { Detection, SurveyFrame } from '../../types/sonar';
-
-const BACKEND_URL = 'http://localhost:8000';
+import { BACKEND_URL } from '../../utils/apiConfig';
 
 function toDetectionGeoJSON(detections: Detection[]): string {
   const features = detections

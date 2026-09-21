@@ -1,14 +1,29 @@
-# Node dependencies & builds
-node_modules/
-frontend/node_modules/
-dist/
-frontend/dist/
-dist-ssr/
-*.local
-Script_Test/
-# Python cache & virtual environments
+# ==============================================================================
+# Aqua Sentinel — Git Ignore Rules for Production & Deployment
+# ==============================================================================
+
+# ─── 1. Environment Variables & Secrets (CRITICAL) ───────────────────────────
+*.env
+*.env.*
+.env
+.env.*
+.env.local
+.env.development
+.env.test
+.env.production
+backend/.env
+frontend/.env
+frontend/.env.local
+frontend/.env.*
+
+# Explicitly allow public example templates
+!.env.example
+!backend/.env.example
+!frontend/.env.example
+
+# ─── 2. Python Bytecode, Caches & Virtual Environments ────────────────────────
 __pycache__/
-*/__pycache__/
+**/__pycache__/
 *.py[cod]
 *$py.class
 *.so
@@ -16,30 +31,115 @@ __pycache__/
 env/
 venv/
 .venv/
-backend/.env
-.env
+ENV/
+env.bak/
+venv.bak/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# Logs
+# Testing, Type Checking & Linting
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+nosetests.xml
+coverage.xml
+*.cover
+
+# ─── 3. Node.js & Frontend Build Artifacts ───────────────────────────────────
+node_modules/
+**/node_modules/
+dist/
+frontend/dist/
+dist-ssr/
+frontend/dist-ssr/
+*.local
+.npm/
+.eslintcache
+.stylelintcache
+.tsbuildinfo
+.parcel-cache/
+.turbo/
+.cache/
+
+# ─── 4. Logs & Debug Reports ──────────────────────────────────────────────────
 logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
+yarn-error.log*
 pnpm-debug.log*
+lerna-debug.log*
 
-# IDE & Editor files
+# ─── 5. Heavy Datasets & Output Dumps ─────────────────────────────────────────
+outputs/
+outputs/**
+FINAL_TRAINING_DATASET/
+FINAL_DATASET/
+dataset/
+datasets/
+test_heatmap/
+Script_Test/
+
+# Archives & Compressed Bundles
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+
+# ─── 6. AI/ML Checkpoints & Weights ──────────────────────────────────────────
+runs/
+runs/**
+checkpoints/
+*.pth
+*.onnx
+*.engine
+*.tflite
+*.pt
+
+# Preserve ONLY the production fine-tuned model and weight documentation
+!MODELS/yolov8n.pt
+!ml/weights/README.md
+
+# ─── 7. OS & IDE System Files ─────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+[Dd]esktop.ini
+
+# IDE & Editor Configurations
 .vscode/
 !.vscode/extensions.json
 .idea/
-.DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
-
-# Outputs
-outputs/
-
-FINAL_TRAINING_DATASET/
-
-runs/
+*.bak
+*.tmp
+*.temp
+*~

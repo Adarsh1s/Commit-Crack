@@ -2,8 +2,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useAppContext } from '../store/AppContext';
 import type { BatchImageRecord, AnalysisResult } from '../types/sonar';
-
-const BACKEND_URL = 'http://localhost:8000';
+import { BACKEND_URL } from '../utils/apiConfig';
 
 export function useAnalysis() {
   const { state, dispatch } = useAppContext();

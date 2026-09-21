@@ -1,6 +1,7 @@
 // src/hooks/useSystemInfo.ts
 import { useState, useEffect } from 'react';
 import type { SystemInfo, GpuDetail } from '../types/sonar';
+import { BACKEND_URL } from '../utils/apiConfig';
 
 export function parseGpuName(raw: string): string {
   if (!raw || raw === 'WebGL unavailable' || raw === 'GPU info restricted') return raw;
@@ -73,7 +74,7 @@ export function useSystemInfo(): SystemInfo {
     async function fetchBackendHardware() {
       try {
         // Try /system-info endpoint first, then /health
-        let res = await fetch('http://localhost:8000/system-info', {
+        let res = await fetch(`${BACKEND_URL}/system-info`, {
           signal: AbortSignal.timeout(2500),
         }).catch(() => null);
 
@@ -82,7 +83,7 @@ export function useSystemInfo(): SystemInfo {
           data = await res.json();
         } else {
           // Fallback to /health
-          const healthRes = await fetch('http://localhost:8000/health', {
+          const healthRes = await fetch(`${BACKEND_URL}/health`, {
             signal: AbortSignal.timeout(2500),
           }).catch(() => null);
           if (healthRes && healthRes.ok) {
