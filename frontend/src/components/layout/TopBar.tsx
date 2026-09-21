@@ -5,6 +5,7 @@ import { useAppContext } from '../../store/AppContext';
 import { TIER_LABELS } from '../../utils/computeTier';
 import type { ComputeTier } from '../../types/sonar';
 import { CliCommandsModal } from './CliCommandsModal';
+import { BackendSettingsModal } from './BackendSettingsModal';
 
 const TIER_ICONS: Record<ComputeTier, React.FC<{ size: number; color: string }>> = {
   A: ({ size, color }) => <Zap size={size} color={color} />,
@@ -16,6 +17,7 @@ export function TopBar() {
   const { state } = useAppContext();
   const [utcTime, setUtcTime] = useState('');
   const [showCliModal, setShowCliModal] = useState(false);
+  const [showBackendModal, setShowBackendModal] = useState(false);
 
   useEffect(() => {
     const update = () => {
@@ -88,6 +90,8 @@ export function TopBar() {
 
       {/* Backend Status Pill */}
       <div
+        onClick={() => setShowBackendModal(true)}
+        title="Click to view backend connection or configure remote API URL"
         style={{
           display: 'inline-flex',
           alignItems: 'center',
@@ -97,6 +101,7 @@ export function TopBar() {
           background: state.backendOnline ? '#f0fdf4' : '#fef2f2',
           border: `1px solid ${state.backendOnline ? '#bbf7d0' : '#fecaca'}`,
           cursor: 'pointer',
+          transition: 'all 150ms ease',
         }}
       >
         <div
@@ -222,6 +227,9 @@ export function TopBar() {
 
       {/* CLI Commands Modal */}
       <CliCommandsModal isOpen={showCliModal} onClose={() => setShowCliModal(false)} />
+
+      {/* Backend Settings Modal */}
+      <BackendSettingsModal isOpen={showBackendModal} onClose={() => setShowBackendModal(false)} />
     </header>
   );
 }

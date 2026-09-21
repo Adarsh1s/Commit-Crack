@@ -1,7 +1,7 @@
 // src/hooks/useSystemInfo.ts
 import { useState, useEffect } from 'react';
 import type { SystemInfo, GpuDetail } from '../types/sonar';
-import { BACKEND_URL } from '../utils/apiConfig';
+import { getBackendUrl, isMixedContentUrl } from '../utils/apiConfig';
 
 export function parseGpuName(raw: string): string {
   if (!raw || raw === 'WebGL unavailable' || raw === 'GPU info restricted') return raw;
@@ -36,35 +36,19 @@ function hasCanvas2D(): boolean {
 
 export function useSystemInfo(): SystemInfo {
   const [info, setInfo] = useState<SystemInfo>(() => {
-    const nav = navigator as Navigator & {
-      deviceMemory?: number;
-    };
-    const rawGpu = getGpuRenderer();
-    const cleanGpu = parseGpuName(rawGpu);
-
+    const nav = typeof navigator !== 'undefined' ? navigator : ({} as any);
+    const gpuRaw = typeof window !== 'undefined' ? getGpuRenderer() : 'Unknown GPU';
     return {
-      cpuCores: navigator.hardwareConcurrency ?? 8,
-      physicalCores: Math.max(1, Math.floor((navigator.hardwareConcurrency ?? 8) / 2)),
-      deviceMemoryGb: nav.deviceMemory ?? null,
-      ramTotalGb: nav.deviceMemory ? Number(nav.deviceMemory) : null,
-      ramAvailableGb: null,
-      gpuRenderer: rawGpu,
-      gpuName: cleanGpu,
-      vramGb: null,
-      gpus: [],
-      webgl: (() => {
-        try {
-          const c = document.createElement('canvas');
-          return !!(c.getContext('webgl') ?? c.getContext('experimental-webgl'));
-        } catch {
-          return false;
-        }
-      })(),
+      cpuCores: nav.hardwareConcurrency || 4,
+      deviceMemoryGb: (nav as any).deviceMemory || null,
+      gpuRenderer: gpuRaw,
+      gpuName: parseGpuName(gpuRaw),
+      webgl: typeof window !== 'undefined' && !!window.WebGLRenderingContext,
       canvas2d: hasCanvas2D(),
       sharedArrayBuffer: typeof SharedArrayBuffer !== 'undefined',
-      screenWidth: window.screen.width,
-      screenHeight: window.screen.height,
-      userAgent: navigator.userAgent.slice(0, 80),
+      screenWidth: typeof window !== 'undefined' ? window.screen.width : 1920,
+      screenHeight: typeof window !== 'undefined' ? window.screen.height : 1080,
+      userAgent: (nav.userAgent || '').slice(0, 80),
     };
   });
 
@@ -72,9 +56,12 @@ export function useSystemInfo(): SystemInfo {
     let active = true;
 
     async function fetchBackendHardware() {
+      const url = getBackendUrl();
+      if (isMixedContentUrl(url)) return;
+
       try {
         // Try /system-info endpoint first, then /health
-        let res = await fetch(`${BACKEND_URL}/system-info`, {
+        let res = await fetch(`${url}/system-info`, {
           signal: AbortSignal.timeout(2500),
         }).catch(() => null);
 
@@ -83,7 +70,7 @@ export function useSystemInfo(): SystemInfo {
           data = await res.json();
         } else {
           // Fallback to /health
-          const healthRes = await fetch(`${BACKEND_URL}/health`, {
+          const healthRes = await fetch(`${url}/health`, {
             signal: AbortSignal.timeout(2500),
           }).catch(() => null);
           if (healthRes && healthRes.ok) {

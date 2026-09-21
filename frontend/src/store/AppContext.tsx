@@ -3,7 +3,7 @@ import React, { createContext, useContext, useReducer, useCallback, useEffect } 
 import { appReducer, initialState } from './appReducer';
 import type { AppState, ComputeTier, GeoCoordinate } from '../types/sonar';
 import type { AppAction } from './appReducer';
-import { BACKEND_URL } from '../utils/apiConfig';
+import { getBackendUrl, isMixedContentUrl } from '../utils/apiConfig';
 
 interface AppContextValue {
   state: AppState;
@@ -29,8 +29,13 @@ export function AppProvider({ children, initialTier, initialLocation }: AppProvi
 
   // Poll backend health every 10 seconds
   const checkHealth = useCallback(async () => {
+    const url = getBackendUrl();
+    if (isMixedContentUrl(url)) {
+      dispatch({ type: 'SET_BACKEND_ONLINE', payload: false });
+      return;
+    }
     try {
-      const res = await fetch(`${BACKEND_URL}/health`, { signal: AbortSignal.timeout(3000) });
+      const res = await fetch(`${url}/health`, { signal: AbortSignal.timeout(3000) });
       dispatch({ type: 'SET_BACKEND_ONLINE', payload: res.ok });
     } catch {
       dispatch({ type: 'SET_BACKEND_ONLINE', payload: false });
@@ -40,7 +45,11 @@ export function AppProvider({ children, initialTier, initialLocation }: AppProvi
   useEffect(() => {
     checkHealth();
     const id = setInterval(checkHealth, 10000);
-    return () => clearInterval(id);
+    window.addEventListener('aqua_backend_url_changed', checkHealth);
+    return () => {
+      clearInterval(id);
+      window.removeEventListener('aqua_backend_url_changed', checkHealth);
+    };
   }, [checkHealth]);
 
   return (
